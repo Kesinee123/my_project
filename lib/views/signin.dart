@@ -1,12 +1,8 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:my_project/models/profile.dart';
-import 'package:my_project/views/homepage.dart';
-import 'package:my_project/views/signup.dart';
-import 'package:flutter/src/rendering/box.dart';
-
+import 'package:flutter/src/widgets/container.dart';
+import 'package:flutter/src/widgets/framework.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:my_project/views/views_teachers/homepage.dart';
 
 class SignIn extends StatefulWidget {
   const SignIn({super.key});
@@ -16,134 +12,183 @@ class SignIn extends StatefulWidget {
 }
 
 class _SignInState extends State<SignIn> {
-
-  final _formKey = GlobalKey<FormState>();
-  Profile profile = Profile(email: 'email', password: 'password');
-  final Future<FirebaseApp> firebase = Firebase.initializeApp();
-
   @override
-  Widget build(BuildContext context) { 
-    return FutureBuilder(
-        future: firebase,
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return Scaffold(
-              resizeToAvoidBottomInset: false,
-              appBar: AppBar(
-                title: Text("error"),
-              ),
-              body: Center(child: Text("${snapshot.error}")),
-            );
-          }
-          if (snapshot.connectionState == ConnectionState.done) {
-             return Scaffold(
-      // backgroundColor: Colors.orange,
-      body: SingleChildScrollView(
-        child: Form(
-          key: _formKey,
-            child: Container(
-              margin: EdgeInsets.symmetric(horizontal: 40), 
-              child: Column(    
-                children: [
-                  Image(image: AssetImage("assets/logo.png"),height: 350,),
-                  TextFormField(
-                    validator: (val) { return val!.isEmpty ?  "Enter Email" : null; },
-                    decoration: InputDecoration(
-                      hintText: "Email"
-                       ),
-                       onChanged: (val) {
-                        profile.email = val;
-                       },
-                  ),
-                  SizedBox(height: 6,),
-                  TextFormField(
-                    obscureText: true,
-                    validator: (val) { return val!.isEmpty ?  "Enter Password" : null; },
-                    decoration: InputDecoration(
-                      hintText: "Password"
-                       ),
-                       onChanged: (val) {
-                        profile.password = val;
-                       },
-                  ),
-                  SizedBox(height: 24,),
-          
-                  GestureDetector(
-                   onTap: ()   {
-                      if (_formKey.currentState!.validate()){
-                        _formKey.currentState!.save();
-                          try{
-                             FirebaseAuth.instance.signInWithEmailAndPassword(
-                            email: profile.email, password: profile.password
-                            ).then((value) {
-                                _formKey.currentState!.reset();
-                          Navigator.pushReplacement(
-                            context, MaterialPageRoute(builder: (context){
-                              return HomePage();
-                          }));
-                            });
-                            
-                          
-                          }on FirebaseAuthException catch(e){
-                              print(e.message);
-                              // String message;
-                              // if(e.code == 'email-already-in-use'){
-                              //   message = "มีอีเมลนี้ในระบบแล้วค่า" ;
-                              // }
-                              // // print(e.message);
-                              // Fluttertoast.showToast(
-                              //     msg: message ,
-                              //     gravity: ToastGravity.TOP
-                              //   );
-                          }
-                      }
-                    },
-                    child: Container(
-                      padding: EdgeInsets.symmetric(vertical: 18),
-                      decoration: BoxDecoration(
-                        color: Colors.blue,
-                        borderRadius: BorderRadius.circular(30),
-                      ) ,
-                      alignment: Alignment.center,
-                      width: MediaQuery.of(context).size.width - 48 ,
-                      child: Text("Sign in" ,style: TextStyle(color: Colors.white,fontSize: 16),) ,
-                    ),
-                  ),
-          
-                  SizedBox(height: 18,),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text("Don't have an account ?" ,style: TextStyle(fontSize: 16),),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.pushReplacement(context, MaterialPageRoute(builder: ((context) => SignUp() )));
-                        },
-                         child: Text(
-                            "Sign Up",
-                            style: TextStyle(
-                              fontSize: 16,
-                              decoration: TextDecoration.underline,
-                            ),
-                          )),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 80,
-                  )
-                ],
-              ),
-            ),
+  Widget build(BuildContext context) {
+    final emailField = Container(
+      decoration:
+          BoxDecoration(border: Border(bottom: BorderSide(color: Colors.grey))),
+      child: TextFormField(
+        autofocus: false,
+        keyboardType: TextInputType.emailAddress,
+        validator: (value) {},
+        textInputAction: TextInputAction.next,
+        decoration: InputDecoration(
+            prefixIcon: Icon(Icons.mail),
+            contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
+            hintText: 'Email',
+            border: InputBorder.none),
+      ),
+    );
+
+    final passwordfiele = Container(
+      decoration:
+          BoxDecoration(border: Border(bottom: BorderSide(color: Colors.grey))),
+      child: TextFormField(
+        autofocus: false,
+        obscureText: true,
+        validator: (value) {},
+        textInputAction: TextInputAction.done,
+        decoration: InputDecoration(
+            prefixIcon: Icon(Icons.vpn_key),
+            contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
+            hintText: 'Password',
+            border: InputBorder.none),
+      ),
+    );
+
+    final signInButton = Material(
+      elevation: 0,
+      borderRadius: BorderRadius.circular(30),
+      color: Colors.purple,
+      child: MaterialButton(
+        padding: EdgeInsets.fromLTRB(0, 15, 0, 15),
+        minWidth: MediaQuery.of(context).size.width,
+        onPressed: () => Navigator.push(context,MaterialPageRoute(builder: (context) => HomePage())),
+        child: Text(
+          'Login',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+              fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
         ),
       ),
     );
-          }
-          return Scaffold(
-            body: Center(
-              child: CircularProgressIndicator(),
+
+    final googleSignIn = Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          ElevatedButton.icon(
+              onPressed: (() {}),
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: Colors.red,
+                // minimumSize: Size(double.infinity, 50),
+                minimumSize: Size(50, 50),
+              ),
+              icon: FaIcon(
+                FontAwesomeIcons.google,
+                color: Colors.white,
+              ),
+              label: Text('Sign In with Google')),
+        ],
+      ),
+    );
+
+    return Scaffold(
+      body: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+            gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                colors: [Colors.deepPurple, Colors.purple])),
+        child: SingleChildScrollView(
+            child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              height: 50,
             ),
-          );
-        });
-   
+            Padding(
+              padding: EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Login",
+                    style: TextStyle(color: Colors.white, fontSize: 40),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    "Welcome Back",
+                    style: TextStyle(color: Colors.white, fontSize: 18),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(
+              height: 15,
+            ),
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(60),
+                    topRight: Radius.circular(60)),
+              ),
+              child: Padding(
+                padding: EdgeInsets.all(25),
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 40,
+                    ),
+                    Container(
+                      padding: EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(10),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Color.fromARGB(255, 176, 97, 255),
+                              blurRadius: 20,
+                              offset: Offset(0, 10),
+                            )
+                          ]),
+                      child: Column(
+                        children: [
+                          emailField,
+                        SizedBox(height: 20,),
+                         passwordfiele],
+                      ),
+                    ),
+                    SizedBox(
+                      height: 40,
+                    ),
+                    signInButton,
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text("Don't have an account?"),
+                        GestureDetector(
+                          onTap: () {
+                            // Navigator.push(context, MaterialPageRoute(builder: (context) => SignUp()));
+                          },
+                          child: Text(
+                            'Sign Up',
+                            style: TextStyle(
+                                color: Colors.red,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 15),
+                          ),
+                        )
+                      ],
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    googleSignIn
+                  ],
+                ),
+              ),
+            )
+          ],
+        )),
+      ),
+    );
   }
 }
