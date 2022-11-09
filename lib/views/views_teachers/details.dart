@@ -16,7 +16,7 @@ class _DetailsState extends State<Details> {
     return Scaffold(
       appBar: AppBar(backgroundColor: Colors.deepPurple,title: Text("Detail Quiz"),),
       backgroundColor: Colors.deepPurple,
-      body: detail_Quizs(),
+      body: SafeArea(child: detail_Quizs()),
       
     );
   }

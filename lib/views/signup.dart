@@ -1,11 +1,11 @@
 // import 'package:cloud_firestore/cloud_firestore.dart';
 // import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:firebase_core/firebase_core.dart';
 // import 'package:flutter/material.dart';
 // import 'package:flutter/src/widgets/container.dart';
 // import 'package:flutter/src/widgets/framework.dart';
 // import 'package:fluttertoast/fluttertoast.dart';
-// import 'package:my_project/models/userT.dart';
-// import 'package:my_project/views/homepage.dart';
+// import 'package:my_project/models/usermodel.dart';
 // import 'package:my_project/views/signin.dart';
 
 // class SignUp extends StatefulWidget {
@@ -13,27 +13,17 @@
 
 //   @override
 //   State<SignUp> createState() => _SignUpState();
-
-//   void signUpMessageHandler() {}
 // }
 
 // class _SignUpState extends State<SignUp> {
-//   String? typeUser;
-
-//   final _auth = FirebaseAuth.instance;
+//   String? name , email , password;
 
 //   final _formKey = GlobalKey<FormState>();
-
-//   final userNameEditingController = TextEditingController();
-//   final emailEditingController = TextEditingController();
-//   final passwordEditingController = TextEditingController();
-//   final confirmEditingController = TextEditingController();
 
 //   @override
 //   Widget build(BuildContext context) {
 //     final userNamefileld = TextFormField(
 //       autofocus: false,
-//       controller: userNameEditingController,
 //       validator: (value) {
 //         RegExp regExp =  RegExp(r'^.{3,}$');
 //         if(value!.isEmpty) {
@@ -44,9 +34,8 @@
 //         }
 //         return null;
 //       },
-//       onSaved: (value) {
-//         userNameEditingController.text = value!;
-//       },
+//      onChanged: (value) => name = value.trim(),
+     
 //       textInputAction: TextInputAction.next,
 //       decoration: InputDecoration(
 //           prefixIcon: Icon(Icons.account_circle),
@@ -55,43 +44,20 @@
 //           border: OutlineInputBorder(borderRadius: BorderRadius.circular(10))),
 //     );
 
-//     final textfileld = 
-//         Container(
-//           alignment: Alignment.centerLeft,
-//           child: Text("TypeUser",style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold, color: Colors.grey),),
-//         );       
-
-//     final typeTeacherfileld = 
-//        Container(
-//           alignment: Alignment.centerLeft,
-//           child: RadioListTile(value: 'teacher', groupValue: typeUser, onChanged: (value){},
-//           title: Text("Teacher",style: TextStyle(fontSize: 16),),          ),
-//        );
-
-//        final typeStudentfileld = 
-//        Container(
-//           alignment: Alignment.centerLeft,
-//           child: RadioListTile(value: 'student', groupValue: typeUser, onChanged: (value){},
-//           title: Text("Student",style: TextStyle(fontSize: 16),),
-//           ),
-//        );
-
 //     final emailField = TextFormField(
 //       autofocus: false,
-//       controller: emailEditingController,
 //       keyboardType: TextInputType.emailAddress,
 //       validator: (value) {
 //         if (value!.isEmpty) {
-//           return ('Please Enter Your Email');
+//           return ('Please Enter Your EmailDPU');
 //         }
 //         if (!RegExp("^[a-zA-Z0-9+_.-]+@[dpu]+.[a-z]").hasMatch(value)){
 //           return ("Please Enter a valid email");
 //         }
 //         return null;
 //       },
-//       onSaved: (value) {
-//         emailEditingController.text = value!;
-//       },
+//       onChanged: (value) => email = value.trim(),
+      
 //       textInputAction: TextInputAction.next,
 //       decoration: InputDecoration(
 //           prefixIcon: Icon(Icons.mail),
@@ -102,7 +68,6 @@
 
 //     final passwordfield = TextFormField(
 //       autofocus: false,
-//       controller: passwordEditingController,
 //      obscureText: true,
 //      validator: (value) {
 //         RegExp regExp =  RegExp(r'^.{6,}$');
@@ -113,9 +78,8 @@
 //           return ("Please Enter Valid Password(Min. 6 Character)");
 //         }
 //       },
-//       onSaved: (value) {
-//         passwordEditingController.text = value!;
-//       },
+//       onChanged:(value) => password = value.trim(),
+     
 //       textInputAction: TextInputAction.next,
 //       decoration: InputDecoration(
 //           prefixIcon: Icon(Icons.vpn_key),
@@ -124,26 +88,7 @@
 //           border: OutlineInputBorder(borderRadius: BorderRadius.circular(10))),
 //     );
 
-//     final confirmpasswordfield = TextFormField(
-//       autofocus: false,
-//       controller: confirmEditingController,
-//       obscureText: true,
-//       validator: (value) {
-//         if(confirmEditingController.text != passwordEditingController.text) {
-//           return "Password don't match";
-//         }
-//         return null;
-//       },
-//       onSaved: (value) {
-//         confirmEditingController.text = value!;
-//       },
-//       textInputAction: TextInputAction.done,
-//       decoration: InputDecoration(
-//           prefixIcon: Icon(Icons.vpn_key),
-//           contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
-//           hintText: 'Confirm Password',
-//           border: OutlineInputBorder(borderRadius: BorderRadius.circular(10))),
-//     );
+    
 
 //     final signUpButton = Material(
 //       elevation: 5,
@@ -153,7 +98,11 @@
 //         padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
 //         minWidth: MediaQuery.of(context).size.width,
 //         onPressed: () {
-//           signUp(emailEditingController.text,passwordEditingController.text);
+//           if(_formKey.currentState!.validate()){
+//               print('Have Space');
+//           }else{
+//             createAccountAndInsetInformation();
+//           }
 //         },
 //         child: Text(
 //           'SignUp',
@@ -163,6 +112,7 @@
 //         ),
 //       ),
 //     );
+
 //     return Scaffold(
 //       appBar: AppBar(
 //         backgroundColor: Colors.transparent,
@@ -184,30 +134,12 @@
 //                     mainAxisAlignment: MainAxisAlignment.center,
 //                     crossAxisAlignment: CrossAxisAlignment.center,
 //                     children: <Widget>[
-//                       SizedBox(
-//                         height: 200,
-//                         child: Image.asset(
-//                           'assets/logo.png',
-//                           fit: BoxFit.contain,
-//                         ),
-//                       ),
-//                       SizedBox(
-//                         height: 10,
-//                       ),
+                     
 //                       userNamefileld,
 //                       SizedBox(
 //                         height: 20,
 //                       ),
-//                       textfileld,
-//                       SizedBox(
-//                         height: 10,
-//                       ),
-//                       typeTeacherfileld,
-                      
-//                       typeStudentfileld,
-//                       SizedBox(
-//                         height: 20,
-//                       ),
+                    
 //                       emailField,
 //                       SizedBox(
 //                         height: 20,
@@ -216,10 +148,7 @@
 //                       SizedBox(
 //                         height: 20,
 //                       ),
-//                       confirmpasswordfield,
-//                       SizedBox(
-//                         height: 20,
-//                       ),
+                     
 //                       signUpButton,
 //                       SizedBox(
 //                         height: 20,
@@ -232,37 +161,7 @@
 //       ),
 //     );
 //   }
-//   void signUp(String email, String password) async {
-//     if(_formKey.currentState!.validate()) {
-//       await _auth.createUserWithEmailAndPassword(email: email, password: password)
-//       .then((value) => {
-//         postDetailsToFirestore()
-//       }).catchError((e) {
-//         Fluttertoast.showToast(msg: e!.message);
-//       }
-//       );
-//     }
-
-//   }
-//   postDetailsToFirestore() async {
-
-//     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
-//     User? user = _auth.currentUser;
-
-//     UserTModel userTModel = UserTModel(email: '', usernameT: '', uid: '');
-
-//     userTModel.email = user!.email!;
-//     userTModel.uid = user.uid;
-//     userTModel.usernameT = userNameEditingController.text;
-
-//     await firebaseFirestore
-//     .collection("users")
-//     .doc(user.uid)
-//     .set(userTModel.toMap());
-//   Fluttertoast.showToast(msg: "Account created successfully : )");
-
-//   Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => HomePage()),
-//    (route) => false);
-
+//   Future<Null> createAccountAndInsetInformation() async {
+//     await Firebase.initializeApp().then((value) => print('### Firebase Success ###'));
 //   }
 // }
