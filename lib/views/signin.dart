@@ -1,12 +1,13 @@
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+import 'package:get/get_state_manager/src/simple/list_notifier.dart';
 import 'package:my_project/views/signup.dart';
 import 'package:my_project/views/views_teachers/homepage.dart';
+
 
 class SignIn extends StatefulWidget {
   const SignIn({super.key});
@@ -16,23 +17,53 @@ class SignIn extends StatefulWidget {
 }
 
 class _SignInState extends State<SignIn> {
-  @override
-  Widget build(BuildContext context) {
-        
 
+  final TextEditingController emailController = new TextEditingController();
+  final TextEditingController passwordController = new TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  final Future<FirebaseApp> firebase = Firebase.initializeApp();
+  final _auth = FirebaseAuth.instance;
+
+  // Future signIn() async {
+  //   await FirebaseAuth.instance.signInWithEmailAndPassword(
+  //     email: emailController.text.trim(), password: passwordController.text.trim());
+  // }
+
+  // @override
+  // void dispose() {
+  //   emailController.dispose();
+  //   passwordController.dispose();
+  //   super.dispose();
+  // }
+
+  @override
+  Widget build(BuildContext context) { 
     final emailField = Container(
       decoration:
           BoxDecoration(border: Border(bottom: BorderSide(color: Colors.grey))),
       child: TextFormField(
+        controller: emailController,
         autofocus: false,
+       
         keyboardType: TextInputType.emailAddress,
-        validator: (value) {},
+        validator: (value) {
+          if(value!.isEmpty){
+            return "Plase Enter Your @dpu.ac.th";
+          }
+          if (!RegExp("^[a-zA-Z0-9+_.-]+@[dpu]+.[ac]+.[th]").hasMatch(value)) {
+            return ("Plase Enter Your @dpu.ac.th");
+          }
+          return null;
+        },
         textInputAction: TextInputAction.next,
         decoration: InputDecoration(
             prefixIcon: Icon(Icons.mail),
             contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
             hintText: 'Email',
             border: InputBorder.none),
+        onSaved: (value) {
+          emailController.text = value!;
+        },
       ),
     );
 
@@ -41,8 +72,20 @@ class _SignInState extends State<SignIn> {
           BoxDecoration(border: Border(bottom: BorderSide(color: Colors.grey))),
       child: TextFormField(
         autofocus: false,
+        controller: passwordController,
         obscureText: true,
-        validator: (value) {},
+        onSaved: (value){
+          passwordController.text = value!;
+        },
+        validator: (value) {
+          RegExp regex = new RegExp(r'^.{6,}$');
+          if(value!.isEmpty){
+            return ("Password is required for login");
+          }
+          if(!regex.hasMatch(value)){
+            return("Enter Valid Password(Min. 6 Character)");
+          }
+        },
         textInputAction: TextInputAction.done,
         decoration: InputDecoration(
             prefixIcon: Icon(Icons.vpn_key),
@@ -59,7 +102,12 @@ class _SignInState extends State<SignIn> {
       child: MaterialButton(
         padding: EdgeInsets.fromLTRB(0, 20, 0, 20),
         minWidth: MediaQuery.of(context).size.width,
-        onPressed: () => Navigator.push(context,MaterialPageRoute(builder: (context) => HomePage())),
+        onPressed: () {
+           Fluttertoast.showToast(
+              msg: "รบกวนรอซักครู่....",
+            );
+            signIn(emailController.text, passwordController.text);
+        },
         child: Text(
           'Login',
           textAlign: TextAlign.center,
@@ -69,27 +117,40 @@ class _SignInState extends State<SignIn> {
       ),
     );
 
-    final googleSignIn = Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          ElevatedButton.icon(
-            style: ElevatedButton.styleFrom(
-              primary: Colors.red,
-              onPrimary: Colors.white,
-              minimumSize: Size(double.infinity, 50)
-            ),
-            onPressed: (){
+    // final googleSignIn = Center(
+    //   child: Column(
+    //     mainAxisAlignment: MainAxisAlignment.center,
+    //     children: [
+    //       ElevatedButton.icon(
+    //         style: ElevatedButton.styleFrom(
+    //           primary: Colors.red,
+    //           onPrimary: Colors.white,
+    //           minimumSize: Size(double.infinity, 50)
+    //         ),
+    //         onPressed: (){
 
-            },
-            icon: FaIcon(FontAwesomeIcons.google, color: Colors.white,),
-            label: Text('Continue with Google',))
-        ],
-      ),
-    );
-
-    return Scaffold(
-      body: SafeArea(
+    //         },
+    //         icon: FaIcon(FontAwesomeIcons.google, color: Colors.white,),
+    //         label: Text('Continue with Google',))
+    //     ],
+    //   ),
+    // );
+    return FutureBuilder(
+        future: firebase,
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Scaffold(
+              resizeToAvoidBottomInset: false,
+              appBar: AppBar(
+                title: Text("error"),
+              ),
+              body: Center(child: Text("${snapshot.error}")),
+            );
+          }
+          if (snapshot.connectionState == ConnectionState.done) {
+             return Scaffold(
+      // backgroundColor: Colors.orange,
+     body: SafeArea(
         child: Container(
           height: double.infinity,
           width: double.infinity,
@@ -134,6 +195,7 @@ class _SignInState extends State<SignIn> {
               Center(
                 child: Container(
                   width: 800,
+                  height: 500,
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.only(
@@ -159,25 +221,37 @@ class _SignInState extends State<SignIn> {
                                   offset: Offset(0, 10),
                                 )
                               ]),
-                          child: Column(
-                            children: [
-                              emailField,
-                            SizedBox(height: 20,),
-                             passwordfiele],
+                          child: Form(
+                            key: _formKey,
+                            child: Column(
+                              children: [
+                                emailField,
+                              SizedBox(height: 20,),
+                               passwordfiele],
+                            ),
                           ),
                         ),
                         SizedBox(
-                          height: 40,
+                          height: 20,
+                        ),
+                        SizedBox(
+                          height: 20,
                         ),
                         signInButton,
+                       
+                       Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                         children: [
+                          Text("Don't have an account ?"),
+                          TextButton(onPressed: () {
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => SignUp()));
+                            }, child: Text('Sign Up' , style: TextStyle(fontWeight: FontWeight.bold , color: Colors.black),),),
+                         ],
+                       ),
                         SizedBox(
                           height: 20,
                         ),
-                        Text('or',style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        googleSignIn
+                        // googleSignIn
                       ],
                     ),
                   ),
@@ -188,6 +262,26 @@ class _SignInState extends State<SignIn> {
         ),
       ),
     );
+  };
+          return Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        });
+   
   }
-  
+  void signIn(String email, String password) async {
+    if(_formKey.currentState!.validate()){
+      await _auth
+      .signInWithEmailAndPassword(email: email, password: password)
+      .then((uid) => {
+        Fluttertoast.showToast(msg: "Login Successfull"),
+        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => HomePage()))
+      }).catchError((e){
+        Fluttertoast.showToast(msg: e!.message);
+      }
+      );
+    }
+  }
 }

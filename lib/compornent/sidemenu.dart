@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:my_project/views/signin.dart';
 import 'package:my_project/views/views_teachers/homepage.dart';
@@ -32,7 +33,7 @@ class sidemenu extends StatelessWidget {
                 ),
               ),
               IconButton(onPressed:(){
-                Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
+                // Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
               } ,
               icon: Icon(Icons.home,size: 35,),
               iconSize: 20,
@@ -46,7 +47,7 @@ class sidemenu extends StatelessWidget {
               padding: EdgeInsets.symmetric(vertical: 20.0),
                ),
               IconButton(onPressed:(){
-                Navigator.push(context, MaterialPageRoute(builder: (context) => SignIn()));
+                signOut(context);
               } ,
               icon: Icon(Icons.logout_outlined,size: 35,),
               iconSize: 20,
@@ -58,4 +59,8 @@ class sidemenu extends StatelessWidget {
       ),
     );
   }
+  Future<void> signOut(BuildContext context) async {
+       await FirebaseAuth.instance.signOut();
+       Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => SignIn()));
+    }
 }

@@ -2,79 +2,53 @@
 
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:meta/meta.dart';
 
-@immutable
-class User {
-  final String uid;
-  final String email;
+class Profile {
+  late final String uid;
+  late final String email;
   final String photoUrl;
-  final String displayName;
-  User({
+  late final String firstName;
+  late final String lastName;
+  late final String password;
+  late final String confirmpassword;
+
+
+  Profile({
     required this.uid,
     required this.email,
     required this.photoUrl,
-    required this.displayName,
+    required this.firstName,
+    required this.lastName,
+    required this.password,
+    required this.confirmpassword,
   });
 
-  User copyWith({
-    String? uid,
-    String? email,
-    String? photoUrl,
-    String? displayName,
-  }) {
-    return User(
-      uid: uid ?? this.uid,
-      email: email ?? this.email,
-      photoUrl: photoUrl ?? this.photoUrl,
-      displayName: displayName ?? this.displayName,
+  factory Profile.fromMap(map) {
+    return Profile(
+      uid: map['uid'],
+      email: map['email'],
+      photoUrl: map['photoUrl'],
+      firstName: map['firstName'],
+      lastName: map['lastName'],
+      password: map['password'],
+      confirmpassword: map['confirmpassword'],
     );
   }
 
-  Map<String, dynamic> toMap() {
-    return <String, dynamic>{
+   Map<String, dynamic> toMap() {
+    return {
       'uid': uid,
       'email': email,
       'photoUrl': photoUrl,
-      'displayName': displayName,
+      'firstName': firstName,
+      'lastName': lastName,
+      'password': password,
+      'confirmpassword': confirmpassword,
     };
   }
 
-  factory User.fromMap(Map<String, dynamic> map) {
-    return User(
-      uid: map['uid'] as String,
-      email: map['email'] as String,
-      photoUrl: map['photoUrl'] as String,
-      displayName: map['displayName'] as String,
-    );
-  }
-
-  String toJson() => json.encode(toMap());
-
-  factory User.fromJson(String source) => User.fromMap(json.decode(source) as Map<String, dynamic>);
-
-  @override
-  String toString() {
-    return 'User(uid: $uid, email: $email, photoUrl: $photoUrl, displayName: $displayName)';
-  }
-
-  @override
-  bool operator ==(covariant User other) {
-    if (identical(this, other)) return true;
-  
-    return 
-      other.uid == uid &&
-      other.email == email &&
-      other.photoUrl == photoUrl &&
-      other.displayName == displayName;
-  }
-
-  @override
-  int get hashCode {
-    return uid.hashCode ^
-      email.hashCode ^
-      photoUrl.hashCode ^
-      displayName.hashCode;
-  }
+ 
 }

@@ -1,11 +1,11 @@
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:flutter/material.dart';
 
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
-
+import 'package:my_project/models/usermodel.dart';
+import 'package:my_project/views/views_teachers/editProfile_user.dart';
 
 class ProfileUser extends StatefulWidget {
   ProfileUser({super.key});
@@ -15,125 +15,352 @@ class ProfileUser extends StatefulWidget {
 }
 
 class _ProfileUserState extends State<ProfileUser> {
+  final TextEditingController firstNameController = TextEditingController();
+  final TextEditingController lastNameController = TextEditingController();
+  Future<void> _update([DocumentSnapshot? documentSnapshot]) async {
+    if (documentSnapshot != null) {
+      firstNameController.text = documentSnapshot['firstName'];
+      lastNameController.text = documentSnapshot['lastName'];
+      
+    }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(backgroundColor: Colors.deepPurple,),
-      backgroundColor: Colors.deepPurple,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 34),
-            child: Center(
+    await showModalBottomSheet(
+        context: context,
+        builder: (BuildContext context) {
+          return Padding(
+            padding: EdgeInsets.only(
+                top: 20,
+                left: 20,
+                right: 20,
+                bottom: MediaQuery.of(context).viewInsets.bottom + 20),
+            child: SingleChildScrollView(
               child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    "MyProfile",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.white, fontSize: 30),
+                  TextField(
+                    controller: firstNameController,
+                    decoration: InputDecoration(labelText: 'ชื่อ'),
                   ),
+                  TextField(
+                    controller: lastNameController,
+                    decoration: InputDecoration(labelText: 'นามสกุล'),
+                  ),
+                  
                   SizedBox(
                     height: 20,
                   ),
-                  Container(
-                    height: 250,
-                    width: 800,
-                    child: LayoutBuilder(builder: (context, constraints) {
-                      double innerHeight = constraints.maxHeight;
-                      double innerWidth = constraints.maxHeight;
-                      return Stack(
-                        fit: StackFit.expand,
-                        children: [
-                          Positioned(
-                              bottom: 0,
-                              left: 0,
-                              right: 0,
-                              child: Container(
-                                height: 160,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(30),
-                                  color: Colors.white,
-                                ),
-                                  child: Container(
-                                    margin: EdgeInsets.symmetric(horizontal: 20),
-                                    child: Column(
-                                          children: [
-                                            SizedBox(
-                                              height: 60,
-                                            ),
-                                            Row(
-                                              children: [
-                                                Column(
-                                                  children: [
-                                                    Text("UserName", style: TextStyle(color: Colors.black,fontSize: 20,fontWeight: FontWeight.bold),)
-                                                  ],
-                                                ),
-                                                IconButton(onPressed: (){},
-                                                icon: Icon(FontAwesomeIcons.pen,
-                                                    color: Colors.blue,
-                                                  ),)
-                                              ],
-                                            ),
-                                            SizedBox(height: 10,),
-                                            Row(
-                                              children: [
-                                                Column(
-                                                  children: [
-                                                    Text("Email : ",
-                                                    style: TextStyle(color: Colors.black,fontSize: 20,fontWeight: FontWeight.bold),)
-                                                  ],
-                                                ),
-                                                Text(
-                                                'pailin@dpu.ac.th',
-                                                style: TextStyle(color: Colors.black,fontSize: 20),)
-                                              ],
-                                            ),
-                                            
-                                          ],
-                                        ),
-                                     
-                                  ),
-                              )),
-                          Positioned(
-                            top: 0,
-                            left: 0,
-                            right: 0,
-                            child: Center(
-                              child: Container(
-                                child: CircleAvatar(
-                                  radius: 80,
-                                  backgroundImage: AssetImage('assets/avatan.jpg')
-                                ),
-                              ),
-                            ),
-                          ),
-                          Positioned(
-                            top: 0,
-                            left: 150,
-                            right: 0,
-                            bottom: 10,
-                            child: Center(
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: Colors.yellow,
-                                ),
-                                child: IconButton(
-                                  icon: Icon(Icons.add_a_photo), onPressed: () {  },)
-                              ),
-                            ),
-                          ),
-                        ],
-                      );
-                    }),
+                  ElevatedButton(
+                    onPressed: () async {
+                      final String firstName = firstNameController.text;
+                      final String lastName = lastNameController.text;
+                     
+
+                      await FirebaseFirestore.instance
+                          .collection("users")
+                          .doc(documentSnapshot!.id)
+                          .update(
+                              {"firstName": firstName, "lastName": lastName});
+                      firstNameController.text = '';
+                      lastNameController.text = '';
+                    },
+                    child: Text('Update'),
                   )
                 ],
               ),
             ),
-          ),
+          );
+        });
+  }
+
+  // final user = FirebaseAuth.instance.currentUser;
+  // Profile loginUser = Profile(uid: '', email: '', photoUrl: '', firstName: '', lastName: '', password: '', confirmpassword: '');
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   FirebaseFirestore.instance
+  //       .collection("users")
+  //       .doc(user!.uid)
+  //       .get()
+  //       .then((value) {
+  //     this.loginUser = Profile.fromMap(value.data());
+  //     setState(() {});
+  //   });
+  // }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.deepPurple,
         ),
-      ),
-    );
+        backgroundColor: Colors.deepPurple,
+        body: SafeArea(
+            child: SingleChildScrollView(
+                child: StreamBuilder(
+                    stream: FirebaseFirestore.instance
+                        .collection("users")
+                        .snapshots(),
+                    builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                      if (snapshot.hasData) {
+                        return ListView.builder(
+                            itemCount: snapshot.data!.docs.length,
+                            shrinkWrap: true,
+                            itemBuilder: (context, index) {
+                              final DocumentSnapshot documentSnapshot =
+                                  snapshot.data!.docs[index];
+                              return Padding(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 15, vertical: 34),
+                                child: Center(
+                                  child: Column(
+                                    children: [
+                                      Text(
+                                        "MyProfile",
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 30),
+                                      ),
+                                      SizedBox(
+                                        height: 20,
+                                      ),
+                                      Container(
+                                        height: 350,
+                                        width: 800,
+                                        child: LayoutBuilder(
+                                            builder: (context, constraints) {
+                                          double innerHeight =
+                                              constraints.maxHeight;
+                                          double innerWidth =
+                                              constraints.maxHeight;
+                                          return Stack(
+                                            fit: StackFit.expand,
+                                            children: [
+                                              Positioned(
+                                                  bottom: 0,
+                                                  left: 0,
+                                                  right: 0,
+                                                  child: Container(
+                                                    height: 250,
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              30),
+                                                      color: Colors.white,
+                                                    ),
+                                                    child: Container(
+                                                      margin:
+                                                          EdgeInsets.symmetric(
+                                                              horizontal: 20),
+                                                      child: Column(
+                                                        children: [
+                                                          Row(
+                                                            mainAxisAlignment: MainAxisAlignment.end,
+                                                            children: [
+                                                              IconButton(
+                                                                  onPressed: () => _update(
+                                                                      documentSnapshot),
+                                                                  icon: Icon(Icons.edit))
+                                                            ],
+                                                          ),
+                                                          SizedBox(
+                                                            height: 10,
+                                                          ),
+                                                          Row(
+                                                            // mainAxisAlignment: MainAxisAlignment.center,
+                                                            children: [
+                                                              Text(
+                                                                "ชื่อ-นามสกุล : ",
+                                                                style: TextStyle(
+                                                                    color: Colors
+                                                                        .black,
+                                                                    fontSize:
+                                                                        20,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold),
+                                                              ),
+                                                              SizedBox(
+                                                                width: 10,
+                                                              ),
+                                                              Text(
+                                                                documentSnapshot[
+                                                                    "firstName"],
+                                                                style: TextStyle(
+                                                                    color: Colors
+                                                                        .black,
+                                                                    fontSize:
+                                                                        20),
+                                                              ),
+                                                              SizedBox(
+                                                                width: 10,
+                                                              ),
+                                                              Column(
+                                                                children: [
+                                                                  Text(
+                                                                      documentSnapshot[
+                                                                          "lastName"],
+                                                                      style: TextStyle(
+                                                                          color: Colors
+                                                                              .black,
+                                                                          fontSize:
+                                                                              20)),
+                                                                ],
+                                                              ),
+                                                              // IconButton(onPressed: (){},
+                                                              // icon: Icon(FontAwesomeIcons.pen,
+                                                              //     color: Colors.blue,
+                                                              //   ),)
+                                                            ],
+                                                          ),
+                                                          SizedBox(
+                                                            height: 10,
+                                                          ),
+                                                          Row(
+                                                            children: [
+                                                              Column(
+                                                                children: [
+                                                                  Text(
+                                                                    "อีเมล : ",
+                                                                    style: TextStyle(
+                                                                        color: Colors
+                                                                            .black,
+                                                                        fontSize:
+                                                                            20,
+                                                                        fontWeight:
+                                                                            FontWeight.bold),
+                                                                  )
+                                                                ],
+                                                              ),
+                                                              Text(
+                                                                documentSnapshot[
+                                                                    "email"],
+                                                                style: TextStyle(
+                                                                    color: Colors
+                                                                        .black,
+                                                                    fontSize:
+                                                                        20),
+                                                              )
+                                                            ],
+                                                          ),
+                                                          SizedBox(
+                                                            height: 10,
+                                                          ),
+                                                          Row(
+                                                            children: [
+                                                              Column(
+                                                                children: [
+                                                                  Text(
+                                                                    "สถานะ : ",
+                                                                    style: TextStyle(
+                                                                        color: Colors
+                                                                            .black,
+                                                                        fontSize:
+                                                                            20,
+                                                                        fontWeight:
+                                                                            FontWeight.bold),
+                                                                  )
+                                                                ],
+                                                              ),
+                                                              Expanded(
+                                                                child: Text(
+                                                                  documentSnapshot[
+                                                                    "rool"],
+                                                                  style: TextStyle(
+                                                                      color: Colors
+                                                                          .black,
+                                                                      fontSize:
+                                                                          20),
+                                                                  maxLines: 1,
+                                                                  overflow:
+                                                                      TextOverflow
+                                                                          .ellipsis,
+                                                                ),
+                                                              )
+                                                            ],
+                                                          ),
+                                                          SizedBox(
+                                                            height: 10,
+                                                          ),
+                                                          // Row(
+                                                          //   children: [
+                                                          //     Column(
+                                                          //       children: [
+                                                          //         Text(
+                                                          //           "สาขาวิชา : ",
+                                                          //           style: TextStyle(
+                                                          //               color: Colors
+                                                          //                   .black,
+                                                          //               fontSize:
+                                                          //                   20,
+                                                          //               fontWeight:
+                                                          //                   FontWeight.bold),
+                                                          //         )
+                                                          //       ],
+                                                          //     ),
+                                                          //     Expanded(
+                                                          //       child: Text(
+                                                          //         "คอมพิวเตอร์",
+                                                          //         style: TextStyle(
+                                                          //             color: Colors
+                                                          //                 .black,
+                                                          //             fontSize:
+                                                          //                 20),
+                                                          //         maxLines: 1,
+                                                          //         overflow:
+                                                          //             TextOverflow
+                                                          //                 .ellipsis,
+                                                          //       ),
+                                                          //     )
+                                                          //   ],
+                                                          // ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  )),
+                                              Positioned(
+                                                top: 0,
+                                                left: 0,
+                                                right: 0,
+                                                child: Center(
+                                                  child: Container(
+                                                    child: CircleAvatar(
+                                                        radius: 70,
+                                                        backgroundImage: AssetImage(
+                                                            'assets/avatan.jpg')),
+                                                  ),
+                                                ),
+                                              ),
+                                              // Positioned(
+                                              //   top: 0,
+                                              //   left: 150,
+                                              //   right: 0,
+                                              //   bottom: 10,
+                                              //   child: Center(
+                                              //     child: Container(
+                                              //       decoration: BoxDecoration(
+                                              //         shape: BoxShape.circle,
+                                              //         color: Colors.yellow,
+                                              //       ),
+                                              //       child: IconButton(
+                                              //         icon: Icon(Icons.add_a_photo), onPressed: () {  },)
+                                              //     ),
+                                              //   ),
+                                              // ),
+                                              
+                                            ],
+                                          );
+                                        }),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              );
+                            });
+                      } else {
+                        return CircularProgressIndicator();
+                      }
+                    }))));
   }
 }
