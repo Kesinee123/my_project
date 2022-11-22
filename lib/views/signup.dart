@@ -17,7 +17,10 @@ class _SignUpState extends State<SignUp> {
   _SignUpState();
 
   bool showProgress = false;
-  bool visible = false;
+  bool _isVisible = false;
+  bool _isVisible2 = false;
+
+
 
   final _formkey = GlobalKey<FormState>();
   final _auth = FirebaseAuth.instance;
@@ -31,11 +34,11 @@ class _SignUpState extends State<SignUp> {
   bool _isObscure2 = true;
   File? file;
   var options = [
-    'Student',
-    'Teacher',
+    'นักเรียน',
+    'คุณครู',
   ];
-  var _currentItemSelected = "Student";
-  var rool = "Student";
+  var _currentItemSelected = "นักเรียน";
+  var type = "นักเรียน";
 
   @override
   Widget build(BuildContext context) {
@@ -44,10 +47,10 @@ class _SignUpState extends State<SignUp> {
       validator: (value) {
         RegExp regExp = RegExp(r'^.{3,}$');
         if (value!.isEmpty) {
-          return ("First Name connot be Empty");
+          return ("โปรดกรอกชื่อจริง");
         }
         if (!regExp.hasMatch(value)) {
-          return ("Enter Valid First Name(Min. 3 Character)");
+          return ("โปรดกรอกชื่อจริง(ต้องมากกว่า 3 ตัวอักษร)");
         }
         return null;
       },
@@ -60,7 +63,7 @@ class _SignUpState extends State<SignUp> {
       decoration: InputDecoration(
           prefixIcon: Icon(Icons.account_circle),
           contentPadding: EdgeInsets.fromLTRB(20, 0, 20, 15),
-          hintText: 'First Name',
+          hintText: 'ชื่อจริง',
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(10))),
     );
 
@@ -70,10 +73,10 @@ class _SignUpState extends State<SignUp> {
       validator: (value) {
         RegExp regExp = RegExp(r'^.{3,}$');
         if (value!.isEmpty) {
-          return ("Last Name connot be Empty");
+          return ("โปรดกรอกนามสกุล");
         }
         if (!regExp.hasMatch(value)) {
-          return ("Enter Valid Last Name(Min. 3 Character)");
+          return ("โปรดกรอกนามสกุล(ต้องมากกว่า 3 ตัวอักษร)");
         }
         return null;
       },
@@ -85,7 +88,7 @@ class _SignUpState extends State<SignUp> {
       decoration: InputDecoration(
           prefixIcon: Icon(Icons.account_circle),
           contentPadding: EdgeInsets.fromLTRB(20, 0, 20, 15),
-          hintText: 'Last Name',
+          hintText: 'นามสกุล',
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(10))),
     );
 
@@ -95,10 +98,10 @@ class _SignUpState extends State<SignUp> {
       keyboardType: TextInputType.emailAddress,
       validator: (value) {
         if (value!.isEmpty) {
-          return "Plase Enter Your @dpu.ac.th";
+          return "โปรดกรอกอีเมลที่เป็น @dpu.ac.th";
         }
         if (!RegExp("^[a-zA-Z0-9+_.-]+@[dpu]+.[ac]+.[th]").hasMatch(value)) {
-          return ("Plase Enter a valid Email-DPU");
+          return ("โปรดกรอกอีเมลที่เป็น @dpu.ac.th");
         }
         return null;
       },
@@ -109,21 +112,21 @@ class _SignUpState extends State<SignUp> {
       decoration: InputDecoration(
           prefixIcon: Icon(Icons.mail),
           contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
-          hintText: 'Email',
+          hintText: 'อีเมล',
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(10))),
     );
 
     final passwordfield = TextFormField(
+      obscureText: !_isVisible,
       autofocus: false,
       controller: passwordEditingController,
-      obscureText: true,
       validator: (value) {
         RegExp regExp = RegExp(r'^.{6,}$');
         if (value!.isEmpty) {
-          return ("Password is required for login");
+          return ("โปรดกรอกรหัสผ่าน");
         }
         if (!regExp.hasMatch(value)) {
-          return ("Please Enter Valid Password(Min. 6 Character)");
+          return ("โปรดกรอกรหัสผ่าน(ต้องมากกว่า 6 ตัวอักษร)");
         }
       },
       onSaved: (value) {
@@ -131,20 +134,26 @@ class _SignUpState extends State<SignUp> {
       },
       textInputAction: TextInputAction.next,
       decoration: InputDecoration(
+        suffixIcon: IconButton(onPressed: (){
+              setState(() {
+                _isVisible = !_isVisible;
+              });
+            },
+            icon: _isVisible ? Icon(Icons.visibility,) : Icon(Icons.visibility_off)),
           prefixIcon: Icon(Icons.vpn_key),
           contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
-          hintText: 'Password',
+          hintText: 'รหัสผ่าน',
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(10))),
     );
 
     final confrimPasswordfield = TextFormField(
       autofocus: false,
       controller: confirmpasswordEditingController,
-      obscureText: true,
+      obscureText: !_isVisible2,
       validator: (value) {
         if (confirmpasswordEditingController.text !=
             passwordEditingController.text) {
-          return "Password don't match";
+          return "รหัสผ่านไม่ตรงกัน";
         }
         return null;
       },
@@ -153,9 +162,15 @@ class _SignUpState extends State<SignUp> {
       },
       textInputAction: TextInputAction.done,
       decoration: InputDecoration(
+        suffixIcon: IconButton(onPressed: (){
+              setState(() {
+                _isVisible2 = !_isVisible2;
+              });
+            },
+            icon: _isVisible2 ? Icon(Icons.visibility,) : Icon(Icons.visibility_off)),
           prefixIcon: Icon(Icons.vpn_key),
           contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
-          hintText: 'Confirm Password',
+          hintText: 'ยืนยันรหัสผ่าน',
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(10))),
     );
 
@@ -166,7 +181,7 @@ class _SignUpState extends State<SignUp> {
           Padding(
             padding: const EdgeInsets.all(8),
             child: Text(
-              "Type : ",
+              "ประเภท : ",
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -175,7 +190,7 @@ class _SignUpState extends State<SignUp> {
             ),
           ),
           DropdownButton<String>(
-            hint: Text('Select Types'),
+            // hint: Text('Select Types'),
             dropdownColor: Colors.white,
             isDense: true,
             isExpanded: false,
@@ -197,7 +212,7 @@ class _SignUpState extends State<SignUp> {
             onChanged: (newValueSelected) {
               setState(() {
                 _currentItemSelected = newValueSelected!;
-                rool = newValueSelected;
+                type = newValueSelected;
               });
             },
             value: _currentItemSelected,
@@ -214,21 +229,20 @@ class _SignUpState extends State<SignUp> {
         padding: EdgeInsets.fromLTRB(0, 20, 0, 20),
         minWidth: MediaQuery.of(context).size.width,
         onPressed: () {
-          Fluttertoast.showToast(
-              msg: "รบกวนรอซักครู่....",
-            );
             setState(() {
           showProgress = true;
         });
+        
         signUp(
             emailEditingController.text,
             passwordEditingController.text,
-            rool,
+            type,
             firstNameEditingController.text,
             lastNameEditingController.text);
+           
         },
         child: Text(
-          'SignUp',
+          'ลงทะเบียน',
           textAlign: TextAlign.center,
           style: TextStyle(
               fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
@@ -301,20 +315,24 @@ class _SignUpState extends State<SignUp> {
     );
   }
 
-  void signUp(String email, String password, String rool, String firstName,
+  void signUp(String email, String password, String type, String firstName,
       String lastName) async {
     CircularProgressIndicator();
     if (_formkey.currentState!.validate()) {
       await _auth
           .createUserWithEmailAndPassword(email: email, password: password)
           .then((value) =>
-              {postDetailsToFirestore(email, rool, firstName, lastName)})
-          .catchError((e) {});
+              {
+                Fluttertoast.showToast(msg: "Login Successfull"),
+                postDetailsToFirestore(email, type, firstName, lastName,)})
+          .catchError((e) {
+                    Fluttertoast.showToast(msg: e!.message);
+          });
     }
   }
 
   postDetailsToFirestore(
-      String email, String rool, String firstName, String lastName) async {
+      String email, String type, String firstName, String lastName) async {
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
     var user = _auth.currentUser;
     CollectionReference ref = FirebaseFirestore.instance.collection('users');
@@ -322,7 +340,8 @@ class _SignUpState extends State<SignUp> {
       'email': emailEditingController.text,
       'firstName': firstNameEditingController.text,
       'lastName': lastNameEditingController.text,
-      'rool': rool
+      'type': type,
+      'uid' : _auth.currentUser!.uid
     });
     Navigator.pushReplacement(
         context, MaterialPageRoute(builder: (context) => MainPage()));

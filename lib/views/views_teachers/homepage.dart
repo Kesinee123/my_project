@@ -83,7 +83,6 @@ class _HomePageState extends State<HomePage> {
                       AppBarActionItems(),
                       SizedBox(height: 20,),
                       QuizDetailList(),
-                      
                     ]),
                   ),
                 )),

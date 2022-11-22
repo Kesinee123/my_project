@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:my_project/models/usermodel.dart';
-import 'package:my_project/views/views_teachers/editProfile_user.dart';
 
 class ProfileUser extends StatefulWidget {
   ProfileUser({super.key});
@@ -73,21 +72,7 @@ class _ProfileUserState extends State<ProfileUser> {
         });
   }
 
-  // final user = FirebaseAuth.instance.currentUser;
-  // Profile loginUser = Profile(uid: '', email: '', photoUrl: '', firstName: '', lastName: '', password: '', confirmpassword: '');
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   FirebaseFirestore.instance
-  //       .collection("users")
-  //       .doc(user!.uid)
-  //       .get()
-  //       .then((value) {
-  //     this.loginUser = Profile.fromMap(value.data());
-  //     setState(() {});
-  //   });
-  // }
+  final currenUser = FirebaseAuth.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -101,6 +86,7 @@ class _ProfileUserState extends State<ProfileUser> {
                 child: StreamBuilder(
                     stream: FirebaseFirestore.instance
                         .collection("users")
+                        .where("uid", isEqualTo: currenUser.currentUser!.uid)
                         .snapshots(),
                     builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                       if (snapshot.hasData) {
@@ -266,7 +252,7 @@ class _ProfileUserState extends State<ProfileUser> {
                                                               Expanded(
                                                                 child: Text(
                                                                   documentSnapshot[
-                                                                    "rool"],
+                                                                    "type"],
                                                                   style: TextStyle(
                                                                       color: Colors
                                                                           .black,
@@ -359,7 +345,7 @@ class _ProfileUserState extends State<ProfileUser> {
                               );
                             });
                       } else {
-                        return CircularProgressIndicator();
+                        return Center(child: CircularProgressIndicator());
                       }
                     }))));
   }

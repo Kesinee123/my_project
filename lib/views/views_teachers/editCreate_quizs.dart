@@ -9,32 +9,25 @@ import 'package:my_project/views/views_teachers/create_questions.dart';
 
 import 'package:my_project/views/views_teachers/homepage.dart';
 
-class CreateQuiz extends StatefulWidget {
-  const CreateQuiz({super.key});
+class EditCreateQuiz extends StatefulWidget {
+  const EditCreateQuiz({super.key});
 
   @override
-  State<CreateQuiz> createState() => _CreateQuizState();
+  State<EditCreateQuiz> createState() => _EditCreateQuizState();
 }
 
-class _CreateQuizState extends State<CreateQuiz> {
+class _EditCreateQuizState extends State<EditCreateQuiz> {
   final _formkey = GlobalKey<FormState>();
 
-  adddataquiz(value) async{
-    await FirebaseFirestore.instance.collection("quizs").add({
-        "quizTitle": quizTitle,
-        "quizSubject": quizSubject,
-    });
-  }
-
-  String quizTitle = '';
-  String quizSubject = '';
-
+  final TextEditingController _quizTitleEdit = TextEditingController();
+  final TextEditingController _quizSubjectEdit = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
                 appBar: AppBar(
-                  title: Text("Create Quiz"),
+                  centerTitle: true,
+                  title: Text("แก้ไขหน้าแบบทดสอบ"),
                   backgroundColor: Colors.deepPurple,
                 ),
                 backgroundColor: Colors.deepPurple,
@@ -125,14 +118,8 @@ class _CreateQuizState extends State<CreateQuiz> {
                                           EdgeInsets.symmetric(horizontal: 25),
                                       child: Container(
                                         child: TextFormField(
-                                          onChanged: (value){
-                                            setState(() {
-                                              quizTitle = value;
-                                            });
-                                          } ,
-                                          validator: ((val) => val!.isEmpty
-                                              ? "โปรดกรอกชื่อแบบทดสอบ"
-                                              : null),
+                                          
+                                         
                                           // decoration: InputDecoration(hintText: "Quiz Title"),
                                           
                                         ),
@@ -160,14 +147,6 @@ class _CreateQuizState extends State<CreateQuiz> {
                               margin: EdgeInsets.symmetric(horizontal: 25),
                               child: Container(
                                 child: TextFormField(
-                                  onChanged: (value){
-                                            setState(() {
-                                              quizSubject = value;
-                                            });
-                                          } ,
-                                  validator: ((val) => val!.isEmpty
-                                      ? "โปรดกรอกชื่อวิชาของแบบทดสอบ"
-                                      : null),
                                   // decoration: InputDecoration(hintText: "Quiz Subject"),
                                   
                                 ),
@@ -177,48 +156,35 @@ class _CreateQuizState extends State<CreateQuiz> {
                               height: 20,
                             ),
                             Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Container(
-                                   margin: EdgeInsets.symmetric(horizontal: 60),
-                                  // alignment: Alignment.centerRight,
-                                  child: ElevatedButton(
+                                ElevatedButton(
                                       style: ElevatedButton.styleFrom(primary: Colors.blueGrey),
                                       onPressed: () {
                                         Navigator.pop(context);
                                       },
-                                      child: Text('Cancle')),
-                                ),
-                                SizedBox(width: 10,),
-                                Container(
-                                  // margin: EdgeInsets.symmetric(horizontal: 20),
-                                  margin: EdgeInsets.symmetric(horizontal: 20),
-                                  child: ElevatedButton(
+                                      child: Text('ยกเลิก')),
+                                
+                                SizedBox(width: 100,),
+                                ElevatedButton(
                                     style: ElevatedButton.styleFrom(primary: Colors.deepPurple),
                                       onPressed: () {
-                                        if(_formkey.currentState!.validate()){
-                                            adddataquiz({
-                                                quizTitle,
-                                                quizSubject,
-                                                
-                                              });
 
-                                            _formkey.currentState!.reset();
-                                               Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) => HomePage()));
-                                        }
-                                        
-                                        },
-                                      child: Text('Next')),
+                                      },
+                                      child: Text('ตกลง')),
+                                      ]
                                 ),
+                                      ]
+                                )
+                            )
+                            )
                               ],
-                            ),
-                                  ]),
-                                )),
-                          ]),
-                    ),
-                  ),
-                ));
-          }
-        }
+                      )
+                    )
+                  )
+                )
+    
+                            );
+  }
+}
+                                  

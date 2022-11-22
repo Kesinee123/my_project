@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get_state_manager/src/simple/list_notifier.dart';
+import 'package:my_project/main_page.dart';
 import 'package:my_project/views/signup.dart';
 import 'package:my_project/views/views_teachers/homepage.dart';
 
@@ -17,6 +18,8 @@ class SignIn extends StatefulWidget {
 }
 
 class _SignInState extends State<SignIn> {
+
+  bool _isVisible = false;
 
   final TextEditingController emailController = new TextEditingController();
   final TextEditingController passwordController = new TextEditingController();
@@ -48,10 +51,10 @@ class _SignInState extends State<SignIn> {
         keyboardType: TextInputType.emailAddress,
         validator: (value) {
           if(value!.isEmpty){
-            return "Plase Enter Your @dpu.ac.th";
+            return "โปรดกรอกอีเมลที่เป็น @dpu.ac.th";
           }
           if (!RegExp("^[a-zA-Z0-9+_.-]+@[dpu]+.[ac]+.[th]").hasMatch(value)) {
-            return ("Plase Enter Your @dpu.ac.th");
+            return ("โปรดกรอกอีเมลที่เป็น @dpu.ac.th");
           }
           return null;
         },
@@ -59,7 +62,7 @@ class _SignInState extends State<SignIn> {
         decoration: InputDecoration(
             prefixIcon: Icon(Icons.mail),
             contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
-            hintText: 'Email',
+            hintText: 'อีเมล',
             border: InputBorder.none),
         onSaved: (value) {
           emailController.text = value!;
@@ -73,25 +76,33 @@ class _SignInState extends State<SignIn> {
       child: TextFormField(
         autofocus: false,
         controller: passwordController,
-        obscureText: true,
+        obscureText: !_isVisible,
         onSaved: (value){
           passwordController.text = value!;
         },
         validator: (value) {
           RegExp regex = new RegExp(r'^.{6,}$');
           if(value!.isEmpty){
-            return ("Password is required for login");
+            return ("โปรดกรอกรหัสผ่านเพื่อเข้าสู่ระบบ");
           }
           if(!regex.hasMatch(value)){
-            return("Enter Valid Password(Min. 6 Character)");
+            return("โปรดกรอกรหัสผ่านเพื่อเข้าสู่ระบบ");
           }
         },
         textInputAction: TextInputAction.done,
         decoration: InputDecoration(
+            suffixIcon: IconButton(onPressed: (){
+              setState(() {
+                _isVisible = !_isVisible;
+              });
+            },
+            icon: _isVisible ? Icon(Icons.visibility,) : Icon(Icons.visibility_off)),
             prefixIcon: Icon(Icons.vpn_key),
             contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
-            hintText: 'Password',
-            border: InputBorder.none),
+            hintText: 'รหัสผ่าน',
+            border: InputBorder.none,
+            
+            ),
       ),
     );
 
@@ -103,13 +114,11 @@ class _SignInState extends State<SignIn> {
         padding: EdgeInsets.fromLTRB(0, 20, 0, 20),
         minWidth: MediaQuery.of(context).size.width,
         onPressed: () {
-           Fluttertoast.showToast(
-              msg: "รบกวนรอซักครู่....",
-            );
+          
             signIn(emailController.text, passwordController.text);
         },
         child: Text(
-          'Login',
+          'เข้าสู่ระบบ',
           textAlign: TextAlign.center,
           style: TextStyle(
               fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
@@ -242,10 +251,10 @@ class _SignInState extends State<SignIn> {
                        Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                          children: [
-                          Text("Don't have an account ?"),
+                          Text("ยังไม่มีบัญชี ?"),
                           TextButton(onPressed: () {
                               Navigator.push(context, MaterialPageRoute(builder: (context) => SignUp()));
-                            }, child: Text('Sign Up' , style: TextStyle(fontWeight: FontWeight.bold , color: Colors.black),),),
+                            }, child: Text('ลงทะเบียน' , style: TextStyle(fontWeight: FontWeight.bold , color: Colors.black),),),
                          ],
                        ),
                         SizedBox(
@@ -277,10 +286,10 @@ class _SignInState extends State<SignIn> {
       .signInWithEmailAndPassword(email: email, password: password)
       .then((uid) => {
         Fluttertoast.showToast(msg: "Login Successfull"),
-        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => HomePage()))
+        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => MainPage()))
       }).catchError((e){
         Fluttertoast.showToast(msg: e!.message);
-      }
+        }
       );
     }
   }

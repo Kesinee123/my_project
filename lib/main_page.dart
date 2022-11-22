@@ -28,7 +28,7 @@ class _MainPageState extends State<MainPage> {
               builder:(BuildContext context, AsyncSnapshot snapshot) {
                 if(snapshot.hasData) {
                   final user = snapshot.data.data();
-                  if (user['rool'] == 'Student') {
+                  if (user['type'] == 'นักเรียน') {
                     return LetPage();
                   }else{
                     return HomePage();
