@@ -8,7 +8,6 @@ import 'package:my_project/data/menu_items.dart';
 import 'package:my_project/models/menu_item.dart';
 import 'package:my_project/views/views_teachers/add_quizs.dart';
 import 'package:my_project/views/views_teachers/create_questions.dart';
-import 'package:my_project/views/views_teachers/detail_quizs.dart';
 import 'package:my_project/views/views_teachers/details.dart';
 import 'package:my_project/views/views_teachers/homepage.dart';
 
@@ -81,8 +80,8 @@ class _AddQuestionState extends State<AddQuestion> {
                             style: ElevatedButton.styleFrom(
                                         primary: Colors.yellow),
                             onPressed: (){
-                              Navigator.pushReplacement(context,
-                        MaterialPageRoute(builder: ((context) => Details())));
+                        //       Navigator.pushReplacement(context,
+                        // MaterialPageRoute(builder: ((context) => Details())));
                             },
                           child: Text('Save',style: TextStyle(color: Colors.black),))
                         ],

@@ -268,6 +268,7 @@ class _SignUpState extends State<SignUp> {
         child: SingleChildScrollView(
           child: Container(
             color: Colors.white,
+            width: 1000,
             child: Padding(
               padding: const EdgeInsets.all(36.0),
               child: Form(

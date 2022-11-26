@@ -4,36 +4,33 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Quiz {
-  String qid;
+ 
   String quizImageUrl;
   String quizTitle;
   String quizSubject;
-  Timestamp createdAt;
-  Timestamp updateAt;
+  
 
- Quiz({required this.qid,required this.quizImageUrl,required this.quizTitle,required this.quizSubject, required this.createdAt , required this.updateAt });
+ Quiz({required this.quizImageUrl,required this.quizTitle,required this.quizSubject,});
 
 
  factory Quiz.fromMap(data) {
     return Quiz(
-      qid: data['qid'],
+      
       quizImageUrl: data['quizImageUrl'],
       quizTitle: data['quizTitle'],
       quizSubject: data['quizSubject'],
-      createdAt : data['createdAt'],
-      updateAt : data['updateAt']
+     
       );
   }
 
   // sending data to our server
   Map<String, dynamic> toMap() {
     return {
-      'qid' : qid,
+     
       'quizImageUrl' : quizImageUrl,
       'quizTitle' : quizTitle,
       'quizSubject' : quizSubject,
-      'createdAt' : createdAt,
-      'updateAt' : updateAt
+      
     };
   }
 }

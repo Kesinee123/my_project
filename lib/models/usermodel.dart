@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:meta/meta.dart';
 
-class Profile {
+class User {
   late final String uid;
   late final String email;
   final String photoUrl;
@@ -16,7 +16,7 @@ class Profile {
   late final String confirmpassword;
 
 
-  Profile({
+  User({
     required this.uid,
     required this.email,
     required this.photoUrl,
@@ -26,8 +26,8 @@ class Profile {
     required this.confirmpassword,
   });
 
-  factory Profile.fromMap(map) {
-    return Profile(
+  factory User.fromMap(map) {
+    return User(
       uid: map['uid'],
       email: map['email'],
       photoUrl: map['photoUrl'],

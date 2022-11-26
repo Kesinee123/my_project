@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:my_project/compornent/appBarActionItems.dart';
@@ -15,6 +16,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+
   final isDialOpen = ValueNotifier(false);
   GlobalKey<ScaffoldState> _drawerkey = GlobalKey();
   @override
@@ -43,7 +45,7 @@ class _HomePageState extends State<HomePage> {
                 SpeedDialChild(
                   backgroundColor: Colors.white,
                   child: Icon(Icons.edit),
-                  label: 'Create Quiz',
+                  label: 'สร้างแบบทดสอบ',
                   onTap: () => 
                   Navigator.push(context, MaterialPageRoute(builder: (context) => CreateQuiz())),
                   // showToast('...Create Quiz'),
@@ -81,7 +83,7 @@ class _HomePageState extends State<HomePage> {
                       children: [
                         if(Responsive.isDestop(context))
                       AppBarActionItems(),
-                      SizedBox(height: 20,),
+                      // SizedBox(height: 20,),
                       QuizDetailList(),
                     ]),
                   ),

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
@@ -19,12 +20,26 @@ class CreateQuiz extends StatefulWidget {
 class _CreateQuizState extends State<CreateQuiz> {
   final _formkey = GlobalKey<FormState>();
 
-  adddataquiz(value) async{
-    await FirebaseFirestore.instance.collection("quizs").add({
-        "quizTitle": quizTitle,
-        "quizSubject": quizSubject,
-    });
+  final _quiz = FirebaseAuth.instance;
+  final CollectionReference quizCollection = FirebaseFirestore.instance.collection("quizs");
+
+  Future createQuiz(String quizTitle, String quizSubject , String Id ) async {
+     DocumentReference quizDocumentReference = await quizCollection.add({
+        "quizTitle" : quizTitle,
+        "quizSubject" : quizSubject,
+        "quizId" : _quiz.currentUser!.uid,
+     });
   }
+
+  // adddataquiz(value) async{
+  //   await FirebaseFirestore.instance.collection("quizs").add({
+  //       "quizTitle": quizTitle,
+  //       "quizSubject": quizSubject,
+  //       "quizId" : "",
+  //   });
+
+  //   await documentReference.update
+  // }
 
   String quizTitle = '';
   String quizSubject = '';
@@ -34,7 +49,7 @@ class _CreateQuizState extends State<CreateQuiz> {
   Widget build(BuildContext context) {
     return Scaffold(
                 appBar: AppBar(
-                  title: Text("Create Quiz"),
+                  title: Text("สร้างแบบทดสอบ"),
                   backgroundColor: Colors.deepPurple,
                 ),
                 backgroundColor: Colors.deepPurple,
@@ -176,43 +191,37 @@ class _CreateQuizState extends State<CreateQuiz> {
                             SizedBox(
                               height: 20,
                             ),
-                            Row(
-                              children: [
-                                Container(
-                                   margin: EdgeInsets.symmetric(horizontal: 60),
-                                  // alignment: Alignment.centerRight,
-                                  child: ElevatedButton(
-                                      style: ElevatedButton.styleFrom(primary: Colors.blueGrey),
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                      },
-                                      child: Text('Cancle')),
-                                ),
-                                SizedBox(width: 10,),
-                                Container(
-                                  // margin: EdgeInsets.symmetric(horizontal: 20),
-                                  margin: EdgeInsets.symmetric(horizontal: 20),
-                                  child: ElevatedButton(
-                                    style: ElevatedButton.styleFrom(primary: Colors.deepPurple),
-                                      onPressed: () {
-                                        if(_formkey.currentState!.validate()){
-                                            adddataquiz({
+                            Container(
+                              margin: EdgeInsets.all(20),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  ElevatedButton(
+                                        style: ElevatedButton.styleFrom(primary: Colors.blueGrey),
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: Text('ยกเลิก')),
+                                  SizedBox(width: 50,),
+                                 ElevatedButton(
+                                      style: ElevatedButton.styleFrom(primary: Colors.deepPurple),
+                                        onPressed: () {
+                                          if(_formkey.currentState!.validate()){
+                                              createQuiz(
                                                 quizTitle,
                                                 quizSubject,
-                                                
-                                              });
-
-                                            _formkey.currentState!.reset();
-                                               Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) => HomePage()));
-                                        }
-                                        
-                                        },
-                                      child: Text('Next')),
-                                ),
-                              ],
+                                                _quiz.currentUser!.uid);
+                            
+                                              _formkey.currentState!.reset();
+                                              Navigator.of(context).pop();
+                                              SnackBar(content: Text('การสร้างแบบทดสอบสำเร็จ'));
+                                                //  Navigator.push(context,MaterialPageRoute(builder: (context) => HomePage()));
+                                            }
+                                          },
+                                        child: Text('ตกลง')),
+                                  
+                                ],
+                              ),
                             ),
                                   ]),
                                 )),
