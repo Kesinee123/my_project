@@ -126,24 +126,6 @@ class _SignInState extends State<SignIn> {
       ),
     );
 
-    // final googleSignIn = Center(
-    //   child: Column(
-    //     mainAxisAlignment: MainAxisAlignment.center,
-    //     children: [
-    //       ElevatedButton.icon(
-    //         style: ElevatedButton.styleFrom(
-    //           primary: Colors.red,
-    //           onPrimary: Colors.white,
-    //           minimumSize: Size(double.infinity, 50)
-    //         ),
-    //         onPressed: (){
-
-    //         },
-    //         icon: FaIcon(FontAwesomeIcons.google, color: Colors.white,),
-    //         label: Text('Continue with Google',))
-    //     ],
-    //   ),
-    // );
     return FutureBuilder(
         future: firebase,
         builder: (context, snapshot) {
@@ -285,12 +267,23 @@ class _SignInState extends State<SignIn> {
       await _auth
       .signInWithEmailAndPassword(email: email, password: password)
       .then((uid) => {
-        Fluttertoast.showToast(msg: "Login Successfull"),
+        showSnackbar(context, Colors.green, "Login Successfull" ),
+        // Fluttertoast.showToast(msg: "Login Successfull"),
         Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => MainPage()))
       }).catchError((e){
-        Fluttertoast.showToast(msg: e!.message);
+        showSnackbar(context, Colors.red, e!.message);
+        // Fluttertoast.showToast(msg: e!.message);
         }
       );
     }
   }
+}
+
+void showSnackbar(context, color, message) {
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text(message, style: TextStyle(fontSize: 14),),
+      backgroundColor: color,
+      duration: Duration(seconds: 5),
+      ));
 }

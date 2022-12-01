@@ -13,49 +13,63 @@ class sidemenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      elevation: 0,
-      child: Container(
-        width: double.infinity,
-        height: SizeConfig.screenHight,
-        color: Colors.deepPurple,
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              Container(
-                height: 100,
-                alignment: Alignment.topCenter,
-                padding: EdgeInsets.only(top: 20),
-                child: SizedBox(
-                  width: 200,
-                  height: 200,
-                  child: Image.asset('assets/logo.png'),
-                ),
-              ),
-              IconButton(onPressed:(){
-                // Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
-              } ,
-              icon: Icon(Icons.home,size: 35,),
-              iconSize: 20,
-              padding: EdgeInsets.symmetric(vertical: 20.0),
-               ),
-              IconButton(onPressed:(){
-                Navigator.push(context, MaterialPageRoute(builder: (context) => ProfileUser()));
-              } ,
-              icon: Icon(Icons.person,size: 35,),
-              iconSize: 20,
-              padding: EdgeInsets.symmetric(vertical: 20.0),
-               ),
-              IconButton(onPressed:(){
-                signOut(context);
-              } ,
-              icon: Icon(Icons.logout_outlined,size: 35,),
-              iconSize: 20,
-              padding: EdgeInsets.symmetric(vertical: 20.0),
-               ),
-            ],
+      backgroundColor: Colors.deepPurple,
+      child:  ListView(
+        padding: EdgeInsets.symmetric(vertical: 50),
+        children: [
+          Image.asset("assets/logo.png",
+          height: 150,
           ),
-        ),
+          SizedBox(height: 20,),
+          Divider(
+            color: Colors.white,
+          ),
+          ListTile(
+            onTap: (){} ,
+            selected: true,
+            contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+            leading: Icon(Icons.group, color: Colors.white,),
+            title: Text("แบบทดสอบ", style: TextStyle(color: Colors.white),),
+          ),
+          ListTile(
+            onTap: (){
+              Navigator.push(context, MaterialPageRoute(builder: (context) => ProfileUser()));
+            } ,
+            selected: true,
+            contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+            leading: Icon(Icons.account_circle, color: Colors.white,),
+            title: Text("โปรไฟล์", style: TextStyle(color: Colors.white),),
+          ),
+          Divider(
+            color: Colors.white,
+          ),
+          ListTile(
+            onTap: () async{
+              showDialog
+              (context: context,
+              builder: (_) {
+                return AlertDialog(
+                  title: Text("ออกจากระบบ"),
+                  content: Text("ต้องการออกจากระบบหรือไม่"),
+                  actions: [
+                    IconButton(onPressed: (){
+                      Navigator.pop(context);
+                    },
+                    icon: Icon(Icons.cancel, color: Colors.red,)),
+                    IconButton(onPressed: (){
+                       signOut(context);
+                    },
+                    icon: Icon(Icons.exit_to_app, color: Colors.green,)),
+                  ],
+                );
+              });
+            } ,
+            selected: true,
+            contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+            leading: Icon(Icons.exit_to_app, color: Colors.white,),
+            title: Text("ออกจากระบบ", style: TextStyle(color: Colors.white),),
+          ),
+        ],
       ),
     );
   }

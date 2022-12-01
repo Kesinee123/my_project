@@ -16,7 +16,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
   final isDialOpen = ValueNotifier(false);
   GlobalKey<ScaffoldState> _drawerkey = GlobalKey();
   @override
@@ -52,25 +51,23 @@ class _HomePageState extends State<HomePage> {
                 )
               ],
             ),
-         key: _drawerkey,
-         drawer: SizedBox(width: 100 , child: sidemenu(),),
-         appBar: !Responsive.isDestop(context) ? AppBar (
-          elevation: 0,
-          backgroundColor: Colors.white,
-          leading: IconButton(onPressed: (){
-            _drawerkey.currentState?.openDrawer();
-          },
-          icon: Icon(Icons.menu, color: Colors.black,)),
+         drawer: sidemenu(),
+         appBar: AppBar(
           actions: [
-            AppBarActionItems(), 
+            IconButton(onPressed: (){},
+            icon: Icon(Icons.search))
           ],
-          ): PreferredSize(child: SizedBox(), preferredSize: Size.zero),
+          elevation: 0,
+          centerTitle: true,
+          backgroundColor: Colors.deepPurple,
+          title: Text('Quizs'),
+        ),
           body: SafeArea(
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if(Responsive.isDestop(context))
-            Expanded(flex: 1,child: sidemenu()
+            Expanded(flex: 2,child: sidemenu()
             ),
             Expanded(
                 flex: 10,
@@ -79,13 +76,8 @@ class _HomePageState extends State<HomePage> {
                   height: SizeConfig.screenHight,
                   child: SingleChildScrollView(
                     padding: EdgeInsets.symmetric(vertical: 30, horizontal: 30),
-                    child: Column(
-                      children: [
-                        if(Responsive.isDestop(context))
-                      AppBarActionItems(),
-                      // SizedBox(height: 20,),
+                    child:
                       QuizDetailList(),
-                    ]),
                   ),
                 )),
           ],

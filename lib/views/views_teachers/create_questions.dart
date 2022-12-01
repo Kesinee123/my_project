@@ -6,6 +6,7 @@ import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:my_project/models/question.dart';
+import 'package:my_project/service/database_service.dart';
 import 'package:my_project/views/views_teachers/homepage.dart';
 
 class CreateQuestion extends StatefulWidget {
@@ -21,25 +22,15 @@ class _CreateQuestionState extends State<CreateQuestion> {
   final _formKey = GlobalKey<FormState>();
   // final Future<FirebaseApp> firebase = Firebase.initializeApp();
 
- void adddataquestion(value) async{
-    await FirebaseFirestore.instance.collection("quizs").add({
-        "quizTitle": quizTitle,
-        "quizSubject": quizSubject,
-    }).then((value) {
-        print(value.id);
-        FirebaseFirestore.instance.collection("quizs").doc(value.id).collection("questions").add({
-            "question" :question,
-            "option1" : option1,
-            "option2" : option2,
-            "option3" : option3,
-            "option4" : option4,
-        });
-    });
-  }
-
-  String quizTitle = '';
-  String quizSubject = '';
-
+//  void adddataquestion(value) async{
+//     await FirebaseFirestore.instance.collection("questions").add({
+//         "question" :question,
+//             // "option1" : option1,
+//             // "option2" : option2,
+//             // "option3" : option3,
+//             // "option4" : option4,
+//     });
+//   }
 
   String question = '';
   String option1 = '';
@@ -47,6 +38,7 @@ class _CreateQuestionState extends State<CreateQuestion> {
   String option3 = '';
   String option4 = '';
 
+   String userName  = '';
 
 
   int _value = 1;
@@ -81,8 +73,10 @@ class _CreateQuestionState extends State<CreateQuestion> {
                                     children: [
                                       Text("โจทย์คำถาม",style: TextStyle(color: Colors.white,fontSize: 18),),
                                       TextFormField(
-                                        onSaved: (value) {
-                                          question = value!;
+                                        onChanged: (value) {
+                                          setState(() {
+                                            question = value;
+                                          });
                                         },
                                         style: TextStyle(color: Colors.white),
                                         validator: ((val) => val!.isEmpty
@@ -195,13 +189,12 @@ class _CreateQuestionState extends State<CreateQuestion> {
                         
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(primary: Colors.deepPurple),
-                          onPressed: (){
-                            _formKey.currentState!.save();
-                            adddataquestion({question});
-                               Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) => HomePage()));
+                          onPressed: () {
+                           if(question != ""){
+                            DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid )
+                            .createQuestion(userName, FirebaseAuth.instance.currentUser!.uid, question);
+                           }
+                            Navigator.push(context,MaterialPageRoute(builder: (context) => HomePage()));
                           },
                           child: Text('บันทึกโจทย์'))
                       ],

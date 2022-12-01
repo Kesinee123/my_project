@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:my_project/main_page.dart';
+import 'package:my_project/service/database_service.dart';
 import 'package:my_project/views/signin.dart';
 import 'package:my_project/views/views_teachers/homepage.dart';
 // import 'model.dart';
@@ -324,27 +325,45 @@ class _SignUpState extends State<SignUp> {
           .createUserWithEmailAndPassword(email: email, password: password)
           .then((value) =>
               {
+                showSnackbar(context, Colors.green, "Login Successfull"),
                 Fluttertoast.showToast(msg: "Login Successfull"),
-                postDetailsToFirestore(email, type, firstName, lastName,)})
+                DatabaseService(uid:_auth.currentUser!.uid).updateUserData(email, type, firstName, lastName),
+                Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => MainPage()))
+              })
           .catchError((e) {
-                    Fluttertoast.showToast(msg: e!.message);
+            showSnackbar(context, Colors.red, e!.message);
+                    // Fluttertoast.showToast(msg: e!.message);
           });
     }
   }
 
-  postDetailsToFirestore(
-      String email, String type, String firstName, String lastName) async {
-    FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
-    var user = _auth.currentUser;
-    CollectionReference ref = FirebaseFirestore.instance.collection('users');
-    ref.doc(user!.uid).set({
-      'email': emailEditingController.text,
-      'firstName': firstNameEditingController.text,
-      'lastName': lastNameEditingController.text,
-      'type': type,
-      'uid' : _auth.currentUser!.uid
-    });
-    Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => MainPage()));
+//   postDetailsToFirestore(
+//       String email, String type, String firstName, String lastName) async {
+//     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+//     var user = _auth.currentUser;
+
+//     CollectionReference users = FirebaseFirestore.instance.collection('users');
+//     CollectionReference quizs = FirebaseFirestore.instance.collection('quizs');
+
+//     users.doc(user!.uid).set({
+//       'email': emailEditingController.text,
+//       'firstName': firstNameEditingController.text,
+//       'lastName': lastNameEditingController.text,
+//       'type': type,
+//       'quizs' : [],
+//       'uid' : _auth.currentUser!.uid
+//     });
+//     Navigator.pushReplacement(
+//         context, MaterialPageRoute(builder: (context) => MainPage()));
+//   }
+// }
+
+void showSnackbar(context, color, message) {
+  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    content: Text(message, style: TextStyle(fontSize: 14),),
+    backgroundColor: color,
+    duration: Duration(seconds: 5),
+    ));
   }
 }

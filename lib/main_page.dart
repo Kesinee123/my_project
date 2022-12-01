@@ -5,6 +5,7 @@ import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:my_project/views/signin.dart';
 import 'package:my_project/views/views_students/codePage.dart';
+import 'package:my_project/views/views_students/homeStudent.dart';
 import 'package:my_project/views/views_teachers/homepage.dart';
 import 'package:my_project/views/views_teachers/profile_user.dart';
 
@@ -29,7 +30,7 @@ class _MainPageState extends State<MainPage> {
                 if(snapshot.hasData) {
                   final user = snapshot.data.data();
                   if (user['type'] == 'นักเรียน') {
-                    return LetPage();
+                    return StudentPage();
                   }else{
                     return HomePage();
                   }

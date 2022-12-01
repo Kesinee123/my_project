@@ -62,6 +62,8 @@ class _ProfileUserState extends State<ProfileUser> {
                               {"firstName": firstName, "lastName": lastName});
                       firstNameController.text = '';
                       lastNameController.text = '';
+
+                      Navigator.pop(context);
                     },
                     child: Text('Update'),
                   )
@@ -113,7 +115,7 @@ class _ProfileUserState extends State<ProfileUser> {
                                       ),
                                       Container(
                                         height: 350,
-                                        width: 800,
+                                        // width: 500,
                                         child: LayoutBuilder(
                                             builder: (context, constraints) {
                                           double innerHeight =
@@ -128,7 +130,7 @@ class _ProfileUserState extends State<ProfileUser> {
                                                   left: 0,
                                                   right: 0,
                                                   child: Container(
-                                                    height: 250,
+                                                    height: 200,
                                                     decoration: BoxDecoration(
                                                       borderRadius:
                                                           BorderRadius.circular(

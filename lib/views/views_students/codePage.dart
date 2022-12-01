@@ -1,7 +1,5 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:my_project/views/signin.dart';
-import 'package:my_project/views/views_students/namePage.dart';
+import 'package:my_project/views/views_students/questionWidget.dart';
 
 class LetPage extends StatefulWidget {
   const LetPage({Key? key}) : super(key: key);
@@ -18,19 +16,14 @@ class _LetPageState extends State<LetPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              SizedBox(height: 10,),
-              Container(
-                alignment: Alignment.topRight,
-                child: IconButton(onPressed: (){
-                  signOut(context);
-                }, icon: Icon(Icons.exit_to_app))),
-              SizedBox(height: 60,),
+              SizedBox(height: 20,),
               Padding(
                 padding: EdgeInsets.all(30),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    Text("Quizzz", style: TextStyle(color: Colors.white, fontSize: 40),),
+                    Image.asset("assets/logo.png", height: 150)
+                    // Text("Quizzz", style: TextStyle(color: Colors.white, fontSize: 40),),
                   ],
                 ),
               ),
@@ -39,7 +32,7 @@ class _LetPageState extends State<LetPage> {
                   padding: EdgeInsets.all(25),
                   child: Column(
                     children: <Widget> [
-                      SizedBox(height: 60,),
+                      SizedBox(height: 0,),
                       Container(
                         padding: EdgeInsets.all(20),
                         decoration: BoxDecoration(
@@ -73,25 +66,12 @@ class _LetPageState extends State<LetPage> {
                         ),
                       ),
                       SizedBox(height: 40,),
-                      Column(
-                        children: [
-                          // InkWell(
-                          //   onTap: () {
-                          //     Navigator.push(context,MaterialPageRoute(builder: (context) => NamesPage()));
-                          //   } ,
-                          // ),
-                          Container(
-                            height: 50,
-                            margin: EdgeInsets.symmetric(horizontal: 50),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(50),
-                              color: Color.fromARGB(255, 251, 204, 64)
-                            ),
-                            child: Center(
-                              child: Text("Join", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
-                            ),
-                          ),
-                        ],
+                      Container(
+                        child: RawMaterialButton(
+                          onPressed: () {Navigator.push(context, MaterialPageRoute(builder: (context){return QuestionWidget();},));},
+                          fillColor: Color.fromARGB(255, 235, 217, 55),
+                          child: Text("Join", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),),
+                        ),
                       ),
                     ],
                   ),
@@ -102,8 +82,4 @@ class _LetPageState extends State<LetPage> {
        ),
     );
   }
-  Future<void> signOut(BuildContext context) async {
-       await FirebaseAuth.instance.signOut();
-       Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => SignIn()));
-    }
 }

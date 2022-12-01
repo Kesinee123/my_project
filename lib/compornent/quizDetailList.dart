@@ -1,15 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:my_project/data/menu_items.dart';
 import 'package:my_project/models/menu_item.dart';
 import 'package:my_project/views/views_teachers/details.dart';
 import 'package:my_project/views/views_teachers/editCreate_quizs.dart';
 
 class QuizDetailList extends StatefulWidget {
-  QuizDetailList({
-    super.key,
-  });
+  QuizDetailList({super.key});
+
+  // final String quizId;
 
   @override
   State<QuizDetailList> createState() => _QuizDetailListState();
@@ -50,7 +49,7 @@ class _QuizDetailListState extends State<QuizDetailList> {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => DetailsQuizs(
-                                          quizId: documentSnapshot.id,
+                                          quizId: documentSnapshot.id, 
                                         )));
                           },
                           child: ListTile(
