@@ -55,20 +55,20 @@ class _HomePageState extends State<HomePage> {
          appBar: AppBar(
           actions: [
             IconButton(onPressed: (){},
-            icon: Icon(Icons.search))
+            icon: Icon(Icons.help))
           ],
           elevation: 0,
           centerTitle: true,
           backgroundColor: Colors.deepPurple,
-          title: Text('Quizs'),
+          title: Text('แบบทดสอบ'),
         ),
           body: SafeArea(
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if(Responsive.isDestop(context))
-            Expanded(flex: 2,child: sidemenu()
-            ),
+            // if(Responsive.isDestop(context))
+            // Expanded(flex: 2,child: sidemenu()
+            // ),
             Expanded(
                 flex: 10,
                 child: Container(

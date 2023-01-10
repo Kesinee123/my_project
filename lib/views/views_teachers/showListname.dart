@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:my_project/views/views_teachers/homepage.dart';
 
 class ShowListName extends StatefulWidget {
-  const ShowListName({super.key});
+  const ShowListName({super.key, required this.quizId});
+
+  final String quizId;
 
   @override
   State<ShowListName> createState() => _ShowListNameState();

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:my_project/models/menu_item.dart';
@@ -27,9 +28,16 @@ class _QuizDetailListState extends State<QuizDetailList> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-        stream: FirebaseFirestore.instance.collection("quizs").snapshots(),
+        stream: FirebaseFirestore.instance.collection("quizs")
+        .where('uid' , isEqualTo: FirebaseAuth.instance.currentUser!.uid )
+        .snapshots(),
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.hasData) {
+            if(snapshot.data!.docs.length != 0) {
+
+            }else{
+              return noQuiz();
+            }
             return ListView.builder(
                 itemCount: snapshot.data!.docs.length,
                 shrinkWrap: true,
@@ -56,8 +64,7 @@ class _QuizDetailListState extends State<QuizDetailList> {
                               contentPadding: EdgeInsets.all(16),
                               leading: CircleAvatar(
                                 radius: 32,
-                                backgroundImage: NetworkImage(
-                                    "https://png.pngtree.com/png-clipart/20190117/ourlarge/pngtree-cartoon-book-notes-stationery-png-image_424364.jpg"),
+                                backgroundImage: NetworkImage(documentSnapshot['imageUrl'])
                               ),
                               title: Text(documentSnapshot['quizTitle'], style: TextStyle(color: Colors.white),),
                               subtitle: Text(documentSnapshot['quizSubject'], style: TextStyle(color: Colors.white),),
@@ -78,7 +85,7 @@ class _QuizDetailListState extends State<QuizDetailList> {
                                                   Text(
                                                     'ต้องการลบแบบทดสอบหรือไม่ ??',
                                                     style: TextStyle(
-                                                        fontSize: 20,
+                                                        fontSize: 16,
                                                         fontWeight:
                                                             FontWeight.bold),
                                                   ),
@@ -187,7 +194,7 @@ class _QuizDetailListState extends State<QuizDetailList> {
                                                                           children: [
                                                                             Expanded(
                                                                               child: Container(
-                                                                                width: 240,
+                                                                                width: 200,
                                                                                 decoration: BoxDecoration(
                                                                                   borderRadius: BorderRadius.circular(20),
                                                                                   border: Border.all(color: Colors.deepPurple),
@@ -378,7 +385,20 @@ class _QuizDetailListState extends State<QuizDetailList> {
           } else {
             return Scaffold(body: Center(child: CircularProgressIndicator()));
           }
+          
         });
+  }
+   noQuiz() {
+    return Container(
+      margin: EdgeInsets.all(50),
+      child: Center(
+        child: Column(
+          children: [
+            Image.network('https://cdn-icons-png.flaticon.com/512/29/29302.png', height: 150,),
+            Text('ไม่มีแบบทดสอบที่สร้าง', style: TextStyle(fontSize: 20),),
+          ],
+        )),
+    );
   }
 }
 

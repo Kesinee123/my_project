@@ -1,19 +1,13 @@
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:form_field_validator/form_field_validator.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:my_project/models/quiz.dart';
-import 'package:my_project/service/database_service.dart';
+import 'package:intl/intl.dart';
 import 'package:my_project/views/views_teachers/create_questions.dart';
-
 import 'package:my_project/views/views_teachers/homepage.dart';
+
 
 class CreateQuiz extends StatefulWidget {
   const CreateQuiz({super.key});
@@ -24,22 +18,61 @@ class CreateQuiz extends StatefulWidget {
 
 class _CreateQuizState extends State<CreateQuiz> {
   final _formkey = GlobalKey<FormState>();
-
-  final CollectionReference quizCollection = FirebaseFirestore.instance.collection("quizs");
+  final _auth = FirebaseAuth.instance;
 
   String quizTitle = '';
   String quizSubject = '';
-  String userName = '';
 
   File? _image;
+  String? _imageUrl;
   final picker = ImagePicker();
   //String? downloadURL;
 
-  void addImage() async {
-    final imgURL = await uploadImage(_image!);
-    await quizCollection.add({
-      "imageURL" : imgURL
-    }).whenComplete(() => showSnackbar(context, Colors.green , "อัปโหลดรูปภาพ"));
+  Future createQuiz(String quizTitle, String quizSubject) async {
+    String date = DateFormat.yMMMMd().format(DateTime.now());
+    String time = DateFormat.Hm().format(DateTime.now());
+
+    final _imageUrl = await uploadImage(_image!);
+    DocumentReference quizDocumentReference = await FirebaseFirestore.instance.collection('quizs').add({
+      'uid' : _auth.currentUser!.uid,
+      'quizTitle' : quizTitle,
+      'quizSubject' : quizSubject,
+      'createdAt' : '$date $time',
+      'imageUrl' : _imageUrl
+    });
+    await quizDocumentReference.update({
+      // "questions" : FieldValue.arrayUnion(["${uid}_$userName"]),
+      "quizId" : quizDocumentReference.id
+    });
+  }
+
+  void _showImage() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('โปรดใส่รูปภาพ'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+            InkWell(
+              onTap: () {
+                //
+                imagePicker();
+              },
+              child: Row(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.all(4),
+                    child: Icon(Icons.camera, color: Colors.black,),
+                    ),
+                    Text('Gallery')
+                ],
+              ),
+            )
+          ]),
+        );
+      });
   }
 
   Future imagePicker() async {
@@ -230,16 +263,21 @@ class _CreateQuizState extends State<CreateQuiz> {
                                  ElevatedButton(
                                       style: ElevatedButton.styleFrom(primary: Colors.deepPurple),
                                         onPressed: () {
-                                          if(quizTitle != ""){
-                                            // setState(() {
-                                              
-                                            // });
-                                            DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid)
-                                            .createQuiz(userName, FirebaseAuth.instance.currentUser!.uid, quizTitle, quizSubject);
-                                            // addImage();
-                                            Navigator.push(context,MaterialPageRoute(builder: (context) => HomePage()));
-                                            showSnackbar(context, Colors.green , "สร้างแบบทดสอบสำเร็จแล้ว");
-                                          }
+                                           if(_formkey.currentState!.validate()){
+                                            if(_image == null) {
+                                               showSnackbar(context, Colors.red, "โปรดเพิ่มรูปภาพ");
+                                                return;
+                                            }
+                                            try{
+                                              createQuiz(quizTitle, quizSubject);
+                                              showSnackbar(context, Colors.green, "สร้างแบบทดสอบสำเร็จ");
+                                               Navigator.pushReplacement(
+                                                 context, MaterialPageRoute(builder: (context) => HomePage()));
+                                            }
+                                            catch(e){
+                                              showSnackbar(context, Colors.red, e.toString() );
+                                            }
+                                           }
                                           },
                                         child: Text('ตกลง')),
                                   

@@ -1,8 +1,12 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:my_project/main_page.dart';
 import 'package:my_project/service/database_service.dart';
 import 'package:my_project/views/signin.dart';
@@ -41,8 +45,99 @@ class _SignUpState extends State<SignUp> {
   var _currentItemSelected = "นักเรียน";
   var type = "นักเรียน";
 
+  File? _image;
+  String? _imageUrl;
+  final picker = ImagePicker();
+
+  void _showImage() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('โปรดใส่รูปภาพ'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+            InkWell(
+              onTap: () {
+                //
+                imagePicker();
+              },
+              child: Row(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.all(4),
+                    child: Icon(Icons.camera, color: Colors.black,),
+                    ),
+                    Text('Gallery')
+                ],
+              ),
+            )
+          ]),
+        );
+      });
+  }
+
+  Future imagePicker() async {
+    try{
+      final pick =  await picker.pickImage(source: ImageSource.gallery);
+    setState(() {
+      if(pick != null) {
+        _image = File(pick.path);
+      }else{
+        showSnackbar(context, Colors.red , "ไม่มีรูปภาพ");
+      }
+    });
+    } catch (e) {
+      showSnackbar(context , Colors.red , e.toString());
+    }
+    
+  }
+
+  Future uploadImage(File _image) async {
+    String url;
+    String imgId = DateTime.now().microsecondsSinceEpoch.toString();
+    Reference reference = FirebaseStorage.instance.ref().child('users').child('user$imgId');
+    await reference.putFile(_image);
+    url = await reference.getDownloadURL();
+    return url;
+  }
+  
+
   @override
   Widget build(BuildContext context) {
+
+    final imageUser = GestureDetector(
+      onTap: () {
+        // createimage
+        imagePicker();
+        Navigator.of(context);
+
+      },
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            CircleAvatar(
+              radius: 75,
+              backgroundColor: Colors.purple,
+              child: _image == null ?
+              CircleAvatar(
+                radius: 70,
+                backgroundColor: Colors.grey,
+                child: Text('โปรดใส่รูปภาพ', style: TextStyle(color: Colors.white),),
+              )
+              : CircleAvatar(
+                radius: 70,
+                backgroundColor: Colors.grey,
+                backgroundImage: FileImage(_image!),
+              )
+            )
+          ],
+        ),
+      )
+    );
+
     final firstNamefileld = TextFormField(
       autofocus: false,
       validator: (value) {
@@ -278,6 +373,8 @@ class _SignUpState extends State<SignUp> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
+                      imageUser,
+                      SizedBox(height: 20,),
                       firstNamefileld,
                       SizedBox(
                         height: 20,
@@ -321,43 +418,45 @@ class _SignUpState extends State<SignUp> {
       String lastName) async {
     CircularProgressIndicator();
     if (_formkey.currentState!.validate()) {
-      await _auth
-          .createUserWithEmailAndPassword(email: email, password: password)
-          .then((value) =>
-              {
-                showSnackbar(context, Colors.green, "Login Successfull"),
-                Fluttertoast.showToast(msg: "Login Successfull"),
-                DatabaseService(uid:_auth.currentUser!.uid).updateUserData(email, type, firstName, lastName),
-                Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => MainPage()))
-              })
-          .catchError((e) {
-            showSnackbar(context, Colors.red, e!.message);
-                    // Fluttertoast.showToast(msg: e!.message);
-          });
+      if(_image == null) {
+        showSnackbar(context, Colors.red, "โปรดเพิ่มรูปภาพ");
+        return;
+      }
+      try{
+        await _auth
+          .createUserWithEmailAndPassword(email: email, password: password);
+                showSnackbar(context, Colors.green, "เข้าสู่ระบบสำเร็จแล้ว");
+                postDetailsToFirestore(email,type,firstName,lastName );
+      }catch(e) {
+        showSnackbar(context, Colors.red, e.toString() );
+      }
+      
     }
   }
+  
 
-//   postDetailsToFirestore(
-//       String email, String type, String firstName, String lastName) async {
-//     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
-//     var user = _auth.currentUser;
+  postDetailsToFirestore(
+    String email, String type, String firstName, String lastName) async {
 
-//     CollectionReference users = FirebaseFirestore.instance.collection('users');
-//     CollectionReference quizs = FirebaseFirestore.instance.collection('quizs');
+    String date = DateFormat.yMMMMd().format(DateTime.now());
+    String time = DateFormat.Hm().format(DateTime.now());
 
-//     users.doc(user!.uid).set({
-//       'email': emailEditingController.text,
-//       'firstName': firstNameEditingController.text,
-//       'lastName': lastNameEditingController.text,
-//       'type': type,
-//       'quizs' : [],
-//       'uid' : _auth.currentUser!.uid
-//     });
-//     Navigator.pushReplacement(
-//         context, MaterialPageRoute(builder: (context) => MainPage()));
-//   }
-// }
+    final User? user = _auth.currentUser;
+    final _uid = user!.uid;
+    final _imageUrl = await uploadImage(_image!);
+    FirebaseFirestore.instance.collection('users').doc(_uid).set({
+      'email': emailEditingController.text,
+      'firstName': firstNameEditingController.text,
+      'lastName': lastNameEditingController.text,
+      'type': type,
+      'imageUrl' : _imageUrl,
+      // 'quizs' : [],
+      'uid' : _uid,
+      'createdAt' : "$date $time",
+    });
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => MainPage()));
+}
 
 void showSnackbar(context, color, message) {
   ScaffoldMessenger.of(context).showSnackBar(SnackBar(

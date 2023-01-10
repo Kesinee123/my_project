@@ -141,7 +141,8 @@ class FormCreateQuiz extends StatelessWidget {
                           child: MaterialButton(
                             padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
                             // minWidth: MediaQuery.of(context).size.width,
-                            onPressed: () => Navigator.push(context,MaterialPageRoute(builder: (context) => AddQuiz())),
+                            onPressed: () {},
+                            // Navigator.push(context,MaterialPageRoute(builder: (context) => AddQuiz())),
                             child: Text(
                               'Cancle',
                               textAlign: TextAlign.center,
@@ -158,7 +159,8 @@ class FormCreateQuiz extends StatelessWidget {
                           child: MaterialButton(
                             padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
                             // minWidth: MediaQuery.of(context).size.width,
-                            onPressed: () => Navigator.push(context,MaterialPageRoute(builder: (context) => AddQuiz())),
+                            onPressed: () {} ,
+                            //Navigator.push(context,MaterialPageRoute(builder: (context) => AddQuiz())),
                             child: Text(
                               'Next',
                               textAlign: TextAlign.center,

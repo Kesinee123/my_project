@@ -48,7 +48,7 @@ class _detial_Quizs_homepageState extends State<detial_Quizs_homepage> {
                               child: Column(
                                 children: [
                                   Text(
-                                    "โจทย์ข้อที่ 1",
+                                    "โจทย์ข้อที่",
                                     style: TextStyle(
                                         fontSize: 20, fontWeight: FontWeight.bold),
                                   ),

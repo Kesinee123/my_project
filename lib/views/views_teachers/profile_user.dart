@@ -130,6 +130,7 @@ class _ProfileUserState extends State<ProfileUser> {
                                                   left: 0,
                                                   right: 0,
                                                   child: Container(
+                                                    width: 200,
                                                     height: 200,
                                                     decoration: BoxDecoration(
                                                       borderRadius:
@@ -315,8 +316,7 @@ class _ProfileUserState extends State<ProfileUser> {
                                                   child: Container(
                                                     child: CircleAvatar(
                                                         radius: 70,
-                                                        backgroundImage: AssetImage(
-                                                            'assets/avatan.jpg')),
+                                                        backgroundImage: NetworkImage(documentSnapshot['imageUrl'])),
                                                   ),
                                                 ),
                                               ),

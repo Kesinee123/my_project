@@ -7,6 +7,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get_state_manager/src/simple/list_notifier.dart';
 import 'package:my_project/main_page.dart';
 import 'package:my_project/views/signup.dart';
+import 'package:my_project/views/views_teachers/forgetPassword.dart';
 import 'package:my_project/views/views_teachers/homepage.dart';
 
 
@@ -141,8 +142,7 @@ class _SignInState extends State<SignIn> {
           if (snapshot.connectionState == ConnectionState.done) {
              return Scaffold(
       // backgroundColor: Colors.orange,
-     body: SafeArea(
-        child: Container(
+     body: Container(
           height: double.infinity,
           width: double.infinity,
           decoration: BoxDecoration(
@@ -225,8 +225,20 @@ class _SignInState extends State<SignIn> {
                         SizedBox(
                           height: 20,
                         ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ForgetPassword(),));
+                              },
+                            child: Text('ลืมรหัสหรือไม่ ?', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),),
+                              
+                            ),
+                          ],
+                        ),
                         SizedBox(
-                          height: 20,
+                          height: 5,
                         ),
                         signInButton,
                        
@@ -251,8 +263,7 @@ class _SignInState extends State<SignIn> {
             ],
           )),
         ),
-      ),
-    );
+      );
   };
           return Scaffold(
             body: Center(
@@ -267,7 +278,7 @@ class _SignInState extends State<SignIn> {
       await _auth
       .signInWithEmailAndPassword(email: email, password: password)
       .then((uid) => {
-        showSnackbar(context, Colors.green, "Login Successfull" ),
+        showSnackbar(context, Colors.green, "เข้าสู่ระบบสำเร็จ" ),
         // Fluttertoast.showToast(msg: "Login Successfull"),
         Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => MainPage()))
       }).catchError((e){
