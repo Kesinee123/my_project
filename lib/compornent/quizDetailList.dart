@@ -1,7 +1,11 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:my_project/models/menu_item.dart';
 import 'package:my_project/views/views_teachers/details.dart';
 import 'package:my_project/views/views_teachers/editCreate_quizs.dart';
@@ -23,6 +27,35 @@ class _QuizDetailListState extends State<QuizDetailList> {
 
   Future<void> _deleteQuiz(id) async {
     await FirebaseFirestore.instance.collection("quizs").doc(id).delete();
+  }
+
+  File? _image;
+  String? _imageUrl;
+  final picker = ImagePicker();
+  //String? downloadURL;
+
+  Future imagePicker() async {
+    try{
+      final pick = await picker.pickImage(source: ImageSource.gallery);
+      setState(() {
+        if(picker != null){
+          _image = File(pick!.path);
+        }else{
+           showSnackbar(context, Colors.red , "ไม่มีรูปภาพ");
+        }
+      });
+    } catch (e){
+      showSnackbar(context , Colors.red , e.toString());
+    }
+  }
+
+  Future uploadImage(File _image) async {
+    String url;
+    String imgId = DateTime.now().microsecondsSinceEpoch.toString();
+    Reference reference = FirebaseStorage.instance.ref().child('images').child('quiz$imgId');
+    await reference.putFile(_image);
+    url = await reference.getDownloadURL();
+    return url;
   }
 
   @override
@@ -57,7 +90,7 @@ class _QuizDetailListState extends State<QuizDetailList> {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => DetailsQuizs(
-                                          quizId: documentSnapshot.id, 
+                                          quizId: documentSnapshot.id, questionId: documentSnapshot.id , 
                                         )));
                           },
                           child: ListTile(
@@ -138,6 +171,7 @@ class _QuizDetailListState extends State<QuizDetailList> {
                                 } else {
                                   quizTitleEdit.text = documentSnapshot['quizTitle'];
                                   quizSubjectEdit.text = documentSnapshot['quizSubject'];
+                                  _imageUrl = documentSnapshot['imageUrl'];
 
                                   showDialog(
                                       context: context,
@@ -203,13 +237,15 @@ class _QuizDetailListState extends State<QuizDetailList> {
                                                                                   child: Column(
                                                                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                                                     children: [
-                                                                                      // Expanded(
-                                                                                      //   child: _image == null
-                                                                                      //       ? Center(
-                                                                                      //           child:
-                                                                                      //               Text("No image selected"))
-                                                                                      //       : Image.file(_image!),
-                                                                                      // ),
+                                                                                      Expanded(
+                                                                                        child: _image == null
+                                                                                            ? Center(
+                                                                                                child:
+                                                                                                    // Text("ไม่มีรูปภาพ")
+                                                                                                    Image.network(documentSnapshot['imageUrl'])
+                                                                                                    )
+                                                                                            : Image.file(_image!),
+                                                                                      ),
                                                                                     ],
                                                                                   ),
                                                                                 ),
@@ -227,7 +263,9 @@ class _QuizDetailListState extends State<QuizDetailList> {
                                                                             Colors
                                                                                 .yellow),
                                                                     onPressed:
-                                                                        () {},
+                                                                        () {
+                                                                          imagePicker();
+                                                                        },
                                                                     child: Text(
                                                                       'เพิ่มรูปภาพ',
                                                                       style: TextStyle(
@@ -355,10 +393,11 @@ class _QuizDetailListState extends State<QuizDetailList> {
                                                                             // final TextEditingController
                                                                             //     quizSubjectEdit =
                                                                             //     TextEditingController();
-
+                                                                            final _imageUrl = await uploadImage(_image!);
                                                                             snapshot.data!.docs[index].reference.update({
                                                                               "quizTitle": quizTitleEdit.text,
-                                                                              "quizSubject": quizSubjectEdit.text
+                                                                              "quizSubject": quizSubjectEdit.text,
+                                                                              "imageUrl" : _imageUrl
                                                                             });
                                                                             Navigator.pop(context);
                                                                           },
@@ -383,7 +422,8 @@ class _QuizDetailListState extends State<QuizDetailList> {
                   );
                 });
           } else {
-            return Scaffold(body: Center(child: CircularProgressIndicator()));
+            // return Scaffold(body: Center(child: CircularProgressIndicator()));
+            return Center(child: CircularProgressIndicator(),);
           }
           
         });
@@ -400,5 +440,15 @@ class _QuizDetailListState extends State<QuizDetailList> {
         )),
     );
   }
+
+
+  void showSnackbar(context, color, message) {
+  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    content: Text(message, style: TextStyle(fontSize: 14),),
+    backgroundColor: color,
+    duration: Duration(seconds: 5),
+    ));
+  }
 }
+
 

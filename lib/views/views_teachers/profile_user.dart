@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:my_project/models/usermodel.dart';
 
 class ProfileUser extends StatefulWidget {
@@ -13,68 +14,7 @@ class ProfileUser extends StatefulWidget {
   State<ProfileUser> createState() => _ProfileUserState();
 }
 
-class _ProfileUserState extends State<ProfileUser> {
-  final TextEditingController firstNameController = TextEditingController();
-  final TextEditingController lastNameController = TextEditingController();
-  Future<void> _update([DocumentSnapshot? documentSnapshot]) async {
-    if (documentSnapshot != null) {
-      firstNameController.text = documentSnapshot['firstName'];
-      lastNameController.text = documentSnapshot['lastName'];
-      
-    }
-
-    await showModalBottomSheet(
-        context: context,
-        builder: (BuildContext context) {
-          return Padding(
-            padding: EdgeInsets.only(
-                top: 20,
-                left: 20,
-                right: 20,
-                bottom: MediaQuery.of(context).viewInsets.bottom + 20),
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  TextField(
-                    controller: firstNameController,
-                    decoration: InputDecoration(labelText: 'ชื่อ'),
-                  ),
-                  TextField(
-                    controller: lastNameController,
-                    decoration: InputDecoration(labelText: 'นามสกุล'),
-                  ),
-                  
-                  SizedBox(
-                    height: 20,
-                  ),
-                  ElevatedButton(
-                    onPressed: () async {
-                      final String firstName = firstNameController.text;
-                      final String lastName = lastNameController.text;
-                     
-
-                      await FirebaseFirestore.instance
-                          .collection("users")
-                          .doc(documentSnapshot!.id)
-                          .update(
-                              {"firstName": firstName, "lastName": lastName});
-                      firstNameController.text = '';
-                      lastNameController.text = '';
-
-                      Navigator.pop(context);
-                    },
-                    child: Text('Update'),
-                  )
-                ],
-              ),
-            ),
-          );
-        });
-  }
-
-  final currenUser = FirebaseAuth.instance;
+class _ProfileUserState extends State<ProfileUser> {  
 
   @override
   Widget build(BuildContext context) {
@@ -85,36 +25,23 @@ class _ProfileUserState extends State<ProfileUser> {
         backgroundColor: Colors.deepPurple,
         body: SafeArea(
             child: SingleChildScrollView(
-                child: StreamBuilder(
-                    stream: FirebaseFirestore.instance
-                        .collection("users")
-                        .where("uid", isEqualTo: currenUser.currentUser!.uid)
-                        .snapshots(),
-                    builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                      if (snapshot.hasData) {
-                        return ListView.builder(
-                            itemCount: snapshot.data!.docs.length,
-                            shrinkWrap: true,
-                            itemBuilder: (context, index) {
-                              final DocumentSnapshot documentSnapshot =
-                                  snapshot.data!.docs[index];
-                              return Padding(
-                                padding: EdgeInsets.symmetric(
+                child: Padding(
+                                padding: const EdgeInsets.symmetric(
                                     horizontal: 15, vertical: 34),
                                 child: Center(
                                   child: Column(
                                     children: [
-                                      Text(
+                                      const Text(
                                         "MyProfile",
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
                                             color: Colors.white, fontSize: 30),
                                       ),
-                                      SizedBox(
+                                      const SizedBox(
                                         height: 20,
                                       ),
                                       Container(
-                                        height: 350,
+                                        height: 360,
                                         // width: 500,
                                         child: LayoutBuilder(
                                             builder: (context, constraints) {
@@ -140,26 +67,18 @@ class _ProfileUserState extends State<ProfileUser> {
                                                     ),
                                                     child: Container(
                                                       margin:
-                                                          EdgeInsets.symmetric(
+                                                          const EdgeInsets.symmetric(
                                                               horizontal: 20),
                                                       child: Column(
                                                         children: [
-                                                          Row(
-                                                            mainAxisAlignment: MainAxisAlignment.end,
-                                                            children: [
-                                                              IconButton(
-                                                                  onPressed: () => _update(
-                                                                      documentSnapshot),
-                                                                  icon: Icon(Icons.edit))
-                                                            ],
-                                                          ),
-                                                          SizedBox(
-                                                            height: 10,
+                                                          
+                                                          const SizedBox(
+                                                            height: 50,
                                                           ),
                                                           Row(
                                                             // mainAxisAlignment: MainAxisAlignment.center,
                                                             children: [
-                                                              Text(
+                                                               Text(
                                                                 "ชื่อ-นามสกุล : ",
                                                                 style: TextStyle(
                                                                     color: Colors
@@ -170,47 +89,31 @@ class _ProfileUserState extends State<ProfileUser> {
                                                                         FontWeight
                                                                             .bold),
                                                               ),
-                                                              SizedBox(
+                                                               SizedBox(
                                                                 width: 10,
                                                               ),
-                                                              Text(
-                                                                documentSnapshot[
-                                                                    "firstName"],
+                                                               Text(
+                                                                FirebaseAuth.instance.currentUser!.displayName! ,
                                                                 style: TextStyle(
                                                                     color: Colors
                                                                         .black,
                                                                     fontSize:
                                                                         20),
                                                               ),
-                                                              SizedBox(
+                                                               SizedBox(
                                                                 width: 10,
                                                               ),
-                                                              Column(
-                                                                children: [
-                                                                  Text(
-                                                                      documentSnapshot[
-                                                                          "lastName"],
-                                                                      style: TextStyle(
-                                                                          color: Colors
-                                                                              .black,
-                                                                          fontSize:
-                                                                              20)),
-                                                                ],
-                                                              ),
-                                                              // IconButton(onPressed: (){},
-                                                              // icon: Icon(FontAwesomeIcons.pen,
-                                                              //     color: Colors.blue,
-                                                              //   ),)
+                                                            
                                                             ],
                                                           ),
-                                                          SizedBox(
+                                                          const SizedBox(
                                                             height: 10,
                                                           ),
                                                           Row(
                                                             children: [
                                                               Column(
                                                                 children: [
-                                                                  Text(
+                                                                  const Text(
                                                                     "อีเมล : ",
                                                                     style: TextStyle(
                                                                         color: Colors
@@ -223,8 +126,7 @@ class _ProfileUserState extends State<ProfileUser> {
                                                                 ],
                                                               ),
                                                               Text(
-                                                                documentSnapshot[
-                                                                    "email"],
+                                                                FirebaseAuth.instance.currentUser!.email!,
                                                                 style: TextStyle(
                                                                     color: Colors
                                                                         .black,
@@ -233,14 +135,14 @@ class _ProfileUserState extends State<ProfileUser> {
                                                               )
                                                             ],
                                                           ),
-                                                          SizedBox(
+                                                          const SizedBox(
                                                             height: 10,
                                                           ),
                                                           Row(
                                                             children: [
                                                               Column(
                                                                 children: [
-                                                                  Text(
+                                                                  const Text(
                                                                     "สถานะ : ",
                                                                     style: TextStyle(
                                                                         color: Colors
@@ -252,10 +154,9 @@ class _ProfileUserState extends State<ProfileUser> {
                                                                   )
                                                                 ],
                                                               ),
-                                                              Expanded(
+                                                              const Expanded(
                                                                 child: Text(
-                                                                  documentSnapshot[
-                                                                    "type"],
+                                                                  'คุณครู',
                                                                   style: TextStyle(
                                                                       color: Colors
                                                                           .black,
@@ -269,41 +170,10 @@ class _ProfileUserState extends State<ProfileUser> {
                                                               )
                                                             ],
                                                           ),
-                                                          SizedBox(
+                                                          const SizedBox(
                                                             height: 10,
                                                           ),
-                                                          // Row(
-                                                          //   children: [
-                                                          //     Column(
-                                                          //       children: [
-                                                          //         Text(
-                                                          //           "สาขาวิชา : ",
-                                                          //           style: TextStyle(
-                                                          //               color: Colors
-                                                          //                   .black,
-                                                          //               fontSize:
-                                                          //                   20,
-                                                          //               fontWeight:
-                                                          //                   FontWeight.bold),
-                                                          //         )
-                                                          //       ],
-                                                          //     ),
-                                                          //     Expanded(
-                                                          //       child: Text(
-                                                          //         "คอมพิวเตอร์",
-                                                          //         style: TextStyle(
-                                                          //             color: Colors
-                                                          //                 .black,
-                                                          //             fontSize:
-                                                          //                 20),
-                                                          //         maxLines: 1,
-                                                          //         overflow:
-                                                          //             TextOverflow
-                                                          //                 .ellipsis,
-                                                          //       ),
-                                                          //     )
-                                                          //   ],
-                                                          // ),
+                                                         
                                                         ],
                                                       ),
                                                     ),
@@ -316,39 +186,25 @@ class _ProfileUserState extends State<ProfileUser> {
                                                   child: Container(
                                                     child: CircleAvatar(
                                                         radius: 70,
-                                                        backgroundImage: NetworkImage(documentSnapshot['imageUrl'])),
+                                                        backgroundImage: NetworkImage(FirebaseAuth.instance.currentUser!.photoURL!, scale: 1.0)),
                                                   ),
                                                 ),
                                               ),
-                                              // Positioned(
-                                              //   top: 0,
-                                              //   left: 150,
-                                              //   right: 0,
-                                              //   bottom: 10,
-                                              //   child: Center(
-                                              //     child: Container(
-                                              //       decoration: BoxDecoration(
-                                              //         shape: BoxShape.circle,
-                                              //         color: Colors.yellow,
-                                              //       ),
-                                              //       child: IconButton(
-                                              //         icon: Icon(Icons.add_a_photo), onPressed: () {  },)
-                                              //     ),
-                                              //   ),
-                                              // ),
                                               
-                                            ],
-                                          );
-                                        }),
+                                            ]
+                                              );
+                                            }
+                                        )
                                       )
-                                    ],
-                                  ),
-                                ),
-                              );
-                            });
-                      } else {
-                        return Center(child: CircularProgressIndicator());
-                      }
-                    }))));
-  }
-}
+                                            ],
+                                  )
+                                )
+                )
+            )
+        )
+                                          );
+                                        }
+                            
+         
+                            }
+                  

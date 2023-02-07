@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:my_project/models/question.dart';
+import 'package:my_project/views/views_teachers/correctAnswer.dart';
 
 class QuestionQuiz extends StatefulWidget {
   QuestionQuiz(
@@ -13,7 +14,8 @@ class QuestionQuiz extends StatefulWidget {
       required this.option3,
       required this.option4,
       super.key,
-      required this.quizId});
+      required this.quizId,
+      required this.questionId});
 
   String? question;
   String? option1;
@@ -21,12 +23,15 @@ class QuestionQuiz extends StatefulWidget {
   String? option3;
   String? option4;
   final String quizId;
-
+  final String questionId;
+  
   @override
   State<QuestionQuiz> createState() => _QuestionQuizState();
 }
 
 class _QuestionQuizState extends State<QuestionQuiz> {
+  List<String> popList = ["แก้ไข", "ลบ"];
+
   Future<void> deleteQuestion(id) async {
     await FirebaseFirestore.instance
         .collection('quizs')
@@ -92,83 +97,114 @@ class _QuestionQuizState extends State<QuestionQuiz> {
                                         SizedBox(
                                           width: 10,
                                         ),
-                                        Row(
-                                          children: [
-                                            // IconButton(onPressed: (){}, icon: Icon(Icons.edit)),
-                                            IconButton(
-                                                onPressed: () {
-                                                  showDialog(
-                                                      context: context,
-                                                      builder: (_) {
-                                                        return Dialog(
-                                                          child: Container(
-                                                              margin: EdgeInsets
-                                                                  .all(20),
-                                                              height: 150,
-                                                              width: 200,
-                                                              child: Column(
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .center,
-                                                                children: [
-                                                                  Text(
-                                                                    'ต้องการลบโจทย์หรือไม่ ??',
-                                                                    style: TextStyle(
-                                                                        fontSize:
-                                                                            20,
-                                                                        fontWeight:
-                                                                            FontWeight.bold),
-                                                                  ),
-                                                                  SizedBox(
-                                                                    height: 20,
-                                                                  ),
-                                                                  // MouseRegion(
-                                                                  //   cursor: SystemMouseCursors.click,
-                                                                  //   child:
-                                                                  Row(
-                                                                    mainAxisAlignment:
-                                                                        MainAxisAlignment
-                                                                            .center,
-                                                                    children: [
-                                                                      ElevatedButton(
-                                                                          style: ElevatedButton.styleFrom(
-                                                                              backgroundColor: Colors
-                                                                                  .grey),
-                                                                          onPressed:
-                                                                              () {
-                                                                            Navigator.pop(context);
-                                                                          },
-                                                                          child:
-                                                                              Text('ยกเลิก')),
-                                                                      SizedBox(
-                                                                        width:
-                                                                            50,
-                                                                      ),
-                                                                      ElevatedButton(
-                                                                          style: ElevatedButton.styleFrom(
-                                                                              backgroundColor: Colors
-                                                                                  .red),
-                                                                          onPressed:
-                                                                              () {
-                                                                            deleteQuestion(documentSnapshot.id);
-                                                                            Navigator.pop(context);
-                                                                          },
-                                                                          child:
-                                                                              Text('ลบ'))
-                                                                    ],
-                                                                  ),
-                                                                  // )
-                                                                ],
-                                                              )),
-                                                        );
-                                                      });
-                                                },
-                                                icon: Icon(
-                                                  Icons.delete,
-                                                  color: Colors.red,
-                                                )),
-                                          ],
-                                        )
+                                        PopupMenuButton(onSelected: (value) {
+                                          if (value == "แก้ไข") {
+                                            showDialog(
+                                                context: context,
+                                                builder: (_) {
+                                                  return Dialog(
+                                                    child: Container(
+                                                        margin:
+                                                            EdgeInsets.all(20),
+                                                        height: 150,
+                                                        width: 300,
+                                                        child: Column(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .center,
+                                                          children: [
+                                                            Text(
+                                                              'แก้ไขโจทย์',
+                                                              style: TextStyle(
+                                                                  fontSize: 16,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold),
+                                                            ),
+
+                                                            // )
+                                                          ],
+                                                        )),
+                                                  );
+                                                });
+                                          } else {
+                                            showDialog(
+                                                context: context,
+                                                builder: (_) {
+                                                  return Dialog(
+                                                    child: Container(
+                                                        margin:
+                                                            EdgeInsets.all(20),
+                                                        height: 150,
+                                                        width: 200,
+                                                        child: Column(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .center,
+                                                          children: [
+                                                            Text(
+                                                              'ต้องการลบโจทย์หรือไม่ ??',
+                                                              style: TextStyle(
+                                                                  fontSize: 20,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold),
+                                                            ),
+                                                            SizedBox(
+                                                              height: 20,
+                                                            ),
+                                                            // MouseRegion(
+                                                            //   cursor: SystemMouseCursors.click,
+                                                            //   child:
+                                                            Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .center,
+                                                              children: [
+                                                                ElevatedButton(
+                                                                    style: ElevatedButton.styleFrom(
+                                                                        backgroundColor:
+                                                                            Colors
+                                                                                .grey),
+                                                                    onPressed:
+                                                                        () {
+                                                                      Navigator.pop(
+                                                                          context);
+                                                                    },
+                                                                    child: Text(
+                                                                        'ยกเลิก')),
+                                                                SizedBox(
+                                                                  width: 50,
+                                                                ),
+                                                                ElevatedButton(
+                                                                    style: ElevatedButton.styleFrom(
+                                                                        backgroundColor:
+                                                                            Colors
+                                                                                .red),
+                                                                    onPressed:
+                                                                        () {
+                                                                      deleteQuestion(
+                                                                          documentSnapshot
+                                                                              .id);
+                                                                      Navigator.pop(
+                                                                          context);
+                                                                    },
+                                                                    child: Text(
+                                                                        'ลบ'))
+                                                              ],
+                                                            ),
+                                                            // )
+                                                          ],
+                                                        )),
+                                                  );
+                                                });
+                                          }
+                                        }, itemBuilder: (context) {
+                                          return popList
+                                              .map((e) => PopupMenuItem(
+                                                  value: e, child: Text(e)))
+                                              .toList();
+                                        }),
                                       ],
                                     ),
                                     SizedBox(
@@ -199,18 +235,30 @@ class _QuestionQuizState extends State<QuestionQuiz> {
                                     SizedBox(
                                       height: 10,
                                     ),
-                                    // Container(child: Image.network(documentSnapshot['imageUrlQs'])),
+                                    // Container(
+                                    //   child: documentSnapshot['imageUrl'] != null
+                                    // ? Image.network(
+                                    //   documentSnapshot['imageUrl'],)
+                                    // : Container() ),
                                     SizedBox(
                                       height: 10,
                                     ),
-                                    Answer(quizId: widget.quizId, questionId: documentSnapshot['questionId'] ,),
+                                    Answer(
+                                        quizId: widget.quizId,
+                                        questionId: documentSnapshot.id),
+                                    // correctAnswer(quizId: widget.quizId, questionId: widget.questionId,)
                                   ],
                                 ),
-                                subtitle: 
-                                Row(
+                                subtitle: Row(
                                   children: [
-                                    Text('type-quizs : ', style: TextStyle(color: Colors.red),),
-                                    Text(documentSnapshot['type_quiz'], style: TextStyle(color: Colors.red),),
+                                    Text(
+                                      'type-quizs : ',
+                                      style: TextStyle(color: Colors.red),
+                                    ),
+                                    Text(
+                                      documentSnapshot['type_quiz'],
+                                      style: TextStyle(color: Colors.red),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -220,7 +268,10 @@ class _QuestionQuizState extends State<QuestionQuiz> {
                   }),
             );
           } else {
-            return Scaffold(body: Center(child: CircularProgressIndicator()));
+            // return Scaffold(body: Center(child: CircularProgressIndicator()));
+            return Center(
+              child: CircularProgressIndicator(),
+            );
           }
         });
   }
@@ -244,102 +295,52 @@ class Answer extends StatefulWidget {
 }
 
 class _AnswerState extends State<Answer> {
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-      stream: FirebaseFirestore
-        .instance
-        .collection('quizs')
-        .doc(widget.quizId)
-        .collection('questions')
-        .doc(widget.questionId)
-        .collection('answers')
-        // .where("identifier1", isEqualTo: '1')
-        .snapshots(),
-      builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-        if(snapshot.hasData){
-          return ListView.builder(
-            itemCount: snapshot.data!.docs.length,
-            shrinkWrap: true,
-            itemBuilder: (context, index) {
-              final DocumentSnapshot documentSnapshot =
-                        snapshot.data!.docs[index];
-      return Container(
-        margin: EdgeInsets.all(10),
-        child: Row(
-            children: [
-              Text('คำตอบที่ ${index + 1} :'),
-              SizedBox(
-                width: 10,
-              ),
-              Icon(Icons.circle),
-              // StreamBuilder(
-              //   stream: FirebaseFirestore.instance
-              //     .collection('quizs')
-              //     .doc(widget.quizId)
-              //     .collection("questions")
-              //     // .where('quizId')
-              //     .snapshots(),
-              //   // initialData: initialData,
-              //   builder: (BuildContext context, AsyncSnapshot snapshot) {
-              //     if(snapshot.hasData){
-              //       if(documentSnapshot[''] == null){
-              //         return Icon(Icons.camera);
-              //       }
-              //     }
-              //     return CircularProgressIndicator();
-              //   },
-              // ),
-              // correctAnswer(quizId: widget.quizId,),
-              SizedBox(
-                width: 10,
-              ),
-              Text(documentSnapshot['answer'],),
-            ],
-          ),
-      );
-            });
-        }
-       return CircularProgressIndicator();
-      }
-    );
+        stream: FirebaseFirestore.instance
+            .collection('quizs')
+            .doc(widget.quizId)
+            .collection('questions')
+            .doc(widget.questionId)
+            .collection('answers')
+            // .where("identifier1", isEqualTo: '1')
+            .snapshots(),
+        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (snapshot.hasData) {
+            return ListView.builder(
+                itemCount: snapshot.data!.docs.length,
+                shrinkWrap: true,
+                itemBuilder: (context, index) {
+                  final DocumentSnapshot documentSnapshot =
+                      snapshot.data!.docs[index];
+                  return Container(
+                    margin: EdgeInsets.all(10),
+                    child: Row(
+                      children: [
+                        Text('คำตอบที่ ${index + 1} :'),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        // Icon(Icons.circle),
+                        documentSnapshot['identifier'] == '1' ? Icon(Icons.circle, color: Colors.green,) : Icon(Icons.circle , color: Colors.red,),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Flexible(
+                          child: Text(
+                            documentSnapshot['answer'],
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 3,
+                          ),
+                        )
+                      ],
+                    ),
+                  );
+                });
+          }
+          return Center(child: Center(child: CircularProgressIndicator()));
+        });
   }
 }
-
-// class correctAnswer extends StatefulWidget {
-//    final String quizId;
-//   const correctAnswer({super.key, required this.quizId});
-
-//   @override
-//   State<correctAnswer> createState() => _correctAnswerState();
-// }
-
-// class _correctAnswerState extends State<correctAnswer> {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Row(
-//       mainAxisAlignment: MainAxisAlignment.start,
-//       children: [
-//         StreamBuilder<QuerySnapshot<Object>>(
-//                 stream: FirebaseFirestore.instance
-//                   .collection('quizs')
-//                   .doc(widget.quizId)
-//                   .collection("questions")
-//                   // .where('quizId')
-//                   .snapshots(),
-//                 // initialData: initialData,
-//                 builder: (BuildContext context, AsyncSnapshot snapshot,) {
-//                   // final DocumentSnapshot documentSnapshot =
-//                   //       snapshot.data!.docs[index];
-//                   if(snapshot.hasData){
-//                     if(snapshot.data!.docs['questions'] == 'w'){
-//                       return Icon(Icons.camera);
-//                     }
-//                   }
-//                   return CircularProgressIndicator();
-//                 },
-//               ),
-//       ],
-//     );
-//   }
-// }

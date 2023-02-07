@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:my_project/compornent/appBarActionItems.dart';
@@ -54,8 +55,13 @@ class _HomePageState extends State<HomePage> {
          drawer: sidemenu(),
          appBar: AppBar(
           actions: [
-            IconButton(onPressed: (){},
-            icon: Icon(Icons.help))
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: 20),
+              child: CircleAvatar(
+                backgroundImage: NetworkImage(FirebaseAuth.instance.currentUser!.photoURL!),
+              ))
+            // IconButton(onPressed: (){},
+            // icon: Icon(Icons.help))
           ],
           elevation: 0,
           centerTitle: true,

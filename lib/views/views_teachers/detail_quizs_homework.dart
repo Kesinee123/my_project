@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 
-class detial_Quizs_homepage extends StatefulWidget {
-  const detial_Quizs_homepage({super.key});
+class DetialQuizs_Homework extends StatefulWidget {
+  const DetialQuizs_Homework({super.key});
 
   @override
-  State<detial_Quizs_homepage> createState() => _detial_Quizs_homepageState();
+  State<DetialQuizs_Homework> createState() => _DetialQuizs_HomeworkState();
 }
 
-class _detial_Quizs_homepageState extends State<detial_Quizs_homepage> {
+class _DetialQuizs_HomeworkState extends State<DetialQuizs_Homework> {
    @override
   Widget build(BuildContext context) {
 

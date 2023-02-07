@@ -6,9 +6,10 @@ import 'package:my_project/views/views_teachers/create_questions2.dart';
 import 'package:my_project/views/views_teachers/create_questions3.dart';
 
 class AddQuiz extends StatefulWidget {
-  const AddQuiz({super.key, required this.quizId});
+  const AddQuiz({super.key, required this.quizId, required this.questionId});
 
   final String quizId;
+  final String questionId;
 
   @override
   State<AddQuiz> createState() => _AddQuizState();
@@ -54,7 +55,7 @@ class _AddQuizState extends State<AddQuiz> {
                                   backgroundColor: Colors.yellowAccent
                                 ),
                                 onPressed: (() {
-                                  Navigator.push(context, MaterialPageRoute(builder: (context) => CreateQuestion(quizId: widget.quizId ,) ,) );
+                                  Navigator.push(context, MaterialPageRoute(builder: (context) => CreateQuestion(quizId: widget.quizId, questionId: widget.questionId ,) ,) );
                                 }),
                                  child: Icon(Icons.check_circle_outline, color: Colors.black,size: 50,)
                                  
@@ -86,7 +87,7 @@ class _AddQuizState extends State<AddQuiz> {
                                   backgroundColor: Colors.yellowAccent
                                 ),
                                 onPressed: (() {
-                                  Navigator.push(context, MaterialPageRoute(builder: (context) => CreateQuestion2(quizId: widget.quizId,) ,) );
+                                  Navigator.push(context, MaterialPageRoute(builder: (context) => CreateQuestion2(quizId: widget.quizId, questionId: widget.questionId,) ,) );
                                 }),
                                  child: Icon(Icons.checklist_outlined, color: Colors.black,size: 50,)
                               ),
@@ -117,7 +118,7 @@ class _AddQuizState extends State<AddQuiz> {
                                   backgroundColor: Colors.yellowAccent
                                 ),
                                 onPressed: (() {
-                                  Navigator.push(context, MaterialPageRoute(builder: (context) => CreateQuestion3(quizId: widget.quizId,) ,) );
+                                  Navigator.push(context, MaterialPageRoute(builder: (context) => CreateQuestion3(quizId: widget.quizId, questionId: widget.questionId,) ,) );
                                 }),
                                  child: Icon(Icons.create_rounded,color: Colors.black,size: 50,)
                               ),

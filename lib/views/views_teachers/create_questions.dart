@@ -17,9 +17,10 @@ import 'package:my_project/views/views_teachers/homepage.dart';
 class CreateQuestion extends StatefulWidget {
   const CreateQuestion({
     super.key,
-    required this.quizId,
+    required this.quizId, required this.questionId,
   });
   final String quizId;
+  final String questionId;
 
   @override
   State<CreateQuestion> createState() => _CreateQuestionState();
@@ -40,74 +41,75 @@ class _CreateQuestionState extends State<CreateQuestion> {
     String time = DateFormat.Hm().format(DateTime.now());
 
     final _imageUrlQs = await uploadImage(_imageQs!);
-    DocumentReference questionRadio = await FirebaseFirestore
+    DocumentReference questionDocumentReference = await FirebaseFirestore
         .instance
         .collection('quizs')
         .doc(widget.quizId)
         .collection('questions')
         .add({
       'questions': question,
-      'imageUrl' : _imageUrlQs ? null : null ,
+      'imageUrl' : _imageUrlQs,
       // 'option1': option1,
       // 'option2': option2,
       // 'option3': option3,
       // 'option4': option4,
       'createdAt': '$date $time',
       'quizId': widget.quizId,
-      'type_quiz': 'Radio',
+      'type_quiz': 'เลือกได้ 1 คำตอบ',
       "correct_answer" : correct_answer,
     });
-    await questionRadio.update({
-      "questionId": questionRadio.id,
+    await questionDocumentReference.update({
+      "questionId": questionDocumentReference.id,
     });
+    
 
     DocumentReference questionAnwer1 = await FirebaseFirestore
         .instance
         .collection('quizs')
         .doc(widget.quizId)
         .collection('questions')
-        .doc(questionRadio.id)
+        .doc(questionDocumentReference.id)
         .collection('answers')
         .add({
       'answer': option1,
       'identifier': '1',
-      "questionId": questionRadio.id,
+      "questionId": questionDocumentReference.id,
     });
     DocumentReference questionAnwer2 = await FirebaseFirestore
         .instance
         .collection('quizs')
         .doc(widget.quizId)
         .collection('questions')
-        .doc(questionRadio.id)
+        .doc(questionDocumentReference.id)
         .collection('answers')
         .add({
       'answer': option2,
       'identifier': '2',
-      "questionId": questionRadio.id,
+      "questionId": questionDocumentReference.id,
     });
     DocumentReference questionAnwer3 = await FirebaseFirestore
         .instance
         .collection('quizs')
         .doc(widget.quizId)
         .collection('questions')
-        .doc(questionRadio.id)
+        .doc(questionDocumentReference.id)
         .collection('answers')
         .add({
       'answer': option3,
       'identifier': '3',
-      "questionId": questionRadio.id,
+      "questionId": questionDocumentReference.id,
     });
     DocumentReference questionAnwer4 = await FirebaseFirestore
         .instance
         .collection('quizs')
         .doc(widget.quizId)
         .collection('questions')
-        .doc(questionRadio.id)
+        .doc(questionDocumentReference.id)
         .collection('answers')
         .add({
       'answer': option4,
       'identifier': '4',
-      "questionId": questionRadio.id,
+      "questionId": questionDocumentReference.id,
     });
   }
 
@@ -251,6 +253,8 @@ class _CreateQuestionState extends State<CreateQuestion> {
                       title: Container(
                         // color: Colors.red,
                         child: TextFormField(
+                          minLines: 1,
+                          maxLines: 3,
                           validator: ((val) =>
                               val!.isEmpty ? "กรอกคำตอบ" : null),
                           onChanged: (value) {
@@ -278,6 +282,8 @@ class _CreateQuestionState extends State<CreateQuestion> {
                       });
                     },
                     title: TextFormField(
+                       minLines: 1,
+                        maxLines: 3,
                       validator: ((val) => val!.isEmpty ? "กรอกคำตอบ" : null),
                       onChanged: (value) {
                         setState(() {
@@ -304,6 +310,8 @@ class _CreateQuestionState extends State<CreateQuestion> {
                       });
                     },
                     title: TextFormField(
+                       minLines: 1,
+                          maxLines: 3,
                       validator: ((val) => val!.isEmpty ? "กรอกคำตอบ" : null),
                       onChanged: (value) {
                         setState(() {
@@ -330,6 +338,8 @@ class _CreateQuestionState extends State<CreateQuestion> {
                       });
                     },
                     title: TextFormField(
+                       minLines: 1,
+                          maxLines: 3,
                       validator: ((val) => val!.isEmpty ? "กรอกคำตอบ" : null),
                       onChanged: (value) {
                         setState(() {
@@ -354,7 +364,7 @@ class _CreateQuestionState extends State<CreateQuestion> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) => DetailsQuizs(
-                                        quizId: widget.quizId,
+                                        quizId: widget.quizId, questionId: widget.questionId ,
                                       )));
                         },
                         child: Text('ยกเลิก')),
@@ -365,30 +375,31 @@ class _CreateQuestionState extends State<CreateQuestion> {
                         style: ElevatedButton.styleFrom(
                             primary: Colors.deepPurple),
                         onPressed: () {
-                          if (_formKey.currentState!.validate()) {
-                            if(correct_answer == 0){
-                              //  showSnackbar(
-                              //   context, Colors.red, "โปรดเลือกตอบที่ถูกต้อง");
-                              normalDialog(context, 'โปรดเลือกคำตอบที่ถูกต้อง');
-                              return;
-                            }else if (question == null){
-                              showSnackbar(
-                                context, Colors.red, "สร้างโจทย์ไม่คำถามสำเร็จ!!");
-                            }
-                            try{
-                               createQuestionRadio(question,);
-                               showSnackbar(
-                                context, Colors.green, "สร้างโจทย์คำถามสำเร็จ");
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => DetailsQuizs(
-                                          quizId: widget.quizId,
-                                        )));
-                            }catch (e){
-                              showSnackbar(context, Colors.red, e.toString() );
-                            }
-                          }
+                          print('โจทย์ : $question , รูปภาพ : $_imageUrlQs');
+                          // if (_formKey.currentState!.validate()) {
+                          //   if(correct_answer == 0){
+                          //     //  showSnackbar(
+                          //     //   context, Colors.red, "โปรดเลือกตอบที่ถูกต้อง");
+                          //     normalDialog(context, 'โปรดเลือกคำตอบที่ถูกต้อง');
+                          //     return;
+                          //   } else if (question == null){
+                          //     showSnackbar(
+                          //       context, Colors.red, "สร้างโจทย์ไม่คำถามสำเร็จ!!");
+                          //   }
+                          //   try{
+                          //      createQuestionRadio(question,);
+                          //      showSnackbar(
+                          //       context, Colors.green, "สร้างโจทย์คำถามสำเร็จ");
+                          //   Navigator.push(
+                          //       context,
+                          //       MaterialPageRoute(
+                          //           builder: (context) => DetailsQuizs(
+                          //                 quizId: widget.quizId, questionId: widget.questionId,
+                          //               )));
+                          //   }catch (e){
+                          //     showSnackbar(context, Colors.red, e.toString() );
+                          //   }
+                          // }
                         },
                         child: Text('บันทึกโจทย์')),
                   ],

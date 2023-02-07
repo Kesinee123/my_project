@@ -14,8 +14,9 @@ import 'package:intl/intl.dart';
 class CreateQuestion3 extends StatefulWidget {
 
   final String quizId;
+  final String questionId;
 
-const  CreateQuestion3({super.key, required this.quizId});
+const  CreateQuestion3({super.key, required this.quizId, required this.questionId});
 
   @override
   State<CreateQuestion3> createState() => _CreateQuestion3State();
@@ -40,7 +41,7 @@ class _CreateQuestion3State extends State<CreateQuestion3> {
       'questions': question,
       'createdAt': '$date $time',
       'quizId': widget.quizId,
-      'type_quiz': 'Write',
+      'type_quiz': 'แบบเขียน',
       // "correct_answer" : correct_answer
     });
     await questionWrite.update({
@@ -55,7 +56,8 @@ class _CreateQuestion3State extends State<CreateQuestion3> {
         .collection('answers')
         .add({
       'answer': option1,
-      // 'identifier': '1',
+      // "correct_answer" : '1',
+      'identifier': '1',
       "questionId": questionWrite.id,
     });
 }
@@ -160,7 +162,7 @@ class _CreateQuestion3State extends State<CreateQuestion3> {
                                 showSnackbar(
                                 context, Colors.green, "สร้างโจทย์คำถามสำเร็จ");
                                  Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => DetailsQuizs(quizId: widget.quizId,)));
+                            MaterialPageRoute(builder: (context) => DetailsQuizs(quizId: widget.quizId, questionId: widget.questionId,)));
                               }
                               
                             },

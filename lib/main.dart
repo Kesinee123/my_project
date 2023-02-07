@@ -1,8 +1,13 @@
+import 'dart:math';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:my_project/main_page.dart';
+import 'package:my_project/views/first_page.dart';
 import 'package:my_project/views/signin.dart';
+import 'package:my_project/views/views_teachers/listName_Student.dart';
+import 'package:my_project/views/views_teachers/detail_quizs_time.dart';
+import 'package:my_project/views/views_teachers/ranking_Student.dart';
 
 
 void main() async {
@@ -31,7 +36,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MainPage()
+      home: firstPage()
     );
   }
 }

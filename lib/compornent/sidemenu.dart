@@ -56,8 +56,9 @@ class sidemenu extends StatelessWidget {
                       Navigator.pop(context);
                     },
                     icon: Icon(Icons.cancel, color: Colors.red,)),
-                    IconButton(onPressed: (){
-                       signOut(context);
+                    IconButton(onPressed: () async {
+                      await FirebaseAuth.instance.signOut().then((value) => 
+                      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => SignIn())));
                     },
                     icon: Icon(Icons.exit_to_app, color: Colors.green,)),
                   ],
@@ -73,8 +74,8 @@ class sidemenu extends StatelessWidget {
       ),
     );
   }
-  Future<void> signOut(BuildContext context) async {
-       await FirebaseAuth.instance.signOut();
-       Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => SignIn()));
-    }
+  // Future<void> signOut(BuildContext context) async {
+  //      await FirebaseAuth.instance.signOut();
+  //      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => SignIn()));
+  //   }
 }

@@ -4,11 +4,11 @@ import 'dart:convert';
 class UserDetials {
   String? displayName;
   String? email;
-  String? photoURL;
+  // String? photoURL;
   UserDetials({
     this.displayName,
     this.email,
-    this.photoURL,
+    // this.photoURL,
   });
 
   UserDetials copyWith({
@@ -19,7 +19,7 @@ class UserDetials {
     return UserDetials(
       displayName: displayName ?? this.displayName,
       email: email ?? this.email,
-      photoURL: photoURL ?? this.photoURL,
+      // photoURL: photoURL ?? this.photoURL,
     );
   }
 
@@ -27,7 +27,7 @@ class UserDetials {
     return <String, dynamic>{
       'displayName': displayName,
       'email': email,
-      'photoURL': photoURL,
+      // 'photoURL': photoURL,
     };
   }
 
@@ -35,7 +35,7 @@ class UserDetials {
     return UserDetials(
       displayName: map['displayName'] != null ? map['displayName'] as String : null,
       email: map['email'] != null ? map['email'] as String : null,
-      photoURL: map['photoURL'] != null ? map['photoURL'] as String : null,
+      // photoURL: map['photoURL'] != null ? map['photoURL'] as String : null,
     );
   }
 
@@ -44,7 +44,7 @@ class UserDetials {
   factory UserDetials.fromJson(String source) => UserDetials.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
-  String toString() => 'UserDetials(displayName: $displayName, email: $email, photoURL: $photoURL)';
+  String toString() => 'UserDetials(displayName: $displayName, email: $email)';
 
   @override
   bool operator ==(covariant UserDetials other) {
@@ -52,10 +52,9 @@ class UserDetials {
   
     return 
       other.displayName == displayName &&
-      other.email == email &&
-      other.photoURL == photoURL;
+      other.email == email ;
   }
 
   @override
-  int get hashCode => displayName.hashCode ^ email.hashCode ^ photoURL.hashCode;
+  int get hashCode => displayName.hashCode ^ email.hashCode;
 }
