@@ -1,18 +1,21 @@
 import 'dart:math';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:my_project/views/views_students/codePage.dart';
 import 'package:my_project/views/views_teachers/add_quizs.dart';
 import 'package:my_project/views/views_teachers/create_questions.dart';
+import 'package:my_project/views/views_teachers/detail_quiz_code.dart';
 import 'package:my_project/views/views_teachers/detail_quizs_time.dart';
 import 'package:my_project/views/views_teachers/detail_quizs_homework.dart';
 import 'package:my_project/views/views_teachers/homepage.dart';
 import 'package:my_project/views/views_teachers/listName_Student.dart';
+import 'package:my_project/views/views_teachers/path_constant.dart';
 import 'package:my_project/views/views_teachers/questionQuiz.dart';
 
 class DetailsQuizs extends StatefulWidget {
@@ -28,7 +31,7 @@ class DetailsQuizs extends StatefulWidget {
 
 class _DetailsQuizsState extends State<DetailsQuizs> {
   final isDialOpen = ValueNotifier(false);
-  DateTime dateTime = DateTime(2022, 12, 24, 5, 30);
+  // DateTime dateTime = DateTime(2022, 12, 24, 5, 30);
 
   // final controller = TextEditingController();
   late TextEditingController controller;
@@ -53,8 +56,8 @@ class _DetailsQuizsState extends State<DetailsQuizs> {
     super.dispose();
   }
 
-    randomString() {
-    if ( controller.text == null) {
+  randomString() {
+    if (controller.text == null) {
       return '';
     } else {
       return '....';
@@ -69,8 +72,61 @@ class _DetailsQuizsState extends State<DetailsQuizs> {
 
   @override
   Widget build(BuildContext context) {
-    final hours = dateTime.hour.toString().padLeft(2, '0');
-    final minutes = dateTime.minute.toString().padLeft(2, '0');
+    // final hours = dateTime.hour.toString().padLeft(2, '0');
+    // final minutes = dateTime.minute.toString().padLeft(2, '0');
+
+    String? _linkMessage;
+    bool _isCreatingLink = false;
+
+    FirebaseDynamicLinks dynamicLinks = FirebaseDynamicLinks.instance;
+
+    Future<void> initDynamicLinks(BuildContext context) async {
+  dynamicLinks.onLink.listen((dynamicLinkData) {
+    final Uri uri = dynamicLinkData.link;
+    final queryParams = uri.queryParameters;
+    // เปิดหน้าใหม่ภายในแอปพลิเคชัน
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => LetPage()),
+    );
+  }).onError((error) {
+    print('onLink error');
+    print(error.message);
+  });
+}
+
+    @override
+    void initState() {
+      super.initState();
+      initDynamicLinks(context);
+    }
+
+    Future<void> _createDynamicLink(bool short, String link) async {
+      setState(() {
+        _isCreatingLink = true;
+      });
+      final DynamicLinkParameters parameters = DynamicLinkParameters(
+        link: Uri.parse(kUiPrefix + link),
+        uriPrefix: kUiPrefix,
+        androidParameters: AndroidParameters(
+            packageName: 'com.example.my_project', minimumVersion: 125),
+      );
+
+      Uri url;
+      if (short) {
+        final ShortDynamicLink shortlink =
+            await dynamicLinks.buildShortLink(parameters);
+        url = shortlink.shortUrl;
+      } else {
+        url = await dynamicLinks.buildLink(parameters);
+      }
+
+      setState(() {
+        _isCreatingLink = false;
+        _linkMessage = url.toString();
+      });
+    }
+
     Size size = MediaQuery.of(context).size;
     return WillPopScope(
       onWillPop: () async {
@@ -115,431 +171,167 @@ class _DetailsQuizsState extends State<DetailsQuizs> {
             ],
           ),
           body: SingleChildScrollView(
-            child: FutureBuilder(
-                future: FirebaseFirestore.instance
-                    .collection('quizs')
-                    .doc(widget.quizId)
-                    .get(),
-                builder: (context, AsyncSnapshot snapshot) {
-                  if (snapshot.hasError) {
-                    return Scaffold(
-                      body: Center(
-                        child: Text('Error: ${snapshot.error}'),
-                      ),
-                    );
-                  }
-                  if (snapshot.connectionState == ConnectionState.done) {
-                    Map<String, dynamic> documentData = snapshot.data!.data();
-                    return Column(
-                      children: [
-                        SizedBox(
-                          height: size.height,
-                          child: Stack(children: [
-                            QuestionQuiz(
-                              question: question,
-                              option1: option1,
-                              option2: option2,
-                              option3: option3,
-                              option4: option4,
-                              quizId: widget.quizId,
-                              questionId: widget.questionId,
-                            ),
-                            Padding(
-                              padding: EdgeInsets.all(20),
-                              child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+              child: SafeArea(
+                  child: SingleChildScrollView(
+            child: Column(children: [
+              SizedBox(
+                height: size.height,
+                child: Stack(children: [
+                  Center(
+                      child: Container(
+                    width: 800,
+                    margin: EdgeInsets.only(top: 200),
+                    height: 600,
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(24),
+                            topRight: Radius.circular(24))),
+                    child: QuestionQuiz(
+                      question: question,
+                      option1: option1,
+                      option2: option2,
+                      option3: option3,
+                      option4: option4,
+                      quizId: widget.quizId,
+                      questionId: widget.questionId,
+                    ),
+                  )),
+                  Container(
+                    margin: EdgeInsets.all(20),
+                    child: FutureBuilder(
+                        future: FirebaseFirestore.instance
+                            .collection('quizs')
+                            .doc(widget.quizId)
+                            .get(),
+                        builder: (context, AsyncSnapshot snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.done) {
+                            Map<String, dynamic> documentData =
+                                snapshot.data!.data();
+                            return Column(
+                              children: [
+                                Row(
                                   children: [
-                                    Row(
-                                      children: [
-                                        Text(
-                                          "ชื่อแบบทดสอบ :",
-                                          style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                        SizedBox(
-                                          width: 5,
-                                        ),
-                                        Text(
-                                          "${documentData['quizTitle']}",
-                                          style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                      ],
+                                    Text(
+                                      "ชื่อแบบทดสอบ :",
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold),
                                     ),
                                     SizedBox(
-                                      height: 10,
+                                      width: 5,
                                     ),
-                                    Row(
-                                      children: [
-                                        Text(
-                                          "ชื่อวิชา : ",
-                                          style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 16),
-                                        ),
-                                        SizedBox(
-                                          width: 5,
-                                        ),
-                                        Text(
-                                          "${documentData['quizSubject']}",
-                                          style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 16),
-                                        ),
-                                        SizedBox(
-                                          width: 10,
-                                        ),
-                                      ],
+                                    Text(
+                                      "${documentData['quizTitle']}",
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold),
                                     ),
-                                    // Text(
-                                    //   "ID : ${widget.quizId}",
-                                    //   style: TextStyle(
-                                    //       color: Colors.black,
-                                    //       fontSize: 16,
-                                    //       ),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Row(
+                                  children: [
+                                    Text(
+                                      "ชื่อวิชา : ",
+                                      style: TextStyle(
+                                          color: Colors.black, fontSize: 16),
+                                    ),
+                                    SizedBox(
+                                      width: 5,
+                                    ),
+                                    Text(
+                                      "${documentData['quizSubject']}",
+                                      style: TextStyle(
+                                          color: Colors.black, fontSize: 16),
+                                    ),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                  ],
+                                ),
+                                // SizedBox(
+                                //   height: 50,
+                                // ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                            primary: Colors.purpleAccent),
+                                        onPressed: () {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      DetialQuizs_Time(
+                                                        quizId: widget.quizId,
+                                                        questionId:
+                                                            widget.questionId,
+                                                      )));
+                                        },
+                                        child: Text('การบ้าน')),
+                                    // SizedBox(
+                                    //   width: 30,
                                     // ),
-
-                                    Center(
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.end,
-                                        children: [
-                                          Container(
-                                              height: 40,
-                                              child: ElevatedButton(
-                                                  style:
-                                                      ElevatedButton.styleFrom(
-                                                          primary: Colors
-                                                              .purpleAccent),
-                                                  onPressed: () {
-                                                    Navigator.push(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                            builder: (context) =>
-                                                                DetialQuizs_Time()));
-                                                    // showDialog(
-                                                    //     context: context,
-                                                    //     builder: (BuildContext
-                                                    //         context) {
-                                                    //       return AlertDialog(
-                                                    //         title: Column(
-                                                    //           children: [
-                                                    //             Text(
-                                                    //                 'กำหนดวันที่ส่งงาน'),
-                                                    //             SizedBox(
-                                                    //               height: 20,
-                                                    //             ),
-                                                    //             Row(
-                                                    //               children: [
-                                                    //                 Text(
-                                                    //                   'วันที่กำหนดส่ง',
-                                                    //                   style: TextStyle(
-                                                    //                       fontSize:
-                                                    //                           16),
-                                                    //                 ),
-                                                    //                 SizedBox(
-                                                    //                   width: 10,
-                                                    //                 ),
-                                                    //                 ElevatedButton(
-                                                    //                     onPressed:
-                                                    //                         () async {
-                                                    //                       final date =
-                                                    //                           await pickDate();
-                                                    //                       if (date ==
-                                                    //                           null)
-                                                    //                         return;
-
-                                                    //                       final newDateTime = DateTime(
-                                                    //                           dateTime.year,
-                                                    //                           dateTime.month,
-                                                    //                           dateTime.day,
-                                                    //                           dateTime.hour,
-                                                    //                           dateTime.minute);
-
-                                                    //                       setState(() =>
-                                                    //                           dateTime = date);
-                                                    //                     },
-                                                    //                     child: Text(
-                                                    //                         '${dateTime.year}/${dateTime.month}/${dateTime.day}')),
-                                                    //               ],
-                                                    //             ),
-                                                    //             SizedBox(
-                                                    //               height: 20,
-                                                    //             ),
-                                                    //             Row(
-                                                    //               children: [
-                                                    //                 Text(
-                                                    //                   'เวลากำหนดส่ง',
-                                                    //                   style: TextStyle(
-                                                    //                       fontSize:
-                                                    //                           16),
-                                                    //                 ),
-                                                    //                 SizedBox(
-                                                    //                   width: 10,
-                                                    //                 ),
-                                                    //                 ElevatedButton(
-                                                    //                     onPressed:
-                                                    //                         () async {
-                                                    //                       final time =
-                                                    //                           await pickTime();
-                                                    //                       if (time ==
-                                                    //                           null)
-                                                    //                         return;
-
-                                                    //                       final newDateTime = DateTime(
-                                                    //                           dateTime.year,
-                                                    //                           dateTime.month,
-                                                    //                           dateTime.day,
-                                                    //                           time.hour,
-                                                    //                           time.minute);
-                                                    //                       setState(() =>
-                                                    //                           dateTime = newDateTime);
-                                                    //                     },
-                                                    //                     child: Text(
-                                                    //                         '$hours:$minutes')),
-                                                    //               ],
-                                                    //             ),
-                                                    //             SizedBox(
-                                                    //               height: 20,
-                                                    //             ),
-                                                    //             Container(
-                                                    //               alignment:
-                                                    //                   Alignment
-                                                    //                       .centerRight,
-                                                    //               child:
-                                                    //                   TextButton(
-                                                    //                       onPressed:
-                                                    //                           () {
-                                                    //                         Navigator.push(context,
-                                                    //                             MaterialPageRoute(builder: (context) => DetialQuizs_Homework()));
-                                                    //                       },
-                                                    //                       child:
-                                                    //                           Text(
-                                                    //                         'Next',
-                                                    //                         style:
-                                                    //                             TextStyle(color: Colors.black, fontSize: 20),
-                                                    //                       )),
-                                                    //             )
-                                                    //           ],
-                                                    //         ),
-                                                    //       );
-                                                    //     });
-                                                  },
-                                                  child: Text('HomeWork'))),
-                                          SizedBox(
-                                            width: 10,
-                                          ),
-                                          Container(
-                                              height: 40,
-                                              child: ElevatedButton(
-                                                  style:
-                                                      ElevatedButton.styleFrom(
-                                                          primary: Colors
-                                                              .purpleAccent),
-                                                  onPressed: () {
-                                                    showDialog(
-                                                        context: context,
-                                                        builder: (BuildContext
-                                                            context) {
-                                                          // return DetialQuizs_Classroom();
-                                                          return AlertDialog(
-                                                              title: Container(
-                                                            // padding: EdgeInsets.all(20),
-                                                            child: Column(
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .start,
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .center,
-                                                              children: [
-                                                                Text(
-                                                                  'Random Code',
-                                                                  style:
-                                                                      TextStyle(
-                                                                    fontSize:
-                                                                        20,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                  ),
-                                                                ),
-                                                                SizedBox(
-                                                                  height: 12,
-                                                                ),
-                                                                TextField(
-                                                                  controller:
-                                                                      controller,
-                                                                  readOnly:
-                                                                      true,
-                                                                  enableInteractiveSelection:
-                                                                      false,
-                                                                  decoration: InputDecoration(
-                                                                      border: OutlineInputBorder(),
-                                                                      suffixIcon: IconButton(
-                                                                          onPressed: () {
-                                                                            final data =
-                                                                                ClipboardData(text: controller.text);
-                                                                            Clipboard.setData(data);
-                                                                            showSnackbar(
-                                                                                context,
-                                                                                Colors.green,
-                                                                                'Code Copied');
-                                                                            // final snackBar = SnackBar(content: Text('Code Copied' , style: TextStyle(
-                                                                            //   fontWeight: FontWeight.bold
-                                                                            // ),),
-                                                                            // backgroundColor: Colors.deepPurple,
-                                                                            // );
-                                                                          },
-                                                                          icon: Icon(Icons.copy))),
-                                                                ),
-                                                                SizedBox(
-                                                                  height: 12,
-                                                                ),
-                                                                buildButton(),
-                                                              ],
-                                                            ),
-                                                          ));
-                                                        });
-                                                  },
-                                                  child: Text('ClassRoom'))),
-                                          SizedBox(
-                                            width: 10,
-                                          ),
-                                          Container(
-                                            child: CircleAvatar(
-                                                radius: 60,
-                                                backgroundImage: NetworkImage(
-                                                  "${documentData['imageUrl']}",
-                                                )),
-                                          ),
-                                        ],
-                                      ),
+                                    ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                          primary: Colors.purpleAccent),
+                                      onPressed: !_isCreatingLink
+                                          ? () async {
+                                              await _createDynamicLink(
+                                                  true, kCodeLink);
+                                              String link = _linkMessage ??
+                                                  ''; // Ensure link is not null
+                                              // await FirebaseFirestore.instance
+                                              //     .collection('link')
+                                              //     .add({
+                                              //   "Link": link,
+                                              // });
+                                              Navigator.push(context, MaterialPageRoute(builder: (context) => DetialQuizs_Code(
+                                                quizId: widget.quizId, link: link.toString(),)));
+                                            }
+                                          : null,
+                                      child: Text('ห้องเรียน'),
                                     ),
-                                  ]),
-                            ),
-                          ]),
-                        )
-                      ],
-                    );
-                  }
-                  // return Scaffold(
-                  //   body: Center(
-                  //     child: CircularProgressIndicator(),
-                  //   ),
-                  // );
-                  return Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }),
-          ),
+                                    
+                                    CircleAvatar(
+                                        radius: 50,
+                                        backgroundColor: Colors.white,
+                                        backgroundImage: NetworkImage(
+                                          "${documentData['imageUrl']}",
+                                        ))
+                                  ],
+                                ),
+                              ],
+                            );
+                          }
+                          return CircularProgressIndicator();
+                        }),
+                  )
+                ]),
+              ),
+            ]),
+          ))),
         ),
       ),
     );
   }
 
-  // Classroom
-  Widget buildButton() {
-    final backgroundColor = MaterialStateColor.resolveWith(
-      (states) => states.contains(MaterialState.pressed)
-          ? Colors.deepPurple
-          : Colors.black,
-    );
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        ElevatedButton(
-            style: ButtonStyle(backgroundColor: backgroundColor),
-            onPressed: isButtonActive
-                ? () {
-                    final password = generatePassword();
-
-                    controller.text = password;
-                    setState(
-                      () => isButtonActive = false,
-                    );
-                  }
-                : null,
-            child: Text('Random')),
-        controller.text != '' ? ElevatedButton(
-            onPressed: () {
-              // if (controller.text != '') {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ListName_Student()));
-              // } else {
-              //   showSnackbar(context, Colors.red, 'กรุณากดปุ่ม Random');
-              // }
-            },
-            child: Text(
-              'Start',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            )) : Text('')
-      ]
-    );
+  void showSnackbar(context, color, message) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(
+        message,
+        style: TextStyle(fontSize: 14),
+      ),
+      backgroundColor: color,
+      duration: Duration(seconds: 5),
+    ));
   }
-
-  // Widget buildButton2() {
-  //   return ElevatedButton(onPressed: (){},
-  //   child: Text('Start', style: TextStyle(fontWeight: FontWeight.bold),));
-  // }
-
-  String generatePassword({
-    bool hasLetters = true,
-    bool hasNumber = true,
-  }) {
-    final length = 8;
-    final lettersLowercase = 'abcdefghijklmnopqrstuvwxyz';
-    final lettersUpercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    final number = '0123456789';
-
-    String chars = '';
-    if (hasLetters) chars += '$lettersUpercase$lettersLowercase';
-    if (hasNumber) chars += '$number';
-
-    return List.generate(length, (index) {
-      final indexRandom = Random.secure().nextInt(chars.length);
-
-      return chars[indexRandom];
-    }).join('');
-  }
-
-  // Homework
-  Future pickDateTime() async {
-    DateTime? date = await pickDate();
-    if (date == null) return;
-
-    TimeOfDay? time = await pickTime();
-    if (time == null) return;
-
-    final dateTime =
-        DateTime(date.year, date.month, date.day, time.hour, time.minute);
-    setState(() => this.dateTime = dateTime);
-  }
-
-  Future<DateTime?> pickDate() => showDatePicker(
-      context: context,
-      initialDate: dateTime,
-      firstDate: DateTime(1900),
-      lastDate: DateTime(2100));
-
-  Future<TimeOfDay?> pickTime() => showTimePicker(
-      context: context,
-      initialTime: TimeOfDay(hour: dateTime.hour, minute: dateTime.minute));
-}
-
-void showSnackbar(context, color, message) {
-  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-    content: Text(
-      message,
-      style: TextStyle(fontSize: 14),
-    ),
-    backgroundColor: color,
-    duration: Duration(seconds: 5),
-  ));
 }

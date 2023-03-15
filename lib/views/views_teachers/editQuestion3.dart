@@ -1,119 +1,79 @@
-import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:form_field_validator/form_field_validator.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:my_project/models/question.dart';
 import 'package:my_project/models/usermodel.dart';
 import 'package:my_project/views/views_teachers/details.dart';
 import 'package:intl/intl.dart';
 
-class CreateQuestion3 extends StatefulWidget {
+class EditQuestion3 extends StatefulWidget {
   final String quizId;
   final String questionId;
+  final String question;
+  final String option1;
 
-  const CreateQuestion3(
-      {super.key, required this.quizId, required this.questionId});
+  const EditQuestion3(
+      {super.key, required this.quizId, required this.questionId, required this.question, required this.option1});
 
   @override
-  State<CreateQuestion3> createState() => _CreateQuestion3State();
+  State<EditQuestion3> createState() => _EditQuestion3State();
 }
 
-class _CreateQuestion3State extends State<CreateQuestion3> {
+class _EditQuestion3State extends State<EditQuestion3> {
   final _formKey = GlobalKey<FormState>();
   String question = '';
   String option1 = '';
 
-  Future createQuestionWrite(
-    String question,
-  ) async {
+  final TextEditingController questionEdit = TextEditingController();
+  final TextEditingController option1Edit = TextEditingController();
+
+  Future editQuestionWrite() async {
     String date = DateFormat.yMMMMd().format(DateTime.now());
     String time = DateFormat.Hm().format(DateTime.now());
 
-    if (_imageQs3 != null) {
-      _imageUrlQs3 = await uploadImage(_imageQs3!);
-    } else {
-     _imageUrlQs3 = null;
-    }
-
-    DocumentReference questionWrite = await FirebaseFirestore.instance
+    final questionWrite =  FirebaseFirestore.instance
         .collection('quizs')
         .doc(widget.quizId)
         .collection('questions')
-        .add({
-      'questions': question,
-      'imageUrl' : _imageUrlQs3,
+        .doc(widget.questionId)
+        .update({
+      'questions': questionEdit.text,
       'createdAt': '$date $time',
-      'quizId': widget.quizId,
-      'type_quiz': 'แบบเขียน',
-      "correct_answer": '1'
-    });
-    await questionWrite.update({
-      "questionId": questionWrite.id,
-    });
-    DocumentReference questionAnwer1 = await FirebaseFirestore.instance
-        .collection('quizs')
-        .doc(widget.quizId)
-        .collection('questions')
-        .doc(questionWrite.id)
-        .collection('answers')
-        .add({
-      'answer': option1,
-      'imageUrl' : null,
-      // "correct_answer" : '1',
-      'identifier': '1',
-      "questionId": questionWrite.id,
-    });
-    await questionAnwer1.update({
-      'answerId' : questionAnwer1.id
-    });
-    await questionWrite.update({
-      'answerId1': questionAnwer1.id
     });
   }
 
-  // ImageQuestion3
-  File? _imageQs3;
-  String? _imageUrlQs3;
-  final picker = ImagePicker();
-
-  Future imagePickerQuestion3() async {
-    try {
-      final pickQs3 = await picker.pickImage(source: ImageSource.gallery);
-      setState(() {
-        if (pickQs3 != null) {
-          _imageQs3 = File(pickQs3.path);
-        }
-      });
-    } catch (e) {
-      showSnackbar(context, Colors.red, e.toString());
-    }
-  }
-
-  // uploadImageQs
-  Future uploadImage(File _imageQs3) async {
-    String url;
-    String imgId = DateTime.now().microsecondsSinceEpoch.toString();
-    Reference reference = FirebaseStorage.instance
-        .ref()
-        .child('question3')
-        .child('question3$imgId');
-    await reference.putFile(_imageQs3);
-    url = await reference.getDownloadURL();
-    return url;
+  Future<void> editAnswer() async {
+    String date = DateFormat.yMMMMd().format(DateTime.now());
+    String time = DateFormat.Hm().format(DateTime.now());
+    final answersDocumentSnapshot =
+        await FirebaseFirestore.instance
+            .collection('quizs')
+            .doc(widget.quizId)
+            .collection('questions')
+            .doc(widget.questionId)
+            .collection('answers')
+            .doc(widget.option1)
+            .update({
+              'answer' : option1Edit.text,
+              'createdAt': '$date $time',
+            });
   }
 
   @override
   Widget build(BuildContext context) {
+    questionEdit.text = widget.question;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.deepPurple,
+        centerTitle: true,
+        title: Text(
+          'แก้ไขโจทย์คำตอบแบบที่ 3',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16 ,color: Colors.black),
+        ),
       ),
       backgroundColor: Color.fromARGB(255, 119, 86, 174),
       body: SafeArea(
@@ -147,6 +107,7 @@ class _CreateQuestion3State extends State<CreateQuestion3> {
                                     color: Colors.white, fontSize: 18),
                               ),
                               TextFormField(
+                                controller: questionEdit,
                                 minLines: 1,
                                 maxLines: 5,
                                 keyboardType: TextInputType.multiline,
@@ -156,21 +117,14 @@ class _CreateQuestion3State extends State<CreateQuestion3> {
                                 decoration: InputDecoration(
                                   hintText: "",
                                 ),
-                                onChanged: (value) {
-                                  question = value;
-                                },
+                                // onChanged: (value) {
+                                //   question = value;
+                                // },
                               ),
-                              SizedBox(height: 20,),
-                               Center(
-                                child: _imageQs3 == null
-                                    ? null
-                                    : Image.file(_imageQs3!)),
                               Container(
                                 margin: EdgeInsets.fromLTRB(0, 80, 150, 0),
                                 child: ElevatedButton.icon(
-                                  onPressed: (() {
-                                    imagePickerQuestion3();
-                                  }),
+                                  onPressed: (() {}),
                                   icon: Icon(
                                     Icons.add_a_photo,
                                     color: Colors.black,
@@ -193,7 +147,7 @@ class _CreateQuestion3State extends State<CreateQuestion3> {
                     padding: EdgeInsets.symmetric(horizontal: 24),
                     alignment: Alignment.center,
                     width: 800,
-                    height: 380,
+                    height: 500,
                     color: Colors.white,
                     child: Column(children: [
                       SizedBox(
@@ -208,15 +162,39 @@ class _CreateQuestion3State extends State<CreateQuestion3> {
                       ),
                       Container(
                         width: 800,
-                        child: ListTile(
-                          title: TextFormField(
-                            // validator: (value) =>
-                            //     value!.isEmpty ? "กรอกคำตอบที่ถูกต้อง" : null,
-                            decoration: InputDecoration(hintText: 'คำตอบ'),
-                            onChanged: (value) {
-                              option1 = value;
-                            },
-                          ),
+                        child: FutureBuilder<DocumentSnapshot>(
+                          future: FirebaseFirestore.instance
+                          .collection('quizs')
+                          .doc(widget.quizId)
+                          .collection('questions')
+                          .doc(widget.questionId)
+                          .collection('answers')
+                          .doc(widget.option1)
+                          .get(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return CircularProgressIndicator();
+                        }
+                        if (snapshot.hasError) {
+                          return Text('Error: ${snapshot.error}');
+                        }
+                        if (!snapshot.hasData || !snapshot.data!.exists) {
+                          return Text('ไม่มีคำตอบ');
+                        }
+                        Map<String, dynamic> answerData =
+                            snapshot.data!.data()! as Map<String, dynamic>;
+                        option1Edit.text = answerData['answer'];
+                            return ListTile(
+                              title: TextFormField(
+                                controller: option1Edit,
+                                decoration: InputDecoration(hintText: 'คำตอบ'),
+                                onChanged: (value) {
+                                  option1 = value;
+                                },
+                              ),
+                            );
+                          }
                         ),
                       ),
                       SizedBox(
@@ -226,26 +204,9 @@ class _CreateQuestion3State extends State<CreateQuestion3> {
                           style: ElevatedButton.styleFrom(
                               primary: Colors.deepPurple),
                           onPressed: () {
-                            if (_formKey.currentState!.validate()) {
-                              if(option1 == ""){
-                              //  showSnackbar(
-                              //   context, Colors.red, "โปรดเลือกตอบที่ถูกต้อง");
-                              normalDialog(context, 'โปรดกรอกคำตอบที่ถูกต้อง');
-                              return;
-                              }
-                              createQuestionWrite(
-                                question,
-                              );
-                              showSnackbar(context, Colors.green,
-                                  "สร้างโจทย์คำถามสำเร็จ");
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => DetailsQuizs(
-                                            quizId: widget.quizId,
-                                            questionId: widget.questionId,
-                                          )));
-                            }
+                            editQuestionWrite();
+                            editAnswer();
+                            Navigator.pop(context);
                           },
                           child: Text('บันทึกโจทย์'))
                     ]),

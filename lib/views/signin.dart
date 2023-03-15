@@ -7,6 +7,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get_state_manager/src/simple/list_notifier.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:intl/intl.dart';
+import 'package:my_project/config/responsive.dart';
 import 'package:my_project/main_page.dart';
 import 'package:my_project/models/user_detial.dart';
 import 'package:my_project/models/usermodel.dart';
@@ -24,74 +25,92 @@ class SignIn extends StatefulWidget {
 }
 
 class _SignInState extends State<SignIn> {
-  // String? name, email, uid;
-
   @override
   Widget build(BuildContext context) {
+    double height = MediaQuery.of(context).size.height;
+    double width = MediaQuery.of(context).size.width;
     return Scaffold(
-      backgroundColor: Colors.purple,
-      body: Padding(
-        padding: EdgeInsets.all(40),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Spacer(),
-            Image(image: AssetImage('assets/logo.png')),
-            // FlutterLogo(size: 120,),
-            Spacer(),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                'Welcome\nBack',
-                style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    fontSize: 30),
-              ),
-            ),
-            SizedBox(
-              height: 8,
-            ),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                'Login to you account to continue',
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
-            Spacer(),
-            ElevatedButton.icon(onPressed: () => processSignInWithGoogle(context),
-            style: ElevatedButton.styleFrom(
-              primary: Colors.white,
-              onPrimary: Colors.black,
-              minimumSize: Size(double.infinity, 50),
-            ),
-            icon: FaIcon(FontAwesomeIcons.google, color: Colors.red,),
-            label: Text('Sign in With Google')),
-            SizedBox(
-              height: 40,
-            ),
-            RichText(
-              text: TextSpan(text: 'Already have an account?', children: [
-                TextSpan(
-                    text: 'Log in',
-                    style: TextStyle(decoration: TextDecoration.underline))
-              ]),
-            )
-          ],
-        ),
-      ),
-    );
+        backgroundColor: Colors.purple,
+        body: SizedBox(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Responsive.isSmallScreen(context) ? const SizedBox() : Expanded(
+                  child: Container(
+                height: height,
+                color: Colors.white,
+                child: const Center(
+                  child: Text(
+                    'QUIZS',
+                    style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              )),
+              Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(40),
+                    child: Container(
+                        height: height,
+                        color: Colors.purple,
+                        child: Column(
+                          children: [
+                            const Center(
+                              child: Image(
+                                image: AssetImage('assets/logo.png'),
+                                height: 300,
+                                width: 300,
+                              ),
+                            ),
+                            const Spacer(),
+                            const Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                'Welcome\nBack',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                    fontSize: 30),
+                              ),
+                            ),
+                            const SizedBox(
+                                height: 8,
+                              ),
+                              const Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  'Login to you account to continue',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ),
+                              const Spacer(),
+                              ElevatedButton.icon(onPressed: () => processSignInWithGoogle(context),
+                              style: ElevatedButton.styleFrom(
+                                primary: Colors.white,
+                                onPrimary: Colors.black,
+                                minimumSize: const Size(double.infinity, 50),
+                              ),
+                              icon: const FaIcon(FontAwesomeIcons.google, color: Colors.red,),
+                              label: const Text('Sign in With Google')),
+                              const SizedBox(
+                                height: 40,
+                              ),
+                          ],
+                        )),
+                  )),
+            ],
+          ),
+        ));
   }
 }
 
 Future<void> processSignInWithGoogle(context) async {
-  GoogleSignIn _googleSignIn = GoogleSignIn(
-    scopes: [
-      'email',
-      'https://www.googleapis.com/auth/contacts.readonly',
-    ],
-  );
+  final GoogleSignIn _googleSignIn = GoogleSignIn(
+  scopes: [
+    'email',
+    'https://www.googleapis.com/auth/contacts.readonly',
+  ],
+);
 
   await Firebase.initializeApp().then((value) async {
     await _googleSignIn.signIn().then((value) async {
@@ -108,31 +127,32 @@ Future<void> processSignInWithGoogle(context) async {
           String time = DateFormat.Hm().format(DateTime.now());
           String uid = value3.user!.uid;
 
-         RegExp emailTeacher = RegExp(r'[A-Za-z0-9]+@gmail+.com');
-         RegExp emailStudent = RegExp(r'[0-9]+@dpu+.ac.th');
+          RegExp emailTeacher = RegExp(r'[A-Za-z0-9]+@gmail+.com');
+          RegExp emailStudent = RegExp(r'[0-9]+@dpu+.ac.th');
 
           print(
               'Login with gmail success : name = $name , email = $email uid = $uid');
-          if(emailTeacher.hasMatch(email!)){
+          if (emailTeacher.hasMatch(email!)) {
             await FirebaseFirestore.instance.collection('user').doc(uid).set({
-            'email': email,
-            'name': name,
-            'uid': uid,
-            'createdAt' : '$date $time',
-            'type' : 'คุณครู'
-          });
-          }else{
-             await FirebaseFirestore.instance.collection('user').doc(uid).set({
-            'email': email,
-            'name': name,
-            'uid': uid,
-            'createdAt' : '$date $time',
-            'tpye' : 'นักเรียน'
-          });
+              'email': email,
+              'name': name,
+              'uid': uid,
+              'createdAt': '$date $time',
+              'imageUrl' : FirebaseAuth.instance.currentUser!.photoURL,
+              'type': 'คุณครู'
+            });
+          } else {
+            await FirebaseFirestore.instance.collection('user').doc(uid).set({
+              'email': email,
+              'name': name,
+              'uid': uid,
+              'createdAt': '$date $time',
+              'imageUrl' : FirebaseAuth.instance.currentUser!.photoURL,
+              'type': 'นักเรียน'
+            });
           }
           Navigator.push(
-              context, MaterialPageRoute(builder: (context) => MainPage()));
-         
+              context, MaterialPageRoute(builder: (context) => const MainPage()));
         });
       });
     });
@@ -143,9 +163,9 @@ void showSnackbar(context, color, message) {
   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
     content: Text(
       message,
-      style: TextStyle(fontSize: 14),
+      style: const TextStyle(fontSize: 14),
     ),
     backgroundColor: color,
-    duration: Duration(seconds: 5),
+    duration: const Duration(seconds: 5),
   ));
 }

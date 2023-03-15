@@ -35,24 +35,25 @@ class _QuizDetailListState extends State<QuizDetailList> {
   //String? downloadURL;
 
   Future imagePicker() async {
-    try{
+    try {
       final pick = await picker.pickImage(source: ImageSource.gallery);
       setState(() {
-        if(picker != null){
+        if (picker != null) {
           _image = File(pick!.path);
-        }else{
-           showSnackbar(context, Colors.red , "ไม่มีรูปภาพ");
+        } else {
+          showSnackbar(context, Colors.red, "ไม่มีรูปภาพ");
         }
       });
-    } catch (e){
-      showSnackbar(context , Colors.red , e.toString());
+    } catch (e) {
+      showSnackbar(context, Colors.red, e.toString());
     }
   }
 
   Future uploadImage(File _image) async {
     String url;
     String imgId = DateTime.now().microsecondsSinceEpoch.toString();
-    Reference reference = FirebaseStorage.instance.ref().child('images').child('quiz$imgId');
+    Reference reference =
+        FirebaseStorage.instance.ref().child('images').child('quiz$imgId');
     await reference.putFile(_image);
     url = await reference.getDownloadURL();
     return url;
@@ -61,14 +62,15 @@ class _QuizDetailListState extends State<QuizDetailList> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-        stream: FirebaseFirestore.instance.collection("quizs")
-        .where('uid' , isEqualTo: FirebaseAuth.instance.currentUser!.uid )
-        .snapshots(),
+        stream: FirebaseFirestore.instance
+            .collection("quizs")
+            // .where('uid', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+            .orderBy('createdAt', descending: true)
+            .snapshots(),
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.hasData) {
-            if(snapshot.data!.docs.length != 0) {
-
-            }else{
+            if (snapshot.data!.docs.length != 0) {
+            } else {
               return noQuiz();
             }
             return ListView.builder(
@@ -90,17 +92,25 @@ class _QuizDetailListState extends State<QuizDetailList> {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => DetailsQuizs(
-                                          quizId: documentSnapshot.id, questionId: documentSnapshot.id , 
+                                          quizId: documentSnapshot.id,
+                                          questionId: documentSnapshot.id,
                                         )));
                           },
                           child: ListTile(
                               contentPadding: EdgeInsets.all(16),
                               leading: CircleAvatar(
-                                radius: 32,
-                                backgroundImage: NetworkImage(documentSnapshot['imageUrl'])
+                                  radius: 32,
+                                  backgroundColor: Colors.white,
+                                  backgroundImage: NetworkImage(
+                                      documentSnapshot['imageUrl'])),
+                              title: Text(
+                                documentSnapshot['quizTitle'],
+                                style: TextStyle(color: Colors.white),
                               ),
-                              title: Text(documentSnapshot['quizTitle'], style: TextStyle(color: Colors.white),),
-                              subtitle: Text(documentSnapshot['quizSubject'], style: TextStyle(color: Colors.white),),
+                              subtitle: Text(
+                                documentSnapshot['quizSubject'],
+                                style: TextStyle(color: Colors.white),
+                              ),
                               trailing: PopupMenuButton(onSelected: (value) {
                                 if (value == "ลบ") {
                                   showDialog(
@@ -125,52 +135,53 @@ class _QuizDetailListState extends State<QuizDetailList> {
                                                   SizedBox(
                                                     height: 20,
                                                   ),
-                                                  // MouseRegion(
-                                                  //   cursor: SystemMouseCursors.click,
-                                                  //   child: 
+                                                  
                                                   Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                      children: [
-                                                        ElevatedButton(
-                                                            style: ElevatedButton
-                                                                .styleFrom(
-                                                                    backgroundColor:
-                                                                        Colors
-                                                                            .grey),
-                                                            onPressed: () {
-                                                              Navigator.pop(
-                                                                  context);
-                                                            },
-                                                            child:
-                                                                Text('ยกเลิก')),
-                                                        SizedBox(
-                                                          width: 50,
-                                                        ),
-                                                        ElevatedButton(
-                                                            style: ElevatedButton
-                                                                .styleFrom(
-                                                                    backgroundColor:
-                                                                        Colors
-                                                                            .red),
-                                                            onPressed: () {
-                                                              _deleteQuiz(
-                                                                  documentSnapshot
-                                                                      .id);
-                                                              Navigator.pop(context);
-                                                            },
-                                                            child: Text('ลบ'))
-                                                      ],
-                                                    ),
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      ElevatedButton(
+                                                          style: ElevatedButton
+                                                              .styleFrom(
+                                                                  backgroundColor:
+                                                                      Colors
+                                                                          .grey),
+                                                          onPressed: () {
+                                                            Navigator.pop(
+                                                                context);
+                                                          },
+                                                          child:
+                                                              Text('ยกเลิก')),
+                                                      SizedBox(
+                                                        width: 50,
+                                                      ),
+                                                      ElevatedButton(
+                                                          style: ElevatedButton
+                                                              .styleFrom(
+                                                                  backgroundColor:
+                                                                      Colors
+                                                                          .red),
+                                                          onPressed: () {
+                                                            _deleteQuiz(
+                                                                documentSnapshot
+                                                                    .id);
+                                                            Navigator.pop(
+                                                                context);
+                                                          },
+                                                          child: Text('ลบ'))
+                                                    ],
+                                                  ),
                                                   // )
                                                 ],
                                               )),
                                         );
                                       });
                                 } else {
-                                  quizTitleEdit.text = documentSnapshot['quizTitle'];
-                                  quizSubjectEdit.text = documentSnapshot['quizSubject'];
+                                  quizTitleEdit.text =
+                                      documentSnapshot['quizTitle'];
+                                  quizSubjectEdit.text =
+                                      documentSnapshot['quizSubject'];
                                   _imageUrl = documentSnapshot['imageUrl'];
 
                                   showDialog(
@@ -242,8 +253,7 @@ class _QuizDetailListState extends State<QuizDetailList> {
                                                                                             ? Center(
                                                                                                 child:
                                                                                                     // Text("ไม่มีรูปภาพ")
-                                                                                                    Image.network(documentSnapshot['imageUrl'])
-                                                                                                    )
+                                                                                                    Image.network(documentSnapshot['imageUrl']))
                                                                                             : Image.file(_image!),
                                                                                       ),
                                                                                     ],
@@ -264,8 +274,8 @@ class _QuizDetailListState extends State<QuizDetailList> {
                                                                                 .yellow),
                                                                     onPressed:
                                                                         () {
-                                                                          imagePicker();
-                                                                        },
+                                                                      imagePicker();
+                                                                    },
                                                                     child: Text(
                                                                       'เพิ่มรูปภาพ',
                                                                       style: TextStyle(
@@ -393,11 +403,15 @@ class _QuizDetailListState extends State<QuizDetailList> {
                                                                             // final TextEditingController
                                                                             //     quizSubjectEdit =
                                                                             //     TextEditingController();
-                                                                            final _imageUrl = await uploadImage(_image!);
+                                                                            if (_image != null) {
+                                                                              _imageUrl = await uploadImage(_image!);
+                                                                            } else {
+                                                                              _imageUrl = 'https://img.icons8.com/sf-regular-filled/256/question-mark.png';
+                                                                            }
                                                                             snapshot.data!.docs[index].reference.update({
                                                                               "quizTitle": quizTitleEdit.text,
                                                                               "quizSubject": quizSubjectEdit.text,
-                                                                              "imageUrl" : _imageUrl
+                                                                              "imageUrl": _imageUrl
                                                                             });
                                                                             Navigator.pop(context);
                                                                           },
@@ -423,32 +437,40 @@ class _QuizDetailListState extends State<QuizDetailList> {
                 });
           } else {
             // return Scaffold(body: Center(child: CircularProgressIndicator()));
-            return Center(child: CircularProgressIndicator(),);
+            return Center(
+              child: CircularProgressIndicator(),
+            );
           }
-          
         });
   }
-   noQuiz() {
+
+  noQuiz() {
     return Container(
       margin: EdgeInsets.all(50),
       child: Center(
-        child: Column(
-          children: [
-            Image.network('https://cdn-icons-png.flaticon.com/512/29/29302.png', height: 150,),
-            Text('ไม่มีแบบทดสอบที่สร้าง', style: TextStyle(fontSize: 20),),
-          ],
-        )),
+          child: Column(
+        children: [
+          Image.network(
+            'https://cdn-icons-png.flaticon.com/512/29/29302.png',
+            height: 150,
+          ),
+          Text(
+            'ไม่มีแบบทดสอบที่สร้าง',
+            style: TextStyle(fontSize: 20),
+          ),
+        ],
+      )),
     );
   }
 
-
   void showSnackbar(context, color, message) {
-  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-    content: Text(message, style: TextStyle(fontSize: 14),),
-    backgroundColor: color,
-    duration: Duration(seconds: 5),
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(
+        message,
+        style: TextStyle(fontSize: 14),
+      ),
+      backgroundColor: color,
+      duration: Duration(seconds: 5),
     ));
   }
 }
-
-

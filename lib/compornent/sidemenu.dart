@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:my_project/views/signin.dart';
 import 'package:my_project/views/views_teachers/homepage.dart';
 import 'package:my_project/views/views_teachers/profile_user.dart';
+import 'package:my_project/views/views_teachers/chatpage.dart';
+import 'package:my_project/views/views_teachers/report.dart';
 import '../config/size_config.dart';
 
 class sidemenu extends StatelessWidget {
@@ -39,6 +41,15 @@ class sidemenu extends StatelessWidget {
             contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
             leading: Icon(Icons.account_circle, color: Colors.white,),
             title: Text("โปรไฟล์", style: TextStyle(color: Colors.white),),
+          ),
+          ListTile(
+            onTap: (){
+              Navigator.push(context, MaterialPageRoute(builder: (context) => ReportPage()));
+            } ,
+            selected: true,
+            contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+            leading: Icon(Icons.clear, color: Colors.white,),
+            title: Text("แจ้งปัญหา", style: TextStyle(color: Colors.white),),
           ),
           Divider(
             color: Colors.white,

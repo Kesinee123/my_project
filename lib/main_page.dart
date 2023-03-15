@@ -1,4 +1,4 @@
-import 'dart:ffi';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -41,7 +41,7 @@ class _MainPageState extends State<MainPage> {
                     return HomePage();
                     // print(email);
                   } else {
-                    return StudentPage();
+                    return LetPage();
                     // print(email);
                   }
                 }return Material(child: Center(

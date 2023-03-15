@@ -4,7 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:my_project/models/question.dart';
+import 'package:my_project/views/firestoreservice.dart';
 import 'package:my_project/views/views_teachers/correctAnswer.dart';
+import 'package:my_project/views/views_teachers/editQuestion.dart';
+import 'package:my_project/views/views_teachers/editQuestion2.dart';
+import 'package:my_project/views/views_teachers/editQuestion3.dart';
 
 class QuestionQuiz extends StatefulWidget {
   QuestionQuiz(
@@ -24,13 +28,16 @@ class QuestionQuiz extends StatefulWidget {
   String? option4;
   final String quizId;
   final String questionId;
-  
+  // final String option1;
+
   @override
   State<QuestionQuiz> createState() => _QuestionQuizState();
 }
 
 class _QuestionQuizState extends State<QuestionQuiz> {
   List<String> popList = ["แก้ไข", "ลบ"];
+
+  Text? correct_answer;
 
   Future<void> deleteQuestion(id) async {
     await FirebaseFirestore.instance
@@ -48,7 +55,7 @@ class _QuestionQuizState extends State<QuestionQuiz> {
             .collection('quizs')
             .doc(widget.quizId)
             .collection("questions")
-            // .where('quizId')
+            .orderBy('createdAt', descending: true)
             .snapshots(),
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.hasData) {
@@ -57,7 +64,7 @@ class _QuestionQuizState extends State<QuestionQuiz> {
               return noQuestion();
             }
             return Container(
-              margin: EdgeInsets.only(top: 200),
+              margin: EdgeInsets.only(top: 20),
               child: ListView.builder(
                   itemCount: snapshot.data!.docs.length,
                   shrinkWrap: true,
@@ -67,14 +74,14 @@ class _QuestionQuizState extends State<QuestionQuiz> {
                     return Column(
                       children: [
                         Container(
-                            margin: EdgeInsets.all(10),
+                            margin: EdgeInsets.symmetric(horizontal: 10),
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(12),
                                 color: Colors.white),
                             child: InkWell(
                               onTap: () {},
                               child: ListTile(
-                                contentPadding: EdgeInsets.all(20),
+                                // contentPadding: EdgeInsets.all(20),
                                 title: Column(
                                   children: [
                                     Row(
@@ -102,30 +109,51 @@ class _QuestionQuizState extends State<QuestionQuiz> {
                                             showDialog(
                                                 context: context,
                                                 builder: (_) {
-                                                  return Dialog(
-                                                    child: Container(
-                                                        margin:
-                                                            EdgeInsets.all(20),
-                                                        height: 150,
-                                                        width: 300,
-                                                        child: Column(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .center,
-                                                          children: [
-                                                            Text(
-                                                              'แก้ไขโจทย์',
-                                                              style: TextStyle(
-                                                                  fontSize: 16,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold),
-                                                            ),
-
-                                                            // )
-                                                          ],
-                                                        )),
-                                                  );
+                                                  // int correct_answerInt = int.parse(documentSnapshot['correct_answer']);
+                                                  if (documentSnapshot[
+                                                          'type_quiz'] ==
+                                                      'เลือกได้ 1 คำตอบ') {
+                                                    return EditQuestion(
+                                                      quizId: widget.quizId,
+                                                      questionId:
+                                                          documentSnapshot.id,
+                                                      question:
+                                                          documentSnapshot[
+                                                              'questions'],
+                                                      option1: documentSnapshot['answerId1'],
+                                                      option2: documentSnapshot['answerId2'],
+                                                      option3: documentSnapshot['answerId3'],
+                                                      option4: documentSnapshot['answerId4'],
+                                                      correct_answer: documentSnapshot['correct_answer'].toString(),
+                                                     
+                                                    );
+                                                  } else if (documentSnapshot[
+                                                          'type_quiz'] ==
+                                                      'แบบเขียน') {
+                                                    return EditQuestion3(
+                                                      quizId: widget.quizId,
+                                                      questionId:
+                                                          documentSnapshot.id,
+                                                      question:
+                                                          documentSnapshot[
+                                                              'questions'],
+                                                      option1: documentSnapshot['answerId1'],
+                                                    );
+                                                  } else {
+                                                    return EditQuestion2(
+                                                      quizId: widget.quizId,
+                                                      questionId:
+                                                          documentSnapshot.id,
+                                                      question:
+                                                          documentSnapshot[
+                                                              'questions'],
+                                                              option1: documentSnapshot['answerId1'],
+                                                              option2: documentSnapshot['answerId2'],
+                                                              option3: documentSnapshot['answerId3'],
+                                                              option4: documentSnapshot['answerId4'],
+                                                    );
+                                                  }
+                                                  // return Center(child: CircularProgressIndicator());
                                                 });
                                           } else {
                                             showDialog(
@@ -153,9 +181,7 @@ class _QuestionQuizState extends State<QuestionQuiz> {
                                                             SizedBox(
                                                               height: 20,
                                                             ),
-                                                            // MouseRegion(
-                                                            //   cursor: SystemMouseCursors.click,
-                                                            //   child:
+
                                                             Row(
                                                               mainAxisAlignment:
                                                                   MainAxisAlignment
@@ -212,15 +238,15 @@ class _QuestionQuizState extends State<QuestionQuiz> {
                                     ),
                                     Row(
                                       children: [
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              'โจทย์ :',
-                                            ),
-                                          ],
-                                        ),
+                                        // Column(
+                                        //   crossAxisAlignment:
+                                        //       CrossAxisAlignment.start,
+                                        //   children: [
+                                        //     Text(
+                                        //       'โจทย์ :', style: TextStyle(fontWeight: FontWeight.bold),
+                                        //     ),
+                                        //   ],
+                                        // ),
                                         SizedBox(
                                           width: 10,
                                         ),
@@ -235,30 +261,44 @@ class _QuestionQuizState extends State<QuestionQuiz> {
                                     SizedBox(
                                       height: 10,
                                     ),
-                                    // Container(
-                                    //   child: documentSnapshot['imageUrl'] != null
-                                    // ? Image.network(
-                                    //   documentSnapshot['imageUrl'],)
-                                    // : Container() ),
+                                    Container(
+                                        child: documentSnapshot['imageUrl'] !=
+                                                null
+                                            ? Image.network(
+                                                documentSnapshot['imageUrl'],
+                                                height: 300,
+                                                width: 300,
+                                              )
+                                            : Container()),
                                     SizedBox(
                                       height: 10,
                                     ),
                                     Answer(
-                                        quizId: widget.quizId,
-                                        questionId: documentSnapshot.id),
-                                    // correctAnswer(quizId: widget.quizId, questionId: widget.questionId,)
+                                      quizId: widget.quizId,
+                                      questionId: documentSnapshot.id,
+                                      correct_answer:
+                                          documentSnapshot['correct_answer']
+                                              .toString(),
+                                    ),
                                   ],
                                 ),
-                                subtitle: Row(
+                                subtitle: Column(
                                   children: [
-                                    Text(
-                                      'type-quizs : ',
-                                      style: TextStyle(color: Colors.red),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          documentSnapshot['type_quiz'],
+                                          style: TextStyle(color: Colors.red),
+                                        ),
+                                      ],
                                     ),
-                                    Text(
-                                      documentSnapshot['type_quiz'],
-                                      style: TextStyle(color: Colors.red),
+                                    SizedBox(
+                                      height: 20,
                                     ),
+                                    Divider(
+                                      color: Colors.black,
+                                    )
+                                    //  Text(documentSnapshot['correct_answer'].toString())
                                   ],
                                 ),
                               ),
@@ -277,24 +317,42 @@ class _QuestionQuizState extends State<QuestionQuiz> {
   }
 
   noQuestion() {
-    return Center(
-        child: Text(
-      'ไม่มีโจทย์ที่สร้าง',
-      style: TextStyle(fontSize: 20, color: Colors.white),
-    ));
+    return Container(
+      margin: EdgeInsets.all(80),
+      child: Center(
+          child: Column(
+            children: [
+              Image.network('https://static.wikia.nocookie.net/scribblenauts/images/6/60/Question_Mark.png/revision/latest?cb=20140409201911' , height: 70,),
+              SizedBox(height: 10,),
+              Text(
+                'ไม่มีโจทย์คำถามที่สร้าง',
+                style: TextStyle(fontSize: 16),
+              ),
+            ],
+          ),),
+    );
   }
 }
 
 class Answer extends StatefulWidget {
   final String quizId;
   final String questionId;
-  const Answer({super.key, required this.quizId, required this.questionId});
+  final String correct_answer;
+
+  const Answer(
+      {super.key,
+      required this.quizId,
+      required this.questionId,
+      required this.correct_answer});
 
   @override
   State<Answer> createState() => _AnswerState();
 }
 
 class _AnswerState extends State<Answer> {
+  List<String> myFunction() {
+    return ['1', '2'];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -324,17 +382,34 @@ class _AnswerState extends State<Answer> {
                           width: 10,
                         ),
                         // Icon(Icons.circle),
-                        documentSnapshot['identifier'] == '1' ? Icon(Icons.circle, color: Colors.green,) : Icon(Icons.circle , color: Colors.red,),
+                        widget.correct_answer
+                                .contains(documentSnapshot['identifier'])
+                            ? Icon(
+                                Icons.circle,
+                                color: Colors.green,
+                              )
+                            : Icon(
+                                Icons.circle,
+                                color: Colors.red,
+                              ),
                         SizedBox(
                           width: 10,
                         ),
-                        Flexible(
-                          child: Text(
-                            documentSnapshot['answer'],
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 3,
-                          ),
-                        )
+                        Container(
+                          child: documentSnapshot['imageUrl'] != null
+                              ? Image.network(
+                                  documentSnapshot['imageUrl'],
+                                  height: 100,
+                                  width: 100,
+                                )
+                              : Flexible(
+                                  child: Text(
+                                    documentSnapshot['answer'],
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 3,
+                                  ),
+                                ),
+                        ),
                       ],
                     ),
                   );

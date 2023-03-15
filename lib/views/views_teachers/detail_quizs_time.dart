@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:my_project/views/views_teachers/detail_quizs_homework.dart';
 
 class DetialQuizs_Time extends StatefulWidget {
-  const DetialQuizs_Time({super.key});
+  const DetialQuizs_Time({super.key, required this.quizId, required this.questionId});
+
+  final String quizId;
+  final String questionId;
 
   @override
   State<DetialQuizs_Time> createState() => _DetialQuizs_TimeState();
@@ -127,7 +131,8 @@ class _DetialQuizs_TimeState extends State<DetialQuizs_Time> {
                     backgroundColor: Colors.purple
                   ),
                   onPressed: (){
-                    print('$hours : $minutes');
+                    // print('$hours : $minutes');
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => DetialQuizs_Homework(quizId: widget.quizId , questionId: widget.questionId,)));
                   }, 
                 child: Text('ต่อไป', style: TextStyle(fontWeight: FontWeight.bold , fontSize: 18),))
               ],

@@ -10,14 +10,14 @@ import 'package:form_field_validator/form_field_validator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:my_project/models/question.dart';
-import 'package:my_project/service/database_service.dart';
 import 'package:my_project/views/views_teachers/details.dart';
 import 'package:my_project/views/views_teachers/homepage.dart';
 
 class CreateQuestion extends StatefulWidget {
   const CreateQuestion({
     super.key,
-    required this.quizId, required this.questionId,
+    required this.quizId,
+    required this.questionId,
   });
   final String quizId;
   final String questionId;
@@ -36,11 +36,16 @@ class _CreateQuestionState extends State<CreateQuestion> {
 
   int correct_answer = 0;
 
-  Future createQuestionRadio(String question,)async {
+  Future createQuestionRadio(String question) async {
     String date = DateFormat.yMMMMd().format(DateTime.now());
     String time = DateFormat.Hm().format(DateTime.now());
 
-    final _imageUrlQs = await uploadImage(_imageQs!);
+    if (_imageQs != null) {
+      _imageUrlQs = await uploadImage(_imageQs!);
+    } else {
+      _imageUrlQs = null;
+    }
+
     DocumentReference questionDocumentReference = await FirebaseFirestore
         .instance
         .collection('quizs')
@@ -48,35 +53,45 @@ class _CreateQuestionState extends State<CreateQuestion> {
         .collection('questions')
         .add({
       'questions': question,
-      'imageUrl' : _imageUrlQs,
-      // 'option1': option1,
-      // 'option2': option2,
-      // 'option3': option3,
-      // 'option4': option4,
+      'imageUrl': _imageUrlQs,
       'createdAt': '$date $time',
       'quizId': widget.quizId,
       'type_quiz': 'เลือกได้ 1 คำตอบ',
-      "correct_answer" : correct_answer,
+      "correct_answer": correct_answer,
     });
     await questionDocumentReference.update({
       "questionId": questionDocumentReference.id,
     });
-    
 
-    DocumentReference questionAnwer1 = await FirebaseFirestore
-        .instance
+    if (_imageOp1 != null) {
+      _imageUrlOp1 = await uploadImage(_imageOp1!);
+    } else {
+      _imageUrlOp1 = null;
+    }
+
+    DocumentReference questionAnwer1 = await FirebaseFirestore.instance
         .collection('quizs')
         .doc(widget.quizId)
         .collection('questions')
         .doc(questionDocumentReference.id)
         .collection('answers')
         .add({
+      'imageUrl': _imageUrlOp1,
       'answer': option1,
       'identifier': '1',
       "questionId": questionDocumentReference.id,
     });
-    DocumentReference questionAnwer2 = await FirebaseFirestore
-        .instance
+    await questionAnwer1.update({'answerId': questionAnwer1.id});
+    await questionDocumentReference.update({
+      'answerId1': questionAnwer1.id
+    });
+
+    if (_imageOp2 != null) {
+      _imageUrlOp2 = await uploadImage(_imageOp2!);
+    } else {
+      _imageUrlOp2 = null;
+    }
+    DocumentReference questionAnwer2 = await FirebaseFirestore.instance
         .collection('quizs')
         .doc(widget.quizId)
         .collection('questions')
@@ -84,11 +99,21 @@ class _CreateQuestionState extends State<CreateQuestion> {
         .collection('answers')
         .add({
       'answer': option2,
+      'imageUrl': _imageUrlOp2,
       'identifier': '2',
       "questionId": questionDocumentReference.id,
     });
-    DocumentReference questionAnwer3 = await FirebaseFirestore
-        .instance
+    await questionAnwer2.update({'answerId': questionAnwer2.id});
+    await questionDocumentReference.update({
+      'answerId2': questionAnwer2.id
+    });
+
+    if (_imageOp3 != null) {
+      _imageUrlOp3 = await uploadImage(_imageOp3!);
+    } else {
+      _imageUrlOp3 = null;
+    }
+    DocumentReference questionAnwer3 = await FirebaseFirestore.instance
         .collection('quizs')
         .doc(widget.quizId)
         .collection('questions')
@@ -96,11 +121,21 @@ class _CreateQuestionState extends State<CreateQuestion> {
         .collection('answers')
         .add({
       'answer': option3,
+      'imageUrl': _imageUrlOp3,
       'identifier': '3',
       "questionId": questionDocumentReference.id,
     });
-    DocumentReference questionAnwer4 = await FirebaseFirestore
-        .instance
+    await questionAnwer3.update({'answerId': questionAnwer3.id});
+    await questionDocumentReference.update({
+      'answerId3': questionAnwer3.id
+    });
+
+    if (_imageOp4 != null) {
+      _imageUrlOp4 = await uploadImage(_imageOp4!);
+    } else {
+      _imageUrlOp4 = null;
+    }
+    DocumentReference questionAnwer4 = await FirebaseFirestore.instance
         .collection('quizs')
         .doc(widget.quizId)
         .collection('questions')
@@ -108,12 +143,15 @@ class _CreateQuestionState extends State<CreateQuestion> {
         .collection('answers')
         .add({
       'answer': option4,
+      'imageUrl': _imageUrlOp4,
       'identifier': '4',
       "questionId": questionDocumentReference.id,
     });
+    await questionAnwer4.update({'answerId': questionAnwer4.id});
+    await questionDocumentReference.update({
+      'answerId4': questionAnwer4.id
+    });
   }
-
-   
 
   // ImageQuestion
   File? _imageQs;
@@ -137,9 +175,127 @@ class _CreateQuestionState extends State<CreateQuestion> {
   Future uploadImage(File _imageQs) async {
     String url;
     String imgId = DateTime.now().microsecondsSinceEpoch.toString();
-    Reference reference =
-        FirebaseStorage.instance.ref().child('question').child('question$imgId');
+    Reference reference = FirebaseStorage.instance
+        .ref()
+        .child('question')
+        .child('question$imgId');
     await reference.putFile(_imageQs);
+    url = await reference.getDownloadURL();
+    return url;
+  }
+
+  // ImageOption1
+  File? _imageOp1;
+  String? _imageUrlOp1;
+  final picker1 = ImagePicker();
+
+  Future imagePickeOption1() async {
+    try {
+      final pickOp1 = await picker1.pickImage(source: ImageSource.gallery);
+      setState(() {
+        if (pickOp1 != null) {
+          _imageOp1 = File(pickOp1.path);
+        }
+      });
+    } catch (e) {
+      showSnackbar(context, Colors.red, e.toString());
+    }
+  }
+
+  // uploadOption1
+  Future uploadImageOp1(File _imageOp1) async {
+    String url;
+    String imgId = DateTime.now().microsecondsSinceEpoch.toString();
+    Reference reference =
+        FirebaseStorage.instance.ref().child('option1').child('option1$imgId');
+    await reference.putFile(_imageOp1);
+    url = await reference.getDownloadURL();
+    return url;
+  }
+
+  // ImageOption2
+  File? _imageOp2;
+  String? _imageUrlOp2;
+  final picker2 = ImagePicker();
+
+  Future imagePickeOption2() async {
+    try {
+      final pickOp2 = await picker2.pickImage(source: ImageSource.gallery);
+      setState(() {
+        if (pickOp2 != null) {
+          _imageOp2 = File(pickOp2.path);
+        }
+      });
+    } catch (e) {
+      showSnackbar(context, Colors.red, e.toString());
+    }
+  }
+
+  // uploadOption2
+  Future uploadImageOp2(File _imageOp2) async {
+    String url;
+    String imgId = DateTime.now().microsecondsSinceEpoch.toString();
+    Reference reference =
+        FirebaseStorage.instance.ref().child('option2').child('option2$imgId');
+    await reference.putFile(_imageOp2);
+    url = await reference.getDownloadURL();
+    return url;
+  }
+
+  // ImageOption3
+  File? _imageOp3;
+  String? _imageUrlOp3;
+  final picker3 = ImagePicker();
+
+  Future imagePickeOption3() async {
+    try {
+      final pickOp3 = await picker3.pickImage(source: ImageSource.gallery);
+      setState(() {
+        if (pickOp3 != null) {
+          _imageOp3 = File(pickOp3.path);
+        }
+      });
+    } catch (e) {
+      showSnackbar(context, Colors.red, e.toString());
+    }
+  }
+
+  // uploadImageOption3
+  Future uploadImageOp3(File _imageOp3) async {
+    String url;
+    String imgId = DateTime.now().microsecondsSinceEpoch.toString();
+    Reference reference =
+        FirebaseStorage.instance.ref().child('option3').child('option3$imgId');
+    await reference.putFile(_imageOp3);
+    url = await reference.getDownloadURL();
+    return url;
+  }
+
+  // ImageOption4
+  File? _imageOp4;
+  String? _imageUrlOp4;
+  final picker4 = ImagePicker();
+
+  Future imagePickeOption4() async {
+    try {
+      final pickOp4 = await picker4.pickImage(source: ImageSource.gallery);
+      setState(() {
+        if (pickOp4 != null) {
+          _imageOp4 = File(pickOp4.path);
+        }
+      });
+    } catch (e) {
+      showSnackbar(context, Colors.red, e.toString());
+    }
+  }
+
+  // uploadImageOption4
+  Future uploadImageOp4(File _imageOp4) async {
+    String url;
+    String imgId = DateTime.now().microsecondsSinceEpoch.toString();
+    Reference reference =
+        FirebaseStorage.instance.ref().child('option4').child('option4$imgId');
+    await reference.putFile(_imageOp4);
     url = await reference.getDownloadURL();
     return url;
   }
@@ -197,10 +353,13 @@ class _CreateQuestionState extends State<CreateQuestion> {
                                 hintText: "",
                               ),
                             ),
-                            SizedBox(height: 20,),
-                            // Center(
-                            //   child: _imageQs == null ? null : Image.file(_imageQs!)
-                            // ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            Center(
+                                child: _imageQs == null
+                                    ? null
+                                    : Image.file(_imageQs!)),
                             Container(
                               margin: EdgeInsets.fromLTRB(0, 20, 150, 0),
                               child: ElevatedButton.icon(
@@ -240,7 +399,7 @@ class _CreateQuestionState extends State<CreateQuestion> {
                       activeColor: Colors.red,
                       secondary: IconButton(
                           onPressed: () {
-                            // imagePicker();
+                            imagePickeOption1();
                           },
                           icon: Icon(Icons.add_a_photo)),
                       value: 1,
@@ -252,18 +411,22 @@ class _CreateQuestionState extends State<CreateQuestion> {
                       },
                       title: Container(
                         // color: Colors.red,
-                        child: TextFormField(
-                          minLines: 1,
-                          maxLines: 3,
-                          validator: ((val) =>
-                              val!.isEmpty ? "กรอกคำตอบ" : null),
-                          onChanged: (value) {
-                            setState(() {
-                              option1 = value;
-                            });
-                          },
-                          decoration: InputDecoration(hintText: 'คำตอบที่ 1'),
-                        ),
+                        child: Center(
+                            child: _imageOp1 == null
+                                ? TextFormField(
+                                    minLines: 1,
+                                    maxLines: 3,
+                                    validator: ((val) =>
+                                        val!.isEmpty ? "กรอกคำตอบ" : null),
+                                    onChanged: (value) {
+                                      setState(() {
+                                        option1 = value;
+                                      });
+                                    },
+                                    decoration:
+                                        InputDecoration(hintText: 'คำตอบที่ 1'),
+                                  )
+                                : Image.file(_imageOp1!)),
                       )),
                 ),
                 SizedBox(
@@ -271,84 +434,114 @@ class _CreateQuestionState extends State<CreateQuestion> {
                 ),
                 Center(
                   child: RadioListTile(
-                    activeColor: Colors.red,
-                    secondary: IconButton(
-                        onPressed: () {}, icon: Icon(Icons.add_a_photo)),
-                    value: 2,
-                    groupValue: correct_answer,
-                    onChanged: (value) {
-                      setState(() {
-                        correct_answer = value!;
-                      });
-                    },
-                    title: TextFormField(
-                       minLines: 1,
-                        maxLines: 3,
-                      validator: ((val) => val!.isEmpty ? "กรอกคำตอบ" : null),
+                      activeColor: Colors.red,
+                      secondary: IconButton(
+                          onPressed: () {
+                            imagePickeOption2();
+                          },
+                          icon: Icon(Icons.add_a_photo)),
+                      value: 2,
+                      groupValue: correct_answer,
                       onChanged: (value) {
                         setState(() {
-                          option2 = value;
+                          correct_answer = value!;
                         });
                       },
-                      decoration: InputDecoration(hintText: 'คำตอบที่ 2'),
-                    ),
-                  ),
+                      title: Container(
+                        // color: Colors.red,
+                        child: Center(
+                            child: _imageOp2 == null
+                                ? TextFormField(
+                                    minLines: 1,
+                                    maxLines: 3,
+                                    validator: ((val) =>
+                                        val!.isEmpty ? "กรอกคำตอบ" : null),
+                                    onChanged: (value) {
+                                      setState(() {
+                                        option2 = value;
+                                      });
+                                    },
+                                    decoration:
+                                        InputDecoration(hintText: 'คำตอบที่ 2'),
+                                  )
+                                : Image.file(_imageOp2!)),
+                      )),
                 ),
                 SizedBox(
                   height: 20,
                 ),
                 Center(
                   child: RadioListTile(
-                    activeColor: Colors.red,
-                    secondary: IconButton(
-                        onPressed: () {}, icon: Icon(Icons.add_a_photo)),
-                    value: 3,
-                    groupValue: correct_answer,
-                    onChanged: (value) {
-                      setState(() {
-                        correct_answer = value!;
-                      });
-                    },
-                    title: TextFormField(
-                       minLines: 1,
-                          maxLines: 3,
-                      validator: ((val) => val!.isEmpty ? "กรอกคำตอบ" : null),
+                      activeColor: Colors.red,
+                      secondary: IconButton(
+                          onPressed: () {
+                            imagePickeOption3();
+                          },
+                          icon: Icon(Icons.add_a_photo)),
+                      value: 3,
+                      groupValue: correct_answer,
                       onChanged: (value) {
                         setState(() {
-                          option3 = value;
+                          correct_answer = value!;
                         });
                       },
-                      decoration: InputDecoration(hintText: 'คำตอบที่ 3'),
-                    ),
-                  ),
+                      title: Container(
+                        // color: Colors.red,
+                        child: Center(
+                            child: _imageOp3 == null
+                                ? TextFormField(
+                                    minLines: 1,
+                                    maxLines: 3,
+                                    validator: ((val) =>
+                                        val!.isEmpty ? "กรอกคำตอบ" : null),
+                                    onChanged: (value) {
+                                      setState(() {
+                                        option3 = value;
+                                      });
+                                    },
+                                    decoration:
+                                        InputDecoration(hintText: 'คำตอบที่ 3'),
+                                  )
+                                : Image.file(_imageOp3!)),
+                      )),
                 ),
                 SizedBox(
                   height: 20,
                 ),
                 Center(
                   child: RadioListTile(
-                    activeColor: Colors.red,
-                    secondary: IconButton(
-                        onPressed: () {}, icon: Icon(Icons.add_a_photo)),
-                    value: 4,
-                    groupValue: correct_answer,
-                    onChanged: (value) {
-                      setState(() {
-                        correct_answer = value!;
-                      });
-                    },
-                    title: TextFormField(
-                       minLines: 1,
-                          maxLines: 3,
-                      validator: ((val) => val!.isEmpty ? "กรอกคำตอบ" : null),
+                      activeColor: Colors.red,
+                      secondary: IconButton(
+                          onPressed: () {
+                            imagePickeOption4();
+                          },
+                          icon: Icon(Icons.add_a_photo)),
+                      value: 4,
+                      groupValue: correct_answer,
                       onChanged: (value) {
                         setState(() {
-                          option4 = value;
+                          correct_answer = value!;
                         });
                       },
-                      decoration: InputDecoration(hintText: 'คำตอบที่ 4'),
-                    ),
-                  ),
+                      title: Container(
+                        // color: Colors.red,
+                        child: Center(
+                            child: _imageOp4 == null
+                                ? TextFormField(
+                                    minLines: 1,
+                                    maxLines: 3,
+                                    validator: ((val) =>
+                                        val!.isEmpty ? "กรอกคำตอบ" : null),
+                                    onChanged: (value) {
+                                      setState(() {
+                                        option4 = value;
+                                      });
+                                    },
+                                    decoration:
+                                        InputDecoration(hintText: 'คำตอบที่ 4'),
+                                  )
+                                : Image.file(_imageOp4!)),
+                      )),
                 ),
                 SizedBox(
                   height: 50,
@@ -364,7 +557,8 @@ class _CreateQuestionState extends State<CreateQuestion> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) => DetailsQuizs(
-                                        quizId: widget.quizId, questionId: widget.questionId ,
+                                        quizId: widget.quizId,
+                                        questionId: widget.questionId,
                                       )));
                         },
                         child: Text('ยกเลิก')),
@@ -375,31 +569,33 @@ class _CreateQuestionState extends State<CreateQuestion> {
                         style: ElevatedButton.styleFrom(
                             primary: Colors.deepPurple),
                         onPressed: () {
-                          print('โจทย์ : $question , รูปภาพ : $_imageUrlQs');
-                          // if (_formKey.currentState!.validate()) {
-                          //   if(correct_answer == 0){
-                          //     //  showSnackbar(
-                          //     //   context, Colors.red, "โปรดเลือกตอบที่ถูกต้อง");
-                          //     normalDialog(context, 'โปรดเลือกคำตอบที่ถูกต้อง');
-                          //     return;
-                          //   } else if (question == null){
-                          //     showSnackbar(
-                          //       context, Colors.red, "สร้างโจทย์ไม่คำถามสำเร็จ!!");
-                          //   }
-                          //   try{
-                          //      createQuestionRadio(question,);
-                          //      showSnackbar(
-                          //       context, Colors.green, "สร้างโจทย์คำถามสำเร็จ");
-                          //   Navigator.push(
-                          //       context,
-                          //       MaterialPageRoute(
-                          //           builder: (context) => DetailsQuizs(
-                          //                 quizId: widget.quizId, questionId: widget.questionId,
-                          //               )));
-                          //   }catch (e){
-                          //     showSnackbar(context, Colors.red, e.toString() );
-                          //   }
-                          // }
+                          // print('โจทย์ : $question , รูปภาพ : $_imageUrlQs');
+                          if (_formKey.currentState!.validate()) {
+                            if (correct_answer == 0) {
+                              //  showSnackbar(
+                              //   context, Colors.red, "โปรดเลือกตอบที่ถูกต้อง");
+                              normalDialog(context, 'โปรดเลือกคำตอบที่ถูกต้อง');
+                              return;
+                            } else if (question == null) {
+                              showSnackbar(context, Colors.red,
+                                  "สร้างโจทย์ไม่คำถามสำเร็จ!!");
+                            }
+                            try {
+                              createQuestionRadio(question);
+
+                              showSnackbar(context, Colors.green,
+                                  "สร้างโจทย์คำถามสำเร็จ");
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => DetailsQuizs(
+                                            quizId: widget.quizId,
+                                            questionId: widget.questionId,
+                                          )));
+                            } catch (e) {
+                              showSnackbar(context, Colors.red, e.toString());
+                            }
+                          }
                         },
                         child: Text('บันทึกโจทย์')),
                   ],
@@ -425,19 +621,25 @@ class _CreateQuestionState extends State<CreateQuestion> {
 }
 
 Future<void> normalDialog(BuildContext context, String s) async {
-  showDialog(context: context,
-  builder: (context) => SimpleDialog(
-    title: Text(s),
-    children: [
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          TextButton(onPressed: () {
-            Navigator.pop(context);
-          },
-          child: Text('ตกลง', style: TextStyle(fontSize: 16, color: Colors.red),),)
-        ],
-      )
-    ],
-  ));
+  showDialog(
+      context: context,
+      builder: (context) => SimpleDialog(
+            title: Text(s),
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Text(
+                      'ตกลง',
+                      style: TextStyle(fontSize: 16, color: Colors.red),
+                    ),
+                  )
+                ],
+              )
+            ],
+          ));
 }

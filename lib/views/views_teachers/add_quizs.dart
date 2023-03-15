@@ -26,9 +26,10 @@ class _AddQuizState extends State<AddQuiz> {
         child: Container(
           margin: EdgeInsets.all(20),
           child: Column(
+            // mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Center(
-                child: Text("Add Question",
+                child: Text("",
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold,color: Colors.white),
               ),
               ),
