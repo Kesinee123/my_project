@@ -1,98 +1,85 @@
+// import 'dart:async';
 // import 'dart:math';
+// import 'package:firebase_auth/firebase_auth.dart';
 // import 'package:flutter/material.dart';
 // import 'package:flutter/src/widgets/container.dart';
 // import 'package:flutter/src/widgets/framework.dart';
 // import 'package:get/get.dart';
 // import 'package:my_project/controllers/question.dart';
 
+// import 'listname.dart';
+
 // class Score extends StatefulWidget {
-//   const Score({super.key});
+//   const Score({super.key, required this.score});
+
+//   final String score;
 
 //   @override
 //   State<Score> createState() => _ScoreState();
 // }
 
 // class _ScoreState extends State<Score> {
+//   bool isBack = false;
 
-//   bool isBack = true;
-//   double angle = 0;
+//   // @override
+//   // void initState() {
+//   //   super.initState();
+//   //   _navigatetScore();
+//   // }
 
-//   void _flip() {
-//     setState(() {
-//       angle = (angle + pi) % (2* pi);
-//     });
-//   }
+//   // _navigatetScore() async {
+//   //   await Future.delayed(Duration(milliseconds: 2000), () {});
+//   //   Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ListName()));
+//   // }
 
 //   @override
 //   Widget build(BuildContext context) {
-//     QuestionController _quController = Get.put(QuestionController());
 //     return Scaffold(
-//       backgroundColor: Color(0xFF292a3e),
-//       body: SafeArea(
-//         child: Center(
-//         child: Column(
-//           mainAxisAlignment: MainAxisAlignment.center,
-//           children: [
-//             GestureDetector(
-//               onTap: _flip,
-//               child: TweenAnimationBuilder(tween: Tween<double>(begin: 0 , end: angle),
-//               duration: Duration(seconds: 1),
-//               builder: (BuildContext context, double value , _) {
-//                 if (value >= (pi / 2)) {
-//                   isBack = false;
-//                 }else{
-//                   isBack = true;
-//                 }
-//                 return (
-//                   Transform(
-//                     alignment: Alignment.center,
-//                 transform: Matrix4.identity()
-//                 ..setEntry(3, 2, 0.001)
-//                 ..rotateY(value)
-//                 ,
+//         backgroundColor: const Color.fromARGB(255, 151, 114, 253),
+//         body: SafeArea(
+//             child: Center(
+//                 child: Column(
+//                     mainAxisAlignment: MainAxisAlignment.center,
+//                     children: [
+//               SizedBox(
+//                 width: 309,
+//                 height: 474,
 //                 child: Container(
-//                   width: 309,
-//                   height: 474,
-//                   child: isBack
-//                   ? Container(
-//                     decoration: BoxDecoration(
+//                   decoration: BoxDecoration(
 //                       borderRadius: BorderRadius.circular(10.0),
-//                       image: DecorationImage(image: AssetImage("assets/back.png"))
-//                     ),
-//                   ) : Transform(
-//                     alignment: Alignment.center,
-//                     transform: Matrix4.identity()
-//                     ..rotateY(pi),
-//                     child: Container(
-//                       decoration: BoxDecoration(
-//                         borderRadius: BorderRadius.circular(10.0),
-//                         image: DecorationImage(image: AssetImage("assets/face.png"))
+//                       image: const DecorationImage(
+//                           image: AssetImage("assets/face.png"))),
+//                   child: Center(
+//                       child: Column(
+//                     crossAxisAlignment: CrossAxisAlignment.center,
+//                     children: [
+//                       const Spacer(
+//                         flex: 3,
 //                       ),
-//                       child: Center(child: Column(
-//                         crossAxisAlignment: CrossAxisAlignment.center,
-//                         children: [
-//                           Spacer(flex: 3,),
-//                           Text('คะแนน' , style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),),
-//                           Spacer(),
-//                           Image.asset('assets/win.png', height: 180, width: 180 ,),
-//                           // CircleAvatar(
-//                           //   radius: 70,
-//                           // ),
-//                           Spacer(),
-//                           Text('20/30',style: TextStyle(fontSize: 30),),
-//                           // Text('${_quController.correctAns! * 10}/${_quController.questions.length * 10}',style: TextStyle(fontSize: 30),),
-//                           Spacer(flex: 3,)
-//                         ],
-//                       )),
-//                     ),
-//                   )
+//                       CircleAvatar(
+//                         radius: 80,
+//                         backgroundImage: NetworkImage(
+//                             FirebaseAuth.instance.currentUser!.photoURL!),
+//                       ),
+//                       const Spacer(),
+//                       Text(
+//                         FirebaseAuth.instance.currentUser!.displayName!,
+//                         style: const TextStyle(
+//                             fontSize: 20, fontWeight: FontWeight.bold),
+//                       ),
+//                       const Spacer(),
+//                       Text(
+//                         widget.score,
+//                         style: const TextStyle(
+//                             fontSize: 30, fontWeight: FontWeight.bold),
+//                       ),
+//                       const Spacer(
+//                         flex: 3,
+//                       )
+//                     ],
+//                   )),
 //                 ),
 //               )
-//                 );
-//               }),
-//             )
-//           ],
-//         ) ,)),
-//     );
+//             ]))));
 //   }
 // }

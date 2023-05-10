@@ -3,10 +3,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class Option {
   final String id;
   final String answer;
+  final String identifier;
+  final String imageUrl;
 
   Option({
     required this.id,
     required this.answer,
+    required this.identifier,
+     required this.imageUrl,
   });
   
 }

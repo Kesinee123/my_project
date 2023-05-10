@@ -5,10 +5,9 @@ import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:my_project/models/question.dart';
 import 'package:my_project/views/firestoreservice.dart';
-import 'package:my_project/views/views_teachers/correctAnswer.dart';
-import 'package:my_project/views/views_teachers/editQuestion.dart';
-import 'package:my_project/views/views_teachers/editQuestion2.dart';
-import 'package:my_project/views/views_teachers/editQuestion3.dart';
+import 'package:my_project/views/views_teachers/update/editQuestion.dart';
+import 'package:my_project/views/views_teachers/update/editQuestion2.dart';
+import 'package:my_project/views/views_teachers/update/editQuestion3.dart';
 
 class QuestionQuiz extends StatefulWidget {
   QuestionQuiz(
@@ -64,7 +63,7 @@ class _QuestionQuizState extends State<QuestionQuiz> {
               return noQuestion();
             }
             return Container(
-              margin: EdgeInsets.only(top: 20),
+              margin: const EdgeInsets.only(top: 20),
               child: ListView.builder(
                   itemCount: snapshot.data!.docs.length,
                   shrinkWrap: true,
@@ -74,7 +73,7 @@ class _QuestionQuizState extends State<QuestionQuiz> {
                     return Column(
                       children: [
                         Container(
-                            margin: EdgeInsets.symmetric(horizontal: 10),
+                            margin: const EdgeInsets.symmetric(horizontal: 10),
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(12),
                                 color: Colors.white),
@@ -90,18 +89,18 @@ class _QuestionQuizState extends State<QuestionQuiz> {
                                       children: [
                                         Row(
                                           children: [
-                                            Text(
+                                            const Text(
                                               'โจทย์ข้อที่ : ',
                                               style: TextStyle(
                                                   fontWeight: FontWeight.bold),
                                             ),
-                                            SizedBox(
+                                            const SizedBox(
                                               width: 10,
                                             ),
                                             Text('${index + 1}'),
                                           ],
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           width: 10,
                                         ),
                                         PopupMenuButton(onSelected: (value) {
@@ -120,24 +119,34 @@ class _QuestionQuizState extends State<QuestionQuiz> {
                                                       question:
                                                           documentSnapshot[
                                                               'questions'],
-                                                      option1: documentSnapshot['answerId1'],
-                                                      option2: documentSnapshot['answerId2'],
-                                                      option3: documentSnapshot['answerId3'],
-                                                      option4: documentSnapshot['answerId4'],
-                                                      correct_answer: documentSnapshot['correct_answer'].toString(),
-                                                     
+                                                      option1: documentSnapshot[
+                                                          'answerId1'],
+                                                      option2: documentSnapshot[
+                                                          'answerId2'],
+                                                      option3: documentSnapshot[
+                                                          'answerId3'],
+                                                      option4: documentSnapshot[
+                                                          'answerId4'],
+                                                      correct_answer:
+                                                          documentSnapshot[
+                                                                  'correct_answer']
+                                                              .toString(),
+                                                      imageUrl: documentSnapshot['imageUrl']?? null .toString(),
                                                     );
                                                   } else if (documentSnapshot[
                                                           'type_quiz'] ==
                                                       'แบบเขียน') {
                                                     return EditQuestion3(
-                                                      quizId: widget.quizId,
-                                                      questionId:
-                                                          documentSnapshot.id,
-                                                      question:
-                                                          documentSnapshot[
-                                                              'questions'],
-                                                      option1: documentSnapshot['answerId1'],
+                                                        quizId: widget.quizId,
+                                                        questionId:
+                                                            documentSnapshot.id,
+                                                        question:
+                                                            documentSnapshot[
+                                                                'questions'],
+                                                        option1:
+                                                            documentSnapshot[
+                                                                'answerId1'],
+                                                        imageUrl: documentSnapshot['imageUrl'] ?? null .toString()
                                                     );
                                                   } else {
                                                     return EditQuestion2(
@@ -147,10 +156,15 @@ class _QuestionQuizState extends State<QuestionQuiz> {
                                                       question:
                                                           documentSnapshot[
                                                               'questions'],
-                                                              option1: documentSnapshot['answerId1'],
-                                                              option2: documentSnapshot['answerId2'],
-                                                              option3: documentSnapshot['answerId3'],
-                                                              option4: documentSnapshot['answerId4'],
+                                                      option1: documentSnapshot[
+                                                          'answerId1'],
+                                                      option2: documentSnapshot[
+                                                          'answerId2'],
+                                                      option3: documentSnapshot[
+                                                          'answerId3'],
+                                                      option4: documentSnapshot[
+                                                          'answerId4'],
+                                                      imageUrl: documentSnapshot['imageUrl'] ?? null .toString(),
                                                     );
                                                   }
                                                   // return Center(child: CircularProgressIndicator());
@@ -162,7 +176,7 @@ class _QuestionQuizState extends State<QuestionQuiz> {
                                                   return Dialog(
                                                     child: Container(
                                                         margin:
-                                                            EdgeInsets.all(20),
+                                                            const EdgeInsets.all(20),
                                                         height: 150,
                                                         width: 200,
                                                         child: Column(
@@ -170,7 +184,7 @@ class _QuestionQuizState extends State<QuestionQuiz> {
                                                               MainAxisAlignment
                                                                   .center,
                                                           children: [
-                                                            Text(
+                                                            const Text(
                                                               'ต้องการลบโจทย์หรือไม่ ??',
                                                               style: TextStyle(
                                                                   fontSize: 20,
@@ -178,7 +192,7 @@ class _QuestionQuizState extends State<QuestionQuiz> {
                                                                       FontWeight
                                                                           .bold),
                                                             ),
-                                                            SizedBox(
+                                                            const SizedBox(
                                                               height: 20,
                                                             ),
 
@@ -197,9 +211,9 @@ class _QuestionQuizState extends State<QuestionQuiz> {
                                                                       Navigator.pop(
                                                                           context);
                                                                     },
-                                                                    child: Text(
+                                                                    child: const Text(
                                                                         'ยกเลิก')),
-                                                                SizedBox(
+                                                                const SizedBox(
                                                                   width: 50,
                                                                 ),
                                                                 ElevatedButton(
@@ -215,7 +229,7 @@ class _QuestionQuizState extends State<QuestionQuiz> {
                                                                       Navigator.pop(
                                                                           context);
                                                                     },
-                                                                    child: Text(
+                                                                    child: const Text(
                                                                         'ลบ'))
                                                               ],
                                                             ),
@@ -233,7 +247,7 @@ class _QuestionQuizState extends State<QuestionQuiz> {
                                         }),
                                       ],
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 10,
                                     ),
                                     Row(
@@ -247,18 +261,19 @@ class _QuestionQuizState extends State<QuestionQuiz> {
                                         //     ),
                                         //   ],
                                         // ),
-                                        SizedBox(
+                                        const SizedBox(
                                           width: 10,
                                         ),
                                         Flexible(
                                             child: Text(
-                                          documentSnapshot['questions'],
+                                          documentSnapshot['questions']
+                                              .toString(),
                                           overflow: TextOverflow.ellipsis,
-                                          maxLines: 10,
+                                          maxLines: 100,
                                         )),
                                       ],
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 10,
                                     ),
                                     Container(
@@ -266,11 +281,11 @@ class _QuestionQuizState extends State<QuestionQuiz> {
                                                 null
                                             ? Image.network(
                                                 documentSnapshot['imageUrl'],
-                                                height: 300,
-                                                width: 300,
+                                                height: 250,
+                                                width: 250,
                                               )
                                             : Container()),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 10,
                                     ),
                                     Answer(
@@ -288,14 +303,14 @@ class _QuestionQuizState extends State<QuestionQuiz> {
                                       children: [
                                         Text(
                                           documentSnapshot['type_quiz'],
-                                          style: TextStyle(color: Colors.red),
+                                          style: const TextStyle(color: Colors.red),
                                         ),
                                       ],
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 20,
                                     ),
-                                    Divider(
+                                    const Divider(
                                       color: Colors.black,
                                     )
                                     //  Text(documentSnapshot['correct_answer'].toString())
@@ -309,7 +324,7 @@ class _QuestionQuizState extends State<QuestionQuiz> {
             );
           } else {
             // return Scaffold(body: Center(child: CircularProgressIndicator()));
-            return Center(
+            return const Center(
               child: CircularProgressIndicator(),
             );
           }
@@ -318,18 +333,21 @@ class _QuestionQuizState extends State<QuestionQuiz> {
 
   noQuestion() {
     return Container(
-      margin: EdgeInsets.all(80),
+      margin: const EdgeInsets.all(80),
       child: Center(
-          child: Column(
-            children: [
-              Image.network('https://static.wikia.nocookie.net/scribblenauts/images/6/60/Question_Mark.png/revision/latest?cb=20140409201911' , height: 70,),
-              SizedBox(height: 10,),
-              Text(
-                'ไม่มีโจทย์คำถามที่สร้าง',
-                style: TextStyle(fontSize: 16),
-              ),
-            ],
-          ),),
+        child: Column(
+          children: const [
+            // Image.asset('Question_Mark.webp' , height: 70,),
+            SizedBox(
+              height: 10,
+            ),
+            Text(
+              'ไม่มีโจทย์คำถามที่สร้าง',
+              style: TextStyle(fontSize: 16),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -356,66 +374,253 @@ class _AnswerState extends State<Answer> {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
-        stream: FirebaseFirestore.instance
-            .collection('quizs')
-            .doc(widget.quizId)
-            .collection('questions')
-            .doc(widget.questionId)
-            .collection('answers')
-            // .where("identifier1", isEqualTo: '1')
-            .snapshots(),
-        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          if (snapshot.hasData) {
-            return ListView.builder(
-                itemCount: snapshot.data!.docs.length,
-                shrinkWrap: true,
-                itemBuilder: (context, index) {
-                  final DocumentSnapshot documentSnapshot =
-                      snapshot.data!.docs[index];
-                  return Container(
-                    margin: EdgeInsets.all(10),
-                    child: Row(
-                      children: [
-                        Text('คำตอบที่ ${index + 1} :'),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        // Icon(Icons.circle),
-                        widget.correct_answer
-                                .contains(documentSnapshot['identifier'])
-                            ? Icon(
-                                Icons.circle,
-                                color: Colors.green,
-                              )
-                            : Icon(
-                                Icons.circle,
-                                color: Colors.red,
-                              ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Container(
-                          child: documentSnapshot['imageUrl'] != null
-                              ? Image.network(
-                                  documentSnapshot['imageUrl'],
-                                  height: 100,
-                                  width: 100,
-                                )
-                              : Flexible(
-                                  child: Text(
-                                    documentSnapshot['answer'],
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 3,
+    return Column(
+      children: [
+        StreamBuilder(
+            stream: FirebaseFirestore.instance
+                .collection('quizs')
+                .doc(widget.quizId)
+                .collection('questions')
+                .doc(widget.questionId)
+                .collection('answers')
+                .where("identifier", isEqualTo: '1')
+                .snapshots(),
+            builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+              if (snapshot.hasData) {
+                return ListView.builder(
+                    itemCount: snapshot.data!.docs.length,
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) {
+                      final DocumentSnapshot documentSnapshot =
+                          snapshot.data!.docs[index];
+                      return Container(
+                        margin: const EdgeInsets.all(10),
+                        child: Row(
+                          children: [
+                            const Text('คำตอบที่ 1 :' , style: TextStyle(fontWeight: FontWeight.bold),),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            // Icon(Icons.circle),
+                            widget.correct_answer
+                                    .contains(documentSnapshot['identifier'])
+                                ? const Icon(
+                                    Icons.circle,
+                                    color: Colors.green,
+                                  )
+                                : const Icon(
+                                    Icons.circle,
+                                    color: Colors.red,
                                   ),
-                                ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            Container(
+                              child: documentSnapshot['imageUrl'] != null
+                                  ? Image.network(
+                                      documentSnapshot['imageUrl'],
+                                      height: 100,
+                                      // width: 50,
+                                    )
+                                  : Flexible(
+                                      child: Text(
+                                        documentSnapshot['answer'] ?? '',
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 3,
+                                      ),
+                                    ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                  );
-                });
-          }
-          return Center(child: Center(child: CircularProgressIndicator()));
-        });
+                      );
+                    });
+              }
+              return const Center(child: Center(child: CircularProgressIndicator()));
+            }),
+            StreamBuilder(
+            stream: FirebaseFirestore.instance
+                .collection('quizs')
+                .doc(widget.quizId)
+                .collection('questions')
+                .doc(widget.questionId)
+                .collection('answers')
+                .where("identifier", isEqualTo: '2')
+                .snapshots(),
+            builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+              if (snapshot.hasData) {
+                return ListView.builder(
+                    itemCount: snapshot.data!.docs.length,
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) {
+                      final DocumentSnapshot documentSnapshot =
+                          snapshot.data!.docs[index];
+                      return Container(
+                        margin: const EdgeInsets.all(10),
+                        child: Row(
+                          children: [
+                            const Text('คำตอบที่ 2 :' , style: TextStyle(fontWeight: FontWeight.bold),),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            // Icon(Icons.circle),
+                            widget.correct_answer
+                                    .contains(documentSnapshot['identifier'])
+                                ? const Icon(
+                                    Icons.circle,
+                                    color: Colors.green,
+                                  )
+                                : const Icon(
+                                    Icons.circle,
+                                    color: Colors.red,
+                                  ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            Container(
+                              child: documentSnapshot['imageUrl'] != null
+                                  ? Image.network(
+                                      documentSnapshot['imageUrl'],
+                                      height: 100,
+                                      // width: 50,
+                                    )
+                                  : Flexible(
+                                      child: Text(
+                                        documentSnapshot['answer'] ?? '',
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 3,
+                                      ),
+                                    ),
+                            ),
+                          ],
+                        ),
+                      );
+                    });
+              }
+              return const Center(child: Center(child: CircularProgressIndicator()));
+            }),
+            StreamBuilder(
+            stream: FirebaseFirestore.instance
+                .collection('quizs')
+                .doc(widget.quizId)
+                .collection('questions')
+                .doc(widget.questionId)
+                .collection('answers')
+                .where("identifier", isEqualTo: '3')
+                .snapshots(),
+            builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+              if (snapshot.hasData) {
+                return ListView.builder(
+                    itemCount: snapshot.data!.docs.length,
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) {
+                      final DocumentSnapshot documentSnapshot =
+                          snapshot.data!.docs[index];
+                      return Container(
+                        margin: const EdgeInsets.all(10),
+                        child: Row(
+                          children: [
+                            const Text('คำตอบที่ 3 :' , style: TextStyle(fontWeight: FontWeight.bold),),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            // Icon(Icons.circle),
+                            widget.correct_answer
+                                    .contains(documentSnapshot['identifier'])
+                                ? const Icon(
+                                    Icons.circle,
+                                    color: Colors.green,
+                                  )
+                                : const Icon(
+                                    Icons.circle,
+                                    color: Colors.red,
+                                  ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            Container(
+                              child: documentSnapshot['imageUrl'] != null
+                                  ? Image.network(
+                                      documentSnapshot['imageUrl'],
+                                      height: 100,
+                                      // width: 50,
+                                    )
+                                  : Flexible(
+                                      child: Text(
+                                        documentSnapshot['answer'] ?? '',
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 3,
+                                      ),
+                                    ),
+                            ),
+                          ],
+                        ),
+                      );
+                    });
+              }
+              return const Center(child: Center(child: CircularProgressIndicator()));
+            }),
+            StreamBuilder(
+            stream: FirebaseFirestore.instance
+                .collection('quizs')
+                .doc(widget.quizId)
+                .collection('questions')
+                .doc(widget.questionId)
+                .collection('answers')
+                .where("identifier", isEqualTo: '4')
+                .snapshots(),
+            builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+              if (snapshot.hasData) {
+                return ListView.builder(
+                    itemCount: snapshot.data!.docs.length,
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) {
+                      final DocumentSnapshot documentSnapshot =
+                          snapshot.data!.docs[index];
+                      return Container(
+                        margin: const EdgeInsets.all(10),
+                        child: Row(
+                          children: [
+                            const Text('คำตอบที่ 4 :' , style: TextStyle(fontWeight: FontWeight.bold),),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            // Icon(Icons.circle),
+                            widget.correct_answer
+                                    .contains(documentSnapshot['identifier'])
+                                ? const Icon(
+                                    Icons.circle,
+                                    color: Colors.green,
+                                  )
+                                : const Icon(
+                                    Icons.circle,
+                                    color: Colors.red,
+                                  ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            Container(
+                              child: documentSnapshot['imageUrl'] != null
+                                  ? Image.network(
+                                      documentSnapshot['imageUrl'],
+                                      height: 100,
+                                      // width: 50,
+                                    )
+                                  : Flexible(
+                                      child: Text(
+                                        documentSnapshot['answer'] ?? '',
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 3,
+                                      ),
+                                    ),
+                            ),
+                          ],
+                        ),
+                      );
+                    });
+              }
+              return const Center(child: Center(child: CircularProgressIndicator()));
+            }),
+      ],
+    );
   }
 }

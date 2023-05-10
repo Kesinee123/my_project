@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:my_project/views/views_students/profileStudent.dart';
 import 'package:my_project/views/views_students/questionWidget.dart';
+import 'package:my_project/views/views_students/questionWidget2.dart';
 
 class LetPage extends StatefulWidget {
+
   const LetPage({Key? key}) : super(key: key);
   @override
   State<LetPage> createState() => _LetPageState();
@@ -13,41 +16,44 @@ class _LetPageState extends State<LetPage> {
   bool _isValid = false;
 
   void _checkNumberValidity() async {
-  String inputNumber = _numberController.text.trim();
-  QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-      .collection('quizs')
-      .where('code', isEqualTo: inputNumber)
-      .get();
-  if (querySnapshot.docs.length > 0) {
-    setState(() {
-      _isValid = true;
-    });
-  }
-  if (_isValid) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => QuestionWidget(
-          // quizCode: inputNumber,
-          quizId: querySnapshot.docs[0].id, // ส่งข้อมูลไปด้วย
+    String inputNumber = _numberController.text.trim();
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('quizs')
+        .where('code', isEqualTo: inputNumber)
+        .get();
+    if (querySnapshot.docs.length > 0) {
+      setState(() {
+        _isValid = true;
+      });
+    }
+    if (_isValid) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => QuestionWidget(
+            // quizCode: inputNumber,
+            quizId: querySnapshot.docs[0].id, // ส่งข้อมูลไปด้วย
+          ),
         ),
-      ),
-    );
-  } else {
-     showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text("แจ้งเตือน", style: TextStyle(fontWeight: FontWeight.bold),),
-          content: Text("code แบบทดสอบที่คุณป้อนไม่ถูกต้อง กรุณาลองอีกครั้ง."),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context, 'OK'),
-              child: const Text('ตกลง'),
-            )
-          ]));
+      );
+    } else {
+      showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+                  title: Text(
+                    "แจ้งเตือน",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  content: Text(
+                      "code แบบทดสอบที่คุณป้อนไม่ถูกต้อง กรุณาลองอีกครั้ง."),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context, 'OK'),
+                      child: const Text('ตกลง'),
+                    )
+                  ]));
+    }
   }
-}
-
 
   @override
   Widget build(BuildContext context) {
@@ -58,8 +64,30 @@ class _LetPageState extends State<LetPage> {
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                SizedBox(
-                  height: 20,
+                Container(
+                  margin: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ProfileSPage()));
+                        },
+                        child: CircleAvatar(
+                          radius: 28,
+                          backgroundColor: Colors.white,
+                          child: Icon(
+                            Icons.person,
+                            size: 35,
+                            color: Colors.black,
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
                 ),
                 Padding(
                   padding: EdgeInsets.all(20),
@@ -105,7 +133,8 @@ class _LetPageState extends State<LetPage> {
                                           Icons.code_sharp,
                                         ),
                                         hintText: "กรุณากรอก code",
-                                        hintStyle: TextStyle(color: Colors.grey),
+                                        hintStyle:
+                                            TextStyle(color: Colors.grey),
                                         border: InputBorder.none),
                                   ),
                                 ),
@@ -119,14 +148,24 @@ class _LetPageState extends State<LetPage> {
                               child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.yellow),
-                            onPressed: _checkNumberValidity,
+                            onPressed: () {
+                              _checkNumberValidity();
+                              // Navigator.push(
+                              //     context,
+                              //     MaterialPageRoute(
+                              //       builder: (context) => QuestionWidget(
+                              //         // quizCode: inputNumber,
+                              //         quizId:
+                              //             'R7wN0dwEbTVDqba8BMfx', // ส่งข้อมูลไปด้วย
+                              //       ),
+                              //     ));
+                            },
                             child: Text('เข้าร่วมแบบทดสอบ',
                                 style: TextStyle(
                                     color: Colors.black,
                                     fontWeight: FontWeight.bold)),
                           )),
-                          
-        
+
                           // Container(
                           //   child: Text('ผ่านนนนน'),
                           // )

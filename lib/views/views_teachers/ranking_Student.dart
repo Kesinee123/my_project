@@ -171,7 +171,7 @@ class _Ranking_StudentState extends State<Ranking_Student> {
                       leading: Icon(Icons.exit_to_app, color: Colors.white, size: 20,),
                       title: Text('ออกจากแบบทดสอบ', style: TextStyle(fontSize: 18, color: Colors.white ,fontWeight: FontWeight.bold),),
                       onTap: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
+                        // Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
                       },
                     ),
                   ),

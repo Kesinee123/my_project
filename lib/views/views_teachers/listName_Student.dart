@@ -1,10 +1,15 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:my_project/views/views_teachers/homepage.dart';
 import 'package:my_project/views/views_teachers/ranking_Student.dart';
 
+import '../../models/quiz.dart';
+
 class ListName_Student extends StatefulWidget {
-  const ListName_Student({super.key});
+  const ListName_Student({super.key, required this.quizId});
+
+  final String quizId;
 
   @override
   State<ListName_Student> createState() => _ListName_StudentState();
@@ -20,27 +25,35 @@ class _ListName_StudentState extends State<ListName_Student> {
             Container(
               height: 200,
               decoration: BoxDecoration(
-                gradient:
-                    LinearGradient(colors: [Colors.deepPurple, Colors.purple]),
+                gradient: LinearGradient(
+                    colors: const [Colors.deepPurple, Colors.purple]),
               ),
               child: Padding(
-                padding: EdgeInsets.all(20),
+                padding: EdgeInsets.all(10),
                 child: Column(
                   children: [
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.red),
-                            onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          HomePage()));
-                            },
-                            child: Text('END')),
+                        IconButton(
+                            onPressed: () {},
+                            icon: Icon(
+                              Icons.exit_to_app,
+                              size: 30,
+                              color: Colors.white,
+                            )),
+                        // ElevatedButton(
+                        //     style: ElevatedButton.styleFrom(
+                        //         backgroundColor: Colors.red),
+                        //     onPressed: () {
+                        //       Navigator.push(
+                        //           context,
+                        //           MaterialPageRoute(
+                        //               builder: (context) =>
+                        //                   HomePage()));
+                        //     },
+                        //     child: IconButton(onPressed: (){},
+                        //     icon: Icon(Icons.exit_to_app))),
                       ],
                     ),
                     SizedBox(
@@ -48,26 +61,26 @@ class _ListName_StudentState extends State<ListName_Student> {
                     ),
                     Row(
                       children: [
-                        Container(
-                          width: 80,
-                          height: 80,
-                          decoration: BoxDecoration(
-                              border: Border.all(
-                                width: 1.5,
-                                color: Colors.orange,
-                              ),
-                              boxShadow: [
-                                BoxShadow(
-                                    color: Colors.black.withOpacity(.1),
-                                    blurRadius: 8,
-                                    spreadRadius: 3),
-                              ],
-                              borderRadius: BorderRadius.circular(40)),
-                          padding: EdgeInsets.all(5),
-                          child: CircleAvatar(
-                            backgroundImage: NetworkImage(FirebaseAuth.instance.currentUser!.photoURL!),
-                          ),
-                        ),
+                        // Container(
+                        //   width: 50,
+                        //   height: 50,
+                        //   decoration: BoxDecoration(
+                        //       border: Border.all(
+                        //         width: 1.5,
+                        //         color: Colors.white,
+                        //       ),
+                        //       boxShadow: [
+                        //         BoxShadow(
+                        //             color: Colors.black.withOpacity(.1),
+                        //             blurRadius: 8,
+                        //             spreadRadius: 3),
+                        //       ],
+                        //       borderRadius: BorderRadius.circular(40)),
+                        //   padding: EdgeInsets.all(5),
+                        //   child: CircleAvatar(
+                        //     backgroundImage: NetworkImage(FirebaseAuth.instance.currentUser!.photoURL!),
+                        //   ),
+                        // ),
                         SizedBox(
                           width: 20,
                         ),
@@ -77,7 +90,7 @@ class _ListName_StudentState extends State<ListName_Student> {
                             Row(
                               children: [
                                 Text(
-                                  'Name : ',
+                                  'ชื่อ - นามสกุล : ',
                                   style: TextStyle(
                                       fontSize: 20,
                                       fontWeight: FontWeight.bold,
@@ -87,7 +100,8 @@ class _ListName_StudentState extends State<ListName_Student> {
                                   width: 10,
                                 ),
                                 Text(
-                                  FirebaseAuth.instance.currentUser!.displayName!,
+                                  FirebaseAuth
+                                      .instance.currentUser!.displayName!,
                                   style: TextStyle(
                                       fontSize: 20,
                                       fontWeight: FontWeight.bold,
@@ -99,7 +113,7 @@ class _ListName_StudentState extends State<ListName_Student> {
                               height: 20,
                             ),
                             Row(
-                              children: [
+                              children: const [
                                 Icon(
                                   Icons.person,
                                   color: Colors.white,
@@ -108,7 +122,7 @@ class _ListName_StudentState extends State<ListName_Student> {
                                   width: 10,
                                 ),
                                 Text(
-                                  'Teacher',
+                                  'คุณครู',
                                   style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 20,
@@ -133,7 +147,7 @@ class _ListName_StudentState extends State<ListName_Student> {
                   children: [
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
+                      children: const [
                         Text(
                           'รายชื่อนักเรียน',
                           style: TextStyle(
@@ -145,144 +159,60 @@ class _ListName_StudentState extends State<ListName_Student> {
                     SizedBox(
                       height: 20,
                     ),
+                    // รายชื่อนักเรียน
+                    Expanded(
+                        child: Container(
+                            padding: EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: StreamBuilder(
+                                stream: FirebaseFirestore.instance
+                                    .collection('quizs')
+                                    .doc(widget.quizId)
+                                    .collection('studentList')
+                                    .snapshots(),
+                                builder: (context,
+                                    AsyncSnapshot<QuerySnapshot> snapshot) {
+                                  if (snapshot.hasData) {
+                                    return ListView.builder(
+                                        itemCount: snapshot.data!.docs.length,
+                                        shrinkWrap: true,
+                                        itemBuilder: (context, index) {
+                                          final DocumentSnapshot
+                                              documentSnapshot =
+                                              snapshot.data!.docs[index];
+                                          return Container(
+                                            // color: Colors.amber,
+                                            margin: EdgeInsets.symmetric(vertical: 5),
+                                            child: ListTile(
+                                              title: Text(documentSnapshot['name'] , style: TextStyle(fontWeight: FontWeight.bold),), 
+                                              leading: CircleAvatar(
+                                                child: Text('${index + 1}'),
+                                              )
+                                              ));
+                                        });
+                                  }
+                                  return CircularProgressIndicator();
+                                }))),
 
-                    Container(
-                      padding: EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Column(
-                        children: [
-                          Row(
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(12),
-                                child: Container(
-                                    width: 50,
-                                    height: 50,
-                                    padding: EdgeInsets.all(16),
-                                    color: Colors.purple,
-                                    child: Center(
-                                        child: Text(
-                                      '1',
-                                      style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white),
-                                    ))),
-                              ),
-                              SizedBox(
-                                width: 20,
-                              ),
-                              Column(
-                                children: [Text('Name_Student')],
-                              )
-                            ],
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          Row(
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(12),
-                                child: Container(
-                                    width: 50,
-                                    height: 50,
-                                    padding: EdgeInsets.all(16),
-                                    color: Colors.purple,
-                                    child: Center(
-                                        child: Text(
-                                      '2',
-                                      style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white),
-                                    ))),
-                              ),
-                              SizedBox(
-                                width: 20,
-                              ),
-                              Column(
-                                children: [Text('Name_Student')],
-                              )
-                            ],
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          Row(
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(12),
-                                child: Container(
-                                    width: 50,
-                                    height: 50,
-                                    padding: EdgeInsets.all(16),
-                                    color: Colors.purple,
-                                    child: Center(
-                                        child: Text(
-                                      '3',
-                                      style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white),
-                                    ))),
-                              ),
-                              SizedBox(
-                                width: 20,
-                              ),
-                              Column(
-                                children: [Text('Name_Student')],
-                              )
-                            ],
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          Row(
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(12),
-                                child: Container(
-                                    width: 50,
-                                    height: 50,
-                                    padding: EdgeInsets.all(16),
-                                    color: Colors.purple,
-                                    child: Center(
-                                        child: Text(
-                                      '4',
-                                      style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white),
-                                    ))),
-                              ),
-                              SizedBox(
-                                width: 20,
-                              ),
-                              Column(
-                                children: [Text('Name_Student')],
-                              )
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                    Spacer(),
+                    SizedBox(height: 30),
                     // button
                     InkWell(
                       onTap: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => Ranking_Student()));
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => Ranking_Student()));
                       },
                       child: Container(
                         height: 50,
-                        width: 150,
+                        width: 200,
                         decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(15),
-                            boxShadow: [
+                            boxShadow: const [
                               BoxShadow(
                                   color: Colors.purple,
                                   spreadRadius: 1,
@@ -294,11 +224,12 @@ class _ListName_StudentState extends State<ListName_Student> {
                                   // blurRadius: 5,
                                   offset: Offset(-4, -4)),
                             ]),
-                        child: Center(
+                        child: Container(
+                          margin: EdgeInsets.all(10),
                           child: Text(
-                            'START',
+                            'เริ่มต้นการทำแบบทดสอบ',
                             style: TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.bold),
+                                fontSize: 16, fontWeight: FontWeight.bold),
                           ),
                         ),
                       ),

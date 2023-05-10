@@ -11,10 +11,10 @@ import 'package:random_string/random_string.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class DetialQuizs_Code extends StatefulWidget {
-  const DetialQuizs_Code({super.key, required this.quizId, required this.link});
+  const DetialQuizs_Code({super.key, required this.quizId});
 
   final String quizId;
-  final String link;
+  // final String link;
 
   @override
   State<DetialQuizs_Code> createState() => _DetialQuizs_CodeState();
@@ -25,9 +25,22 @@ class _DetialQuizs_CodeState extends State<DetialQuizs_Code> {
 
   @override
   Widget build(BuildContext context) {
+    Stream<DocumentSnapshot<Map<String, dynamic>>> documentSnapshot =
+        FirebaseFirestore.instance
+            .collection('quizs')
+            .doc(widget.quizId)
+            .snapshots();
+
+    documentSnapshot.listen((DocumentSnapshot<Map<String, dynamic>> snapshot) {
+      Map<String, dynamic>? data = snapshot.data();
+
+      FirebaseFirestore.instance
+          .collection('quizs')
+          .doc(widget.quizId)
+          .update({'code': code});
+    });
 
     return Scaffold(
-     
         backgroundColor: Colors.grey[300],
         body: Container(
           height: 1000,
@@ -64,33 +77,11 @@ class _DetialQuizs_CodeState extends State<DetialQuizs_Code> {
                           SizedBox(
                             height: 20,
                           ),
-                          Container(
-                            height: 60,
-                            width: 300,
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(10)),
-                            child: Center(
-                                child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                
-                                TextButton(onPressed: () async {
-                                  if(widget.link != null) {
-                                    // ignore: deprecated_member_use
-                                    await launch(widget.link);
-                                  }
-                                },
-                                child: Text(widget.link))
-                                
-                              ],
-                            )),
-                          ),
                           SizedBox(
                             height: 20,
                           ),
                           Container(
-                            height: 60,
+                            height: 100,
                             width: 300,
                             decoration: BoxDecoration(
                                 color: Colors.white,
@@ -135,7 +126,8 @@ class _DetialQuizs_CodeState extends State<DetialQuizs_Code> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => ListName_Student()));
+                                builder: (context) => ListName_Student(
+                                  quizId: widget.quizId,)));
                       },
                       child: Text(
                         'เริ่มต้น',

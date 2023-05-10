@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
-import 'package:my_project/views/views_teachers/create_questions.dart';
-import 'package:my_project/views/views_teachers/create_questions2.dart';
-import 'package:my_project/views/views_teachers/create_questions3.dart';
+import 'package:my_project/views/views_teachers/create/create_questions.dart';
+import 'package:my_project/views/views_teachers/create/create_questions2.dart';
+import 'package:my_project/views/views_teachers/create/create_questions3.dart';
 
 class AddQuiz extends StatefulWidget {
   const AddQuiz({super.key, required this.quizId, required this.questionId});
@@ -36,7 +36,11 @@ class _AddQuizState extends State<AddQuiz> {
               SizedBox(height: 20,),
               Center(
                child: Container(
-                color: Colors.white,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  color: Colors.white,
+                ),
+                
                 height: 500,
                 width: 500,
                child: Column(
@@ -68,7 +72,7 @@ class _AddQuizState extends State<AddQuiz> {
                           child: Container(
                             margin: EdgeInsets.all(15),
                             child: 
-                              Text("(เลือกได้ 1 ข้อ)",style: TextStyle(fontWeight: FontWeight.bold),)
+                              Text("(เลือกได้ 1 คำตอบ)",style: TextStyle(fontWeight: FontWeight.bold),)
                           ) ,
                           ),
                        ],
@@ -99,7 +103,7 @@ class _AddQuizState extends State<AddQuiz> {
                           child: Container(
                             margin: EdgeInsets.all(15),
                             child: 
-                              Text("(เลือกได้มากกว่า 1 ข้อ)",style: TextStyle(fontWeight: FontWeight.bold),)
+                              Text("(เลือกได้มากกว่า 1 คำตอบ)",style: TextStyle(fontWeight: FontWeight.bold),)
                           ) ,
                           ),
                        ],
@@ -131,7 +135,7 @@ class _AddQuizState extends State<AddQuiz> {
                           child: Container(
                             margin: EdgeInsets.all(15),
                             child: 
-                              Text("(ข้อเขียน)",style: TextStyle(fontWeight: FontWeight.bold))
+                              Text("(แบบพิมคำตอบ)",style: TextStyle(fontWeight: FontWeight.bold))
                           ) ,
                           ),
                        ],

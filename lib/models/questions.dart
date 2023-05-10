@@ -1,81 +1,57 @@
-// // ignore_for_file: public_member_api_docs, sort_constructors_first
-// import 'dart:convert';
-// import 'dart:ffi';
-
-// import 'package:cloud_firestore/cloud_firestore.dart';
-
 // class Questions {
- 
-//   String questions;
-//   String imageUrl;
-//   String type_quiz;
-//   String correct_answer;
+//   final String text;
+//   final List<Option> options;
+//   bool isLocked;
+//   Option? selectedOption;
+
 //   Questions({
-//     required this.questions,
-//     required this.imageUrl,
-//     required this.type_quiz,
-//     required this.correct_answer,
+//     required this.text,
+//     required this.options,
+//     this.isLocked = false,
+//     this.selectedOption,
 //   });
-  
-
-
-//   Map<String, dynamic> toMap() {
-//     return <String, dynamic>{
-//       'questions': questions,
-//       'imageUrl': imageUrl,
-//       'type_quiz': type_quiz,
-//       'correct_answer': correct_answer,
-//     };
-//   }
-
-//   factory Questions.fromMap(Map<String, dynamic> map) {
-//     return Questions(
-//       questions: map['questions'] as String,
-//       imageUrl: map['imageUrl'] as String,
-//       type_quiz: map['type_quiz'] as String,
-//       correct_answer: map['correct_answer'] as String,
-//     );
-//   }
-
-//   String toJson() => json.encode(toMap());
-
-//   factory Questions.fromJson(String source) => Questions.fromMap(json.decode(source) as Map<String, dynamic>);
-
-//   Questions copyWith({
-//     String? questions,
-//     String? imageUrl,
-//     String? type_quiz,
-//     String? correct_answer,
-//   }) {
-//     return Questions(
-//       questions: questions ?? this.questions,
-//       imageUrl: imageUrl ?? this.imageUrl,
-//       type_quiz: type_quiz ?? this.type_quiz,
-//       correct_answer: correct_answer ?? this.correct_answer,
-//     );
-//   }
-
-//   @override
-//   String toString() {
-//     return 'Questions(questions: $questions, imageUrl: $imageUrl, type_quiz: $type_quiz, correct_answer: $correct_answer)';
-//   }
-
-//   @override
-//   bool operator ==(covariant Questions other) {
-//     if (identical(this, other)) return true;
-  
-//     return 
-//       other.questions == questions &&
-//       other.imageUrl == imageUrl &&
-//       other.type_quiz == type_quiz &&
-//       other.correct_answer == correct_answer;
-//   }
-
-//   @override
-//   int get hashCode {
-//     return questions.hashCode ^
-//       imageUrl.hashCode ^
-//       type_quiz.hashCode ^
-//       correct_answer.hashCode;
-//   }
 // }
+
+// class Option {
+//   final String text;
+//   final bool isCorrect;
+
+//   const Option({
+//     required this.text,
+//     required this.isCorrect,
+//   });
+// }
+
+// final questions = [
+//   Questions(text: 'ถ้า 3x + 1 = 13 และ 3(y - 2) = 9', options: [
+//     const Option(text: '7', isCorrect: false),
+//     const Option(text: '8', isCorrect: false),
+//     const Option(text: '9', isCorrect: true),
+//     const Option(text: '15', isCorrect: false),
+//   ]),
+//   Questions(text: 'สามในสี่เท่าของผลบวกของเลขจำนวนหนึ่ง กับ 3 มีค่าเท่ากับ 45 เลขจำนวนนั้นมีค่าเท่าใด', options: [
+//     const Option(text: '67', isCorrect: false),
+//     const Option(text: '87', isCorrect: false),
+//     const Option(text: '57', isCorrect: true),
+//     const Option(text: '77', isCorrect: false),
+//   ]),
+//   Questions(text: 'ปีนี้ยายอายุ 60 ปี หลานอายุ 12 ปี อีกกี่ปี อายุยายจะเป็น 3 เท่าของอายุหลาน', options: [
+//     const Option(text: '11', isCorrect: false),
+//     const Option(text: '12', isCorrect: true),
+//     const Option(text: '13', isCorrect: false),
+//     const Option(text: '14', isCorrect: false),
+//   ]),
+//   Questions(text: 'ถ้านำจำนวนเต็ม 3 จำนวนมาบวกกันทีละคู่จะได้ผลบวกเป็น 4, 16 และ 26 จงหาจำนวนที่มากที่สุด', options: [
+//     const Option(text: '18', isCorrect: false),
+//     const Option(text: '20', isCorrect: false),
+//     const Option(text: '30', isCorrect: false),
+//     const Option(text: '19', isCorrect: true),
+//   ]),
+//   Questions(text: 'มาลีทำข้อสอบ 24 ข้อ โดยทำถูกมากกว่าผิด 6 ข้อ มาลีทำข้อสอบถูกกี่ข้อ', options: [
+//     const Option(text: '16', isCorrect: false),
+//     const Option(text: '15', isCorrect: true),
+//     const Option(text: '13', isCorrect: false),
+//     const Option(text: '14', isCorrect: false),
+//   ]),
+  
+// ];

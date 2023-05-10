@@ -1,21 +1,12 @@
 import 'dart:math';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
-import 'package:my_project/controllers/question.dart';
-import 'package:my_project/main_page.dart';
 import 'package:my_project/views/first_page.dart';
-import 'package:my_project/views/route_services.dart';
 import 'package:my_project/views/signin.dart';
-import 'package:my_project/views/views_students/codePage.dart';
-import 'package:my_project/views/views_students/homeStudent.dart';
-import 'package:my_project/views/views_students/questionWidget.dart';
-import 'package:my_project/views/views_students/score.dart';
-import 'package:my_project/views/views_teachers/detail_quiz_code.dart';
-import 'package:my_project/views/views_teachers/ranking_Student.dart';
-import 'package:my_project/views/views_teachers/test.dart';
+import 'package:my_project/views/views_students/quizPage.dart';
 
 
 void main() async {
@@ -30,12 +21,35 @@ void main() async {
   }else{
     await Firebase.initializeApp(); 
   }
+
+  final PendingDynamicLinkData? initiaLink = 
+    await FirebaseDynamicLinks.instance.getInitialLink();
   
-  runApp(const MyApp());
+  runApp(MyApp(
+    initiaLink: initiaLink,
+    ));
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+class MyApp extends StatefulWidget {
+  final PendingDynamicLinkData? initiaLink;
+  const MyApp({Key? key, this.initiaLink}) : super(key: key);
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+
+  String? path;
+
+  @override
+  void initState() {
+    if (widget.initiaLink != null) {
+      path = widget.initiaLink!.link.path;
+    }
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
@@ -44,8 +58,10 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.purple,
       ),
-      home: MainPage(),
-      // onGenerateRoute: RouteServices.generateRoute,
+      // ignore: prefer_const_constructors
+      // home: firstPage(path: path.toString(),),
+      home: QuizPage(quizId: 'R7wN0dwEbTVDqba8BMfx'),
+      // onGenerateRoute: RouteServices.generateRoute
     );
   }
 }

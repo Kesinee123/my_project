@@ -9,13 +9,17 @@ import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:my_project/views/signin.dart';
 import 'package:my_project/views/views_students/codePage.dart';
 import 'package:my_project/views/views_students/homeStudent.dart';
+import 'package:my_project/views/views_students/quizPage.dart';
 import 'package:my_project/views/views_teachers/homepage.dart';
 import 'package:my_project/views/views_teachers/profile_user.dart';
 import 'package:email_validator/email_validator.dart';
 
 
 class MainPage extends StatefulWidget {
-  const MainPage({super.key});
+
+  final String path;
+
+  const MainPage({super.key, required this.path});
 
   @override
   State<MainPage> createState() => _MainPageState();
@@ -41,6 +45,7 @@ class _MainPageState extends State<MainPage> {
                     return HomePage();
                     // print(email);
                   } else {
+                    // return QuizPage();
                     return LetPage();
                     // print(email);
                   }
@@ -50,7 +55,7 @@ class _MainPageState extends State<MainPage> {
               },);
             // return HomePage();
           }else{
-            return SignIn();
+            return SignIn(path: '',);
           }
         }),
     );

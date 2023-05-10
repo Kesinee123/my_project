@@ -7,8 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:my_project/models/menu_item.dart';
-import 'package:my_project/views/views_teachers/details.dart';
-import 'package:my_project/views/views_teachers/editCreate_quizs.dart';
+import 'package:my_project/views/views_teachers/detail/details.dart';
 
 class QuizDetailList extends StatefulWidget {
   QuizDetailList({super.key});
@@ -94,6 +93,7 @@ class _QuizDetailListState extends State<QuizDetailList> {
                                     builder: (context) => DetailsQuizs(
                                           quizId: documentSnapshot.id,
                                           questionId: documentSnapshot.id,
+                                          
                                         )));
                           },
                           child: ListTile(
@@ -107,9 +107,21 @@ class _QuizDetailListState extends State<QuizDetailList> {
                                 documentSnapshot['quizTitle'],
                                 style: TextStyle(color: Colors.white),
                               ),
-                              subtitle: Text(
-                                documentSnapshot['quizSubject'],
-                                style: TextStyle(color: Colors.white),
+                              subtitle: Row(
+                                children: [
+                                  Icon(
+                                    Icons.circle,
+                                    size: 10,
+                                    color: Colors.amber,
+                                  ),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Text(
+                                    documentSnapshot['quizSubject'],
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ],
                               ),
                               trailing: PopupMenuButton(onSelected: (value) {
                                 if (value == "ลบ") {
@@ -135,7 +147,7 @@ class _QuizDetailListState extends State<QuizDetailList> {
                                                   SizedBox(
                                                     height: 20,
                                                   ),
-                                                  
+
                                                   Row(
                                                     mainAxisAlignment:
                                                         MainAxisAlignment
@@ -403,7 +415,8 @@ class _QuizDetailListState extends State<QuizDetailList> {
                                                                             // final TextEditingController
                                                                             //     quizSubjectEdit =
                                                                             //     TextEditingController();
-                                                                            if (_image != null) {
+                                                                            if (_image !=
+                                                                                null) {
                                                                               _imageUrl = await uploadImage(_image!);
                                                                             } else {
                                                                               _imageUrl = 'https://img.icons8.com/sf-regular-filled/256/question-mark.png';

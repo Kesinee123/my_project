@@ -1,25 +1,87 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:my_project/compornent/quizDetailList.dart';
 import 'package:my_project/config/responsive.dart';
 import 'package:my_project/config/size_config.dart';
 import 'package:my_project/compornent/sidemenu.dart';
-import 'package:my_project/views/views_teachers/create_quizs.dart';
+import 'package:my_project/views/views_teachers/create/create_quizs.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  const HomePage({super.key,});
 
-  // final String quizId;
+  // final String path;
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
+
 class _HomePageState extends State<HomePage> {
   final isDialOpen = ValueNotifier(false);
   GlobalKey<ScaffoldState> _drawerkey = GlobalKey();
+
+   bool shouldShowNotification = false;
+
+  FlutterLocalNotificationsPlugin? notifications;
+
+Future<void> initializeNotifications() async {
+  const AndroidInitializationSettings initializationSettingsAndroid =
+    AndroidInitializationSettings('@mipmap/ic_launcher');
+
+  final InitializationSettings initializationSettings =
+    InitializationSettings(android: initializationSettingsAndroid);
+
+  notifications = FlutterLocalNotificationsPlugin();
+  await notifications!.initialize(initializationSettings);
+}
+
+Future<void> showNotification() async {
+  if (notifications == null) {
+    await initializeNotifications();
+  }
+
+  const AndroidNotificationDetails androidPlatformChannelSpecifics =
+    AndroidNotificationDetails(
+      'your channel id',
+      'your channel name',
+      // 'your channel description',
+      importance: Importance.max,
+      priority: Priority.high,
+      ticker: 'ticker',
+    );
+
+  const NotificationDetails platformChannelSpecifics =
+    NotificationDetails(android: androidPlatformChannelSpecifics);
+
+  await notifications!.show(
+      0, // id ของแจ้งเตือน
+    'แจ้งเตือน', // หัวข้อของแจ้งเตือน
+    'ปัญหาที่คุณแจ้งได้รับการแก้ไขเสร็จสิ้นแล้ว', // เนื้อหาของแจ้งเตือน
+    platformChannelSpecifics,
+  );
+}
+
+@override
+  void initState() {
+    super.initState();
+    Firebase.initializeApp().then((_) {
+      FirebaseFirestore.instance
+          .collection('problum')
+          .doc('QBLew22zp9yA5Bsys85G')
+          .get()
+          .then((documentSnapshot) {
+        final data = documentSnapshot.data()!;
+        data['status'] == 'false' ? showNotification() : Text('');
+      });
+    });
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
@@ -49,6 +111,13 @@ class _HomePageState extends State<HomePage> {
                   label: 'สร้างแบบทดสอบ',
                   onTap: () => 
                   Navigator.push(context, MaterialPageRoute(builder: (context) => CreateQuiz())),
+                  // showToast('...Create Quiz'),
+                ),
+                SpeedDialChild(
+                  backgroundColor: Colors.white,
+                  child: Icon(Icons.edit),
+                  label: 'แจ้งเตือน',
+                  onTap: () => showNotification(),
                   // showToast('...Create Quiz'),
                 )
               ],

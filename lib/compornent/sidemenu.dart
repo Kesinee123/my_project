@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:my_project/views/signin.dart';
 import 'package:my_project/views/views_teachers/homepage.dart';
 import 'package:my_project/views/views_teachers/profile_user.dart';
-import 'package:my_project/views/views_teachers/chatpage.dart';
 import 'package:my_project/views/views_teachers/report.dart';
 import '../config/size_config.dart';
 
@@ -69,7 +68,7 @@ class sidemenu extends StatelessWidget {
                     icon: Icon(Icons.cancel, color: Colors.red,)),
                     IconButton(onPressed: () async {
                       await FirebaseAuth.instance.signOut().then((value) => 
-                      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => SignIn())));
+                      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => SignIn(path: '',))));
                     },
                     icon: Icon(Icons.exit_to_app, color: Colors.green,)),
                   ],

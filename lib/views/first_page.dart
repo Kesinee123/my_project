@@ -6,7 +6,10 @@ import 'package:flutter/src/widgets/ticker_provider.dart';
 import 'package:my_project/main_page.dart';
 
 class firstPage extends StatefulWidget {
-  const firstPage({super.key});
+
+  final String path;
+
+  const firstPage({super.key, required this.path});
 
   @override
   State<firstPage> createState() => _firstPageState();
@@ -22,7 +25,7 @@ class _firstPageState extends State<firstPage> {
 
   _navigatetohome() async {
     await Future.delayed(Duration(milliseconds: 2000), () {});
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainPage()));
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainPage(path: widget.path ,)));
   }
 
   @override
