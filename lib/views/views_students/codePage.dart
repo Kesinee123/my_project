@@ -30,7 +30,7 @@ class _LetPageState extends State<LetPage> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => QuestionWidget(
+          builder: (context) => QuizWidget(
             // quizCode: inputNumber,
             quizId: querySnapshot.docs[0].id, // ส่งข้อมูลไปด้วย
           ),

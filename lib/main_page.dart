@@ -42,11 +42,11 @@ class _MainPageState extends State<MainPage> {
                   RegExp emailTeacher = RegExp(r'[A-Za-z0-9]+@gmail+.com');
                   RegExp emailStudent = RegExp(r'[0-9]+@dpu+.ac.th');
                   if(emailTeacher.hasMatch(user['email'])){
-                    return HomePage();
-                    // print(email);
+                    return HomePage(path: widget.path,);
+                    // print(widget.path,);
                   } else {
-                    // return QuizPage();
                     return LetPage();
+                    // return widget.path != null ? QuizPage(quizId: 'R7wN0dwEbTVDqba8BMfx') :  LetPage();
                     // print(email);
                   }
                 }return Material(child: Center(

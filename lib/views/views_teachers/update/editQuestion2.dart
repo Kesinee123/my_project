@@ -966,7 +966,7 @@ List  getIntsFromCheckboxListTiles() {
                               MaterialPageRoute(
                                   builder: (context) => DetailsQuizs(
                                         quizId: widget.quizId,
-                                        questionId: widget.questionId,
+                                        questionId: widget.questionId, path: '',
                                         
                                       )));
                         },
@@ -1562,7 +1562,7 @@ List  getIntsFromCheckboxListTiles() {
                                 MaterialPageRoute(
                                     builder: (context) => DetailsQuizs(
                                           quizId: widget.quizId,
-                                          questionId: widget.questionId,
+                                          questionId: widget.questionId, path: '',
                                           
                                         )));
                           },

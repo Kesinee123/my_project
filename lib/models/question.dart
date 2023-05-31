@@ -1,35 +1,92 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
+
+  class Quizs {
+  late final String id;
+  final String quizTitle;
+  final String quizSubject;
+  final String imageUrl;
+
+  Quizs({
+    required this.id,
+    required this.quizTitle,
+    required this.quizSubject,
+    required this.imageUrl,
+  });
+
+  factory Quizs.fromMap(Map<String, dynamic> data) {
+    return Quizs(
+      id: data['quizId'] ?? '',
+      quizTitle: data['quizTitle'] ?? '',
+      quizSubject: data['quizSubject'] ?? '',
+      imageUrl: data['imageUrl'] ?? '',
+    );
+  }
+}
+
+
 
 class Question {
-  final String id;
+  late final String id;
   final String question;
   final String typeQuestion;
   final String correct_answer;
+  final List<Option> options;
 
   Question({
-    required this.question,
     required this.id,
-    required this.typeQuestion,
+    required this.question,
     required this.correct_answer,
+    required this.typeQuestion,
+    required this.options,
   });
+
+  factory Question.fromMap(Map<String, dynamic> data) {
+    return Question(
+      id: data['questionId'] ?? '',
+      question: data['question'] ?? '',
+      correct_answer: data['correct_answer'] ?? '',
+      typeQuestion: data['typeQuestion'] ?? '',
+      options: [],
+    );
+  }
 }
 
-// Future<List<Question>> getQuestions() async {
-//     final CollectionReference questions = FirebaseFirestore.instance
-//         .collection('quizs')
-//         .doc('h98ceZEsLHKJWnpODf2v')
-//         .collection('questions');
-//     QuerySnapshot querySnapshot = await questions.get();
-//     List<Question> questionsList = [];
-//     querySnapshot.docs.forEach((doc) {
-//       Question question = Question(
-//         id: doc.id,
-//         question: doc['questions'].toString(),
-//         typeQuestion: doc['type_quiz'].toString(),
-//         correct_answer: doc['correct_answer'].toString(),
-//       );
-//       questionsList.add(question);
-//     });
-//     return questionsList;
-//   }
+class Option {
+  final String id;
+  final String answer;
+  final String identifier;
+  final String imageUrl;
+
+  Option({
+    required this.id,
+    required this.answer,
+    required this.identifier,
+    required this.imageUrl,
+  });
+
+  factory Option.fromMap(Map<String, dynamic> data) {
+    return Option(
+      id: data['id'] ?? '',
+      answer: data['answer'] ?? '',
+      identifier: data['identifier'] ?? '',
+      imageUrl: data['imageUrl'] ?? '',
+    );
+  }
+}
+
+class StudentList {
+  final String studentId;
+  // final String answer;
+  // final String identifier;
+  // final String imageUrl;
+
+  StudentList({
+    required this.studentId,
+  });
+
+  factory StudentList.fromMap(Map<String, dynamic> data) {
+    return StudentList(
+      studentId: data['studentId'] ?? '',
+    );
+  }
+}
+

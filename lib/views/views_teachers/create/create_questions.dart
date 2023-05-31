@@ -62,7 +62,7 @@ class _CreateQuestionState extends State<CreateQuestion> {
       'createdAt': '$date $time',
       'quizId': widget.quizId,
       'type_quiz': 'เลือกได้ 1 คำตอบ',
-      "correct_answer": correct_answer,
+      "correct_answer": correct_answer.toString(),
     });
     await questionDocumentReference.update({
       "questionId": questionDocumentReference.id,
@@ -309,344 +309,17 @@ class _CreateQuestionState extends State<CreateQuestion> {
     return Scaffold(
       // appBar: AppBar(backgroundColor: Colors.deepPurple, title: Text(''),),
       backgroundColor: Colors.white,
-      body: Form(
-        key: _formKey,
-        child: SingleChildScrollView(
-          child: Container(
-              child: Responsive(
-            mobile: Column(
-              children: [
-                Container(
-                  // margin: EdgeInsets.only(top: 30),
-                  color: Colors.deepPurple,
-                  // decoration: BoxDecoration(
-                  //     image: DecorationImage(
-                  //       image: ExactAssetImage("assets/dw.jpg"),
-                  //       fit: BoxFit.cover,
-                  //     ),
-                  //   ),
-                  child: Container(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
-                    child: Center(
-                      child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 10),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "โจทย์คำถาม",
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 18),
-                            ),
-                            SizedBox(
-                              height: 20,
-                            ),
-                            TextFormField(
-                              minLines: 1,
-                              maxLines: 100,
-                              keyboardType: TextInputType.multiline,
-                              style: TextStyle(color: Colors.white),
-                              validator: ((val) =>
-                                  val!.isEmpty ? "กรอกโจทย์คำถาม" : null),
-                              decoration: InputDecoration(
-                                hintText: "",
-                              ),
-                              onChanged: (value) {
-                                question = value;
-                              },
-                            ),
-                            SizedBox(
-                              height: 20,
-                            ),
-                            Center(
-                                child: _imageQs == null
-                                    ? null
-                                    : Image.file(_imageQs!, height: 200, width: 200,)),
-                            Container(
-                              margin: EdgeInsets.fromLTRB(0, 20, 150, 0),
-                              child: ElevatedButton.icon(
-                                onPressed: (() {
-                                  imagePickerQuestion();
-                                }),
-                                icon: Icon(
-                                  Icons.add_a_photo,
-                                  color: Colors.black,
-                                ),
-                                label: Text(
-                                  "เพิ่มรูปภาพ",
-                                  style: TextStyle(color: Colors.black),
-                                ),
-                                style: ElevatedButton.styleFrom(
-                                    primary: Colors.yellow),
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                
-                Container(
-                  height: 670,
-                  color: Colors.white,
-                  child: Column(
-                    children: [
-                      SizedBox(height: 20,),
-                      Text(
-                        "เลือกได้ 1 ข้อเท่านั้น !!",
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Center(
-                        child: RadioListTile(
-                            activeColor: Colors.red,
-                            secondary: IconButton(
-                                onPressed: () {
-                                  imagePickeOption1();
-                                },
-                                icon: Icon(Icons.add_a_photo)),
-                            value: 1,
-                            groupValue: correct_answer,
-                            onChanged: (value) {
-                              setState(() {
-                                correct_answer = value!;
-                              });
-                            },
-                            title: Container(
-                              // color: Colors.red,
-                              child: Center(
-                                  child: _imageOp1 == null
-                                      ? TextFormField(
-                                          minLines: 1,
-                                          maxLines: 3,
-                                          validator: ((val) => val!.isEmpty
-                                              ? "กรอกคำตอบ"
-                                              : null),
-                                          onChanged: (value) {
-                                            setState(() {
-                                              option1 = value;
-                                            });
-                                          },
-                                          decoration: InputDecoration(
-                                              hintText: 'คำตอบที่ 1'),
-                                        )
-                                      : Image.file(
-                                          _imageOp1!,
-                                          height: 100,
-                                        )),
-                            )),
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Center(
-                        child: RadioListTile(
-                            activeColor: Colors.red,
-                            secondary: IconButton(
-                                onPressed: () {
-                                  imagePickeOption2();
-                                },
-                                icon: Icon(Icons.add_a_photo)),
-                            value: 2,
-                            groupValue: correct_answer,
-                            onChanged: (value) {
-                              setState(() {
-                                correct_answer = value!;
-                              });
-                            },
-                            title: Container(
-                              // color: Colors.red,
-                              child: Center(
-                                  child: _imageOp2 == null
-                                      ? TextFormField(
-                                          minLines: 1,
-                                          maxLines: 3,
-                                          validator: ((val) => val!.isEmpty
-                                              ? "กรอกคำตอบ"
-                                              : null),
-                                          onChanged: (value) {
-                                            setState(() {
-                                              option2 = value;
-                                            });
-                                          },
-                                          decoration: InputDecoration(
-                                              hintText: 'คำตอบที่ 2'),
-                                        )
-                                      : Image.file(
-                                          _imageOp2!,
-                                          height: 100,
-                                        )),
-                            )),
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Center(
-                        child: RadioListTile(
-                            activeColor: Colors.red,
-                            secondary: IconButton(
-                                onPressed: () {
-                                  imagePickeOption3();
-                                },
-                                icon: Icon(Icons.add_a_photo)),
-                            value: 3,
-                            groupValue: correct_answer,
-                            onChanged: (value) {
-                              setState(() {
-                                correct_answer = value!;
-                              });
-                            },
-                            title: Container(
-                              // color: Colors.red,
-                              child: Center(
-                                  child: _imageOp3 == null
-                                      ? TextFormField(
-                                          minLines: 1,
-                                          maxLines: 3,
-                                          validator: ((val) => val!.isEmpty
-                                              ? "กรอกคำตอบ"
-                                              : null),
-                                          onChanged: (value) {
-                                            setState(() {
-                                              option3 = value;
-                                            });
-                                          },
-                                          decoration: InputDecoration(
-                                              hintText: 'คำตอบที่ 3'),
-                                        )
-                                      : Image.file(
-                                          _imageOp3!,
-                                          height: 100,
-                                        )),
-                            )),
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Center(
-                        child: RadioListTile(
-                            activeColor: Colors.red,
-                            secondary: IconButton(
-                                onPressed: () {
-                                  imagePickeOption4();
-                                },
-                                icon: Icon(Icons.add_a_photo)),
-                            value: 4,
-                            groupValue: correct_answer,
-                            onChanged: (value) {
-                              setState(() {
-                                correct_answer = value!;
-                              });
-                            },
-                            title: Container(
-                              // color: Colors.red,
-                              child: Center(
-                                  child: _imageOp4 == null
-                                      ? TextFormField(
-                                          minLines: 1,
-                                          maxLines: 3,
-                                          validator: ((val) => val!.isEmpty
-                                              ? "กรอกคำตอบ"
-                                              : null),
-                                          onChanged: (value) {
-                                            setState(() {
-                                              option4 = value;
-                                            });
-                                          },
-                                          decoration: InputDecoration(
-                                              hintText: 'คำตอบที่ 4'),
-                                        )
-                                      : Image.file(
-                                          _imageOp4!,
-                                          height: 100,
-                                        )),
-                            )),
-                      ),
-                      SizedBox(
-                        height: 50,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.grey),
-                              onPressed: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => DetailsQuizs(
-                                              quizId: widget.quizId,
-                                              questionId: widget.questionId,
-                                            )));
-                              },
-                              child: Text('ยกเลิก')),
-                          SizedBox(
-                            width: 50,
-                          ),
-                          ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                  primary: Colors.deepPurple),
-                              onPressed: () {
-                                // print('โจทย์ : $question , รูปภาพ : $_imageUrlQs');
-                                if (_formKey.currentState!.validate()) {
-                                  if (correct_answer == 0) {
-                                    //  showSnackbar(
-                                    //   context, Colors.red, "โปรดเลือกตอบที่ถูกต้อง");
-                                    normalDialog(
-                                        context, 'โปรดเลือกคำตอบที่ถูกต้อง');
-                                    return;
-                                  } else if (question == null) {
-                                    showSnackbar(context, Colors.red,
-                                        "สร้างโจทย์ไม่คำถามสำเร็จ!!");
-                                  }
-                                  try {
-                                    createQuestionRadio(question);
-
-                                    showSnackbar(context, Colors.green,
-                                        "สร้างโจทย์คำถามสำเร็จ");
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => DetailsQuizs(
-                                                  quizId: widget.quizId,
-                                                  questionId: widget.questionId,
-                                                )));
-                                  } catch (e) {
-                                    showSnackbar(
-                                        context, Colors.red, e.toString());
-                                  }
-                                }
-                              },
-                              child: Text('บันทึกโจทย์')),
-                        ],
-                      )
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            destop: Container(
-              
-             decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: Colors.black)
-              ),
-              margin: EdgeInsets.symmetric(horizontal: 400 , vertical: 20),
-              child: Column(
+      body: SafeArea(
+        child: Form(
+          key: _formKey,
+          child: SingleChildScrollView(
+            child: Container(
+                child: Responsive(
+              mobile: Column(
                 children: [
                   Container(
-                    decoration: BoxDecoration(
-                        color: Colors.deepPurple,
-                        borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(20),
-                            topRight: Radius.circular(20))),
-                    // margin: EdgeInsets.symmetric(horizontal: 400),
-
+                    // margin: EdgeInsets.only(top: 30),
+                    color: Colors.deepPurple,
                     // decoration: BoxDecoration(
                     //     image: DecorationImage(
                     //       image: ExactAssetImage("assets/dw.jpg"),
@@ -654,20 +327,18 @@ class _CreateQuestionState extends State<CreateQuestion> {
                     //     ),
                     //   ),
                     child: Container(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 16.0, vertical: 24.0),
-                      // margin: EdgeInsets.symmetric(horizontal: 400),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
                       child: Center(
                         child: Container(
                           padding: EdgeInsets.symmetric(horizontal: 10),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              
                               Text(
                                 "โจทย์คำถาม",
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 18),
+                                style:
+                                    TextStyle(color: Colors.white, fontSize: 18),
                               ),
                               SizedBox(
                                 height: 20,
@@ -692,7 +363,7 @@ class _CreateQuestionState extends State<CreateQuestion> {
                               Center(
                                   child: _imageQs == null
                                       ? null
-                                      : Image.file(_imageQs!)),
+                                      : Image.file(_imageQs!, height: 200, width: 200,)),
                               Container(
                                 margin: EdgeInsets.fromLTRB(0, 20, 150, 0),
                                 child: ElevatedButton.icon(
@@ -717,256 +388,588 @@ class _CreateQuestionState extends State<CreateQuestion> {
                       ),
                     ),
                   ),
-                  // SizedBox(
-                  //   height: 30,
-                  // ),
+                  
                   Container(
-                     decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.only(
-                          bottomLeft: Radius.circular(20),
-                          bottomRight: Radius.circular(20)
-                        )
-                      ),
+                    height: 670,
+                    color: Colors.white,
                     child: Column(
                       children: [
-                        SizedBox(height: 30,),
+                        SizedBox(height: 20,),
                         Text(
                           "เลือกได้ 1 ข้อเท่านั้น !!",
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                         SizedBox(
-                    height: 20,
-                  ),
-                  Center(
-                    child: RadioListTile(
-                        activeColor: Colors.red,
-                        secondary: IconButton(
-                            onPressed: () {
-                              imagePickeOption1();
-                            },
-                            icon: Icon(Icons.add_a_photo)),
-                        value: 1,
-                        groupValue: correct_answer,
-                        onChanged: (value) {
-                          setState(() {
-                            correct_answer = value!;
-                          });
-                        },
-                        title: Container(
-                          // color: Colors.red,
-                          child: Center(
-                              child: _imageOp1 == null
-                                  ? TextFormField(
-                                      minLines: 1,
-                                      maxLines: 3,
-                                      validator: ((val) =>
-                                          val!.isEmpty ? "กรอกคำตอบ" : null),
-                                      onChanged: (value) {
-                                        setState(() {
-                                          option1 = value;
-                                        });
-                                      },
-                                      decoration: InputDecoration(
-                                          hintText: 'คำตอบที่ 1'),
-                                    )
-                                  : Image.file(
-                                      _imageOp1!,
-                                      height: 100,
-                                    )),
-                        )),
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Center(
-                    child: RadioListTile(
-                        activeColor: Colors.red,
-                        secondary: IconButton(
-                            onPressed: () {
-                              imagePickeOption2();
-                            },
-                            icon: Icon(Icons.add_a_photo)),
-                        value: 2,
-                        groupValue: correct_answer,
-                        onChanged: (value) {
-                          setState(() {
-                            correct_answer = value!;
-                          });
-                        },
-                        title: Container(
-                          // color: Colors.red,
-                          child: Center(
-                              child: _imageOp2 == null
-                                  ? TextFormField(
-                                      minLines: 1,
-                                      maxLines: 3,
-                                      validator: ((val) =>
-                                          val!.isEmpty ? "กรอกคำตอบ" : null),
-                                      onChanged: (value) {
-                                        setState(() {
-                                          option2 = value;
-                                        });
-                                      },
-                                      decoration: InputDecoration(
-                                          hintText: 'คำตอบที่ 2'),
-                                    )
-                                  : Image.file(
-                                      _imageOp2!,
-                                      height: 100,
-                                    )),
-                        )),
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Center(
-                    child: RadioListTile(
-                        activeColor: Colors.red,
-                        secondary: IconButton(
-                            onPressed: () {
-                              imagePickeOption3();
-                            },
-                            icon: Icon(Icons.add_a_photo)),
-                        value: 3,
-                        groupValue: correct_answer,
-                        onChanged: (value) {
-                          setState(() {
-                            correct_answer = value!;
-                          });
-                        },
-                        title: Container(
-                          // color: Colors.red,
-                          child: Center(
-                              child: _imageOp3 == null
-                                  ? TextFormField(
-                                      minLines: 1,
-                                      maxLines: 3,
-                                      validator: ((val) =>
-                                          val!.isEmpty ? "กรอกคำตอบ" : null),
-                                      onChanged: (value) {
-                                        setState(() {
-                                          option3 = value;
-                                        });
-                                      },
-                                      decoration: InputDecoration(
-                                          hintText: 'คำตอบที่ 3'),
-                                    )
-                                  : Image.file(
-                                      _imageOp3!,
-                                      height: 100,
-                                    )),
-                        )),
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Center(
-                    child: RadioListTile(
-                        activeColor: Colors.red,
-                        secondary: IconButton(
-                            onPressed: () {
-                              imagePickeOption4();
-                            },
-                            icon: Icon(Icons.add_a_photo)),
-                        value: 4,
-                        groupValue: correct_answer,
-                        onChanged: (value) {
-                          setState(() {
-                            correct_answer = value!;
-                          });
-                        },
-                        title: Container(
-                          // color: Colors.red,
-                          child: Center(
-                              child: _imageOp4 == null
-                                  ? TextFormField(
-                                      minLines: 1,
-                                      maxLines: 3,
-                                      validator: ((val) =>
-                                          val!.isEmpty ? "กรอกคำตอบ" : null),
-                                      onChanged: (value) {
-                                        setState(() {
-                                          option4 = value;
-                                        });
-                                      },
-                                      decoration: InputDecoration(
-                                          hintText: 'คำตอบที่ 4'),
-                                    )
-                                  : Image.file(
-                                      _imageOp4!,
-                                      height: 100,
-                                    )),
-                        )),
-                  ),
-                  SizedBox(
-                    height: 50,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.grey),
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => DetailsQuizs(
-                                          quizId: widget.quizId,
-                                          questionId: widget.questionId,
-                                        )));
-                          },
-                          child: Text('ยกเลิก')),
-                      SizedBox(
-                        width: 50,
-                      ),
-                      ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              primary: Colors.deepPurple),
-                          onPressed: () {
-                            // print('โจทย์ : $question , รูปภาพ : $_imageUrlQs');
-                            if (_formKey.currentState!.validate()) {
-                              if (correct_answer == 0) {
-                                //  showSnackbar(
-                                //   context, Colors.red, "โปรดเลือกตอบที่ถูกต้อง");
-                                normalDialog(
-                                    context, 'โปรดเลือกคำตอบที่ถูกต้อง');
-                                return;
-                              } else if (question == null) {
-                                showSnackbar(context, Colors.red,
-                                    "สร้างโจทย์ไม่คำถามสำเร็จ!!");
-                              }
-                              try {
-                                createQuestionRadio(question);
-
-                                showSnackbar(context, Colors.green,
-                                    "สร้างโจทย์คำถามสำเร็จ");
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => DetailsQuizs(
-                                              quizId: widget.quizId,
-                                              questionId: widget.questionId,
-                                            )));
-                              } catch (e) {
-                                showSnackbar(context, Colors.red, e.toString());
-                              }
-                            }
-                          },
-                          child: Text('บันทึกโจทย์')),
-                    ],
-                  ),
-                  SizedBox(height: 50,)
+                          height: 20,
+                        ),
+                        Center(
+                          child: RadioListTile(
+                              activeColor: Colors.red,
+                              secondary: IconButton(
+                                  onPressed: () {
+                                    imagePickeOption1();
+                                  },
+                                  icon: Icon(Icons.add_a_photo)),
+                              value: 1,
+                              groupValue: correct_answer,
+                              onChanged: (value) {
+                                setState(() {
+                                  correct_answer = value!;
+                                });
+                              },
+                              title: Container(
+                                // color: Colors.red,
+                                child: Center(
+                                    child: _imageOp1 == null
+                                        ? TextFormField(
+                                            minLines: 1,
+                                            maxLines: 3,
+                                            validator: ((val) => val!.isEmpty
+                                                ? "กรอกคำตอบ"
+                                                : null),
+                                            onChanged: (value) {
+                                              setState(() {
+                                                option1 = value;
+                                              });
+                                            },
+                                            decoration: InputDecoration(
+                                                hintText: 'คำตอบที่ 1'),
+                                          )
+                                        : Image.file(
+                                            _imageOp1!,
+                                            height: 100,
+                                          )),
+                              )),
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Center(
+                          child: RadioListTile(
+                              activeColor: Colors.red,
+                              secondary: IconButton(
+                                  onPressed: () {
+                                    imagePickeOption2();
+                                  },
+                                  icon: Icon(Icons.add_a_photo)),
+                              value: 2,
+                              groupValue: correct_answer,
+                              onChanged: (value) {
+                                setState(() {
+                                  correct_answer = value!;
+                                });
+                              },
+                              title: Container(
+                                // color: Colors.red,
+                                child: Center(
+                                    child: _imageOp2 == null
+                                        ? TextFormField(
+                                            minLines: 1,
+                                            maxLines: 3,
+                                            validator: ((val) => val!.isEmpty
+                                                ? "กรอกคำตอบ"
+                                                : null),
+                                            onChanged: (value) {
+                                              setState(() {
+                                                option2 = value;
+                                              });
+                                            },
+                                            decoration: InputDecoration(
+                                                hintText: 'คำตอบที่ 2'),
+                                          )
+                                        : Image.file(
+                                            _imageOp2!,
+                                            height: 100,
+                                          )),
+                              )),
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Center(
+                          child: RadioListTile(
+                              activeColor: Colors.red,
+                              secondary: IconButton(
+                                  onPressed: () {
+                                    imagePickeOption3();
+                                  },
+                                  icon: Icon(Icons.add_a_photo)),
+                              value: 3,
+                              groupValue: correct_answer,
+                              onChanged: (value) {
+                                setState(() {
+                                  correct_answer = value!;
+                                });
+                              },
+                              title: Container(
+                                // color: Colors.red,
+                                child: Center(
+                                    child: _imageOp3 == null
+                                        ? TextFormField(
+                                            minLines: 1,
+                                            maxLines: 3,
+                                            validator: ((val) => val!.isEmpty
+                                                ? "กรอกคำตอบ"
+                                                : null),
+                                            onChanged: (value) {
+                                              setState(() {
+                                                option3 = value;
+                                              });
+                                            },
+                                            decoration: InputDecoration(
+                                                hintText: 'คำตอบที่ 3'),
+                                          )
+                                        : Image.file(
+                                            _imageOp3!,
+                                            height: 100,
+                                          )),
+                              )),
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Center(
+                          child: RadioListTile(
+                              activeColor: Colors.red,
+                              secondary: IconButton(
+                                  onPressed: () {
+                                    imagePickeOption4();
+                                  },
+                                  icon: Icon(Icons.add_a_photo)),
+                              value: 4,
+                              groupValue: correct_answer,
+                              onChanged: (value) {
+                                setState(() {
+                                  correct_answer = value!;
+                                });
+                              },
+                              title: Container(
+                                // color: Colors.red,
+                                child: Center(
+                                    child: _imageOp4 == null
+                                        ? TextFormField(
+                                            minLines: 1,
+                                            maxLines: 3,
+                                            validator: ((val) => val!.isEmpty
+                                                ? "กรอกคำตอบ"
+                                                : null),
+                                            onChanged: (value) {
+                                              setState(() {
+                                                option4 = value;
+                                              });
+                                            },
+                                            decoration: InputDecoration(
+                                                hintText: 'คำตอบที่ 4'),
+                                          )
+                                        : Image.file(
+                                            _imageOp4!,
+                                            height: 100,
+                                          )),
+                              )),
+                        ),
+                        SizedBox(
+                          height: 50,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.grey),
+                                onPressed: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => DetailsQuizs(
+                                                quizId: widget.quizId,
+                                                questionId: widget.questionId,
+                                                path: '',
+                                              )));
+                                },
+                                child: Text('ยกเลิก')),
+                            SizedBox(
+                              width: 50,
+                            ),
+                            ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                    primary: Colors.deepPurple),
+                                onPressed: () {
+                                  // print('โจทย์ : $question , รูปภาพ : $_imageUrlQs');
+                                  if (_formKey.currentState!.validate()) {
+                                    if (correct_answer == 0) {
+                                      //  showSnackbar(
+                                      //   context, Colors.red, "โปรดเลือกตอบที่ถูกต้อง");
+                                      normalDialog(
+                                          context, 'โปรดเลือกคำตอบที่ถูกต้อง');
+                                      return;
+                                    } else if (question == null) {
+                                      showSnackbar(context, Colors.red,
+                                          "สร้างโจทย์ไม่คำถามสำเร็จ!!");
+                                    }
+                                    try {
+                                      createQuestionRadio(question);
+      
+                                      showSnackbar(context, Colors.green,
+                                          "สร้างโจทย์คำถามสำเร็จ");
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => DetailsQuizs(
+                                                    quizId: widget.quizId,
+                                                    questionId: widget.questionId, path: '',
+                                                  )));
+                                    } catch (e) {
+                                      showSnackbar(
+                                          context, Colors.red, e.toString());
+                                    }
+                                  }
+                                },
+                                child: Text('บันทึกโจทย์')),
+                          ],
+                        )
                       ],
                     ),
                   ),
-                  
-                  
                 ],
               ),
-            ),
-          )),
+              destop: Container(
+                
+               decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: Colors.black)
+                ),
+                margin: EdgeInsets.symmetric(horizontal: 400 , vertical: 20),
+                child: Column(
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                          color: Colors.deepPurple,
+                          borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(20),
+                              topRight: Radius.circular(20))),
+                      // margin: EdgeInsets.symmetric(horizontal: 400),
+      
+                      // decoration: BoxDecoration(
+                      //     image: DecorationImage(
+                      //       image: ExactAssetImage("assets/dw.jpg"),
+                      //       fit: BoxFit.cover,
+                      //     ),
+                      //   ),
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 16.0, vertical: 24.0),
+                        // margin: EdgeInsets.symmetric(horizontal: 400),
+                        child: Center(
+                          child: Container(
+                            padding: EdgeInsets.symmetric(horizontal: 10),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                
+                                Text(
+                                  "โจทย์คำถาม",
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 18),
+                                ),
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                TextFormField(
+                                  minLines: 1,
+                                  maxLines: 100,
+                                  keyboardType: TextInputType.multiline,
+                                  style: TextStyle(color: Colors.white),
+                                  validator: ((val) =>
+                                      val!.isEmpty ? "กรอกโจทย์คำถาม" : null),
+                                  decoration: InputDecoration(
+                                    hintText: "",
+                                  ),
+                                  onChanged: (value) {
+                                    question = value;
+                                  },
+                                ),
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                Center(
+                                    child: _imageQs == null
+                                        ? null
+                                        : Image.file(_imageQs!)),
+                                Container(
+                                  margin: EdgeInsets.fromLTRB(0, 20, 150, 0),
+                                  child: ElevatedButton.icon(
+                                    onPressed: (() {
+                                      imagePickerQuestion();
+                                    }),
+                                    icon: Icon(
+                                      Icons.add_a_photo,
+                                      color: Colors.black,
+                                    ),
+                                    label: Text(
+                                      "เพิ่มรูปภาพ",
+                                      style: TextStyle(color: Colors.black),
+                                    ),
+                                    style: ElevatedButton.styleFrom(
+                                        primary: Colors.yellow),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    // SizedBox(
+                    //   height: 30,
+                    // ),
+                    Container(
+                       decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(20),
+                            bottomRight: Radius.circular(20)
+                          )
+                        ),
+                      child: Column(
+                        children: [
+                          SizedBox(height: 30,),
+                          Text(
+                            "เลือกได้ 1 ข้อเท่านั้น !!",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(
+                      height: 20,
+                    ),
+                    Center(
+                      child: RadioListTile(
+                          activeColor: Colors.red,
+                          secondary: IconButton(
+                              onPressed: () {
+                                imagePickeOption1();
+                              },
+                              icon: Icon(Icons.add_a_photo)),
+                          value: 1,
+                          groupValue: correct_answer,
+                          onChanged: (value) {
+                            setState(() {
+                              correct_answer = value!;
+                            });
+                          },
+                          title: Container(
+                            // color: Colors.red,
+                            child: Center(
+                                child: _imageOp1 == null
+                                    ? TextFormField(
+                                        minLines: 1,
+                                        maxLines: 3,
+                                        validator: ((val) =>
+                                            val!.isEmpty ? "กรอกคำตอบ" : null),
+                                        onChanged: (value) {
+                                          setState(() {
+                                            option1 = value;
+                                          });
+                                        },
+                                        decoration: InputDecoration(
+                                            hintText: 'คำตอบที่ 1'),
+                                      )
+                                    : Image.file(
+                                        _imageOp1!,
+                                        height: 100,
+                                      )),
+                          )),
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Center(
+                      child: RadioListTile(
+                          activeColor: Colors.red,
+                          secondary: IconButton(
+                              onPressed: () {
+                                imagePickeOption2();
+                              },
+                              icon: Icon(Icons.add_a_photo)),
+                          value: 2,
+                          groupValue: correct_answer,
+                          onChanged: (value) {
+                            setState(() {
+                              correct_answer = value!;
+                            });
+                          },
+                          title: Container(
+                            // color: Colors.red,
+                            child: Center(
+                                child: _imageOp2 == null
+                                    ? TextFormField(
+                                        minLines: 1,
+                                        maxLines: 3,
+                                        validator: ((val) =>
+                                            val!.isEmpty ? "กรอกคำตอบ" : null),
+                                        onChanged: (value) {
+                                          setState(() {
+                                            option2 = value;
+                                          });
+                                        },
+                                        decoration: InputDecoration(
+                                            hintText: 'คำตอบที่ 2'),
+                                      )
+                                    : Image.file(
+                                        _imageOp2!,
+                                        height: 100,
+                                      )),
+                          )),
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Center(
+                      child: RadioListTile(
+                          activeColor: Colors.red,
+                          secondary: IconButton(
+                              onPressed: () {
+                                imagePickeOption3();
+                              },
+                              icon: Icon(Icons.add_a_photo)),
+                          value: 3,
+                          groupValue: correct_answer,
+                          onChanged: (value) {
+                            setState(() {
+                              correct_answer = value!;
+                            });
+                          },
+                          title: Container(
+                            // color: Colors.red,
+                            child: Center(
+                                child: _imageOp3 == null
+                                    ? TextFormField(
+                                        minLines: 1,
+                                        maxLines: 3,
+                                        validator: ((val) =>
+                                            val!.isEmpty ? "กรอกคำตอบ" : null),
+                                        onChanged: (value) {
+                                          setState(() {
+                                            option3 = value;
+                                          });
+                                        },
+                                        decoration: InputDecoration(
+                                            hintText: 'คำตอบที่ 3'),
+                                      )
+                                    : Image.file(
+                                        _imageOp3!,
+                                        height: 100,
+                                      )),
+                          )),
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Center(
+                      child: RadioListTile(
+                          activeColor: Colors.red,
+                          secondary: IconButton(
+                              onPressed: () {
+                                imagePickeOption4();
+                              },
+                              icon: Icon(Icons.add_a_photo)),
+                          value: 4,
+                          groupValue: correct_answer,
+                          onChanged: (value) {
+                            setState(() {
+                              correct_answer = value!;
+                            });
+                          },
+                          title: Container(
+                            // color: Colors.red,
+                            child: Center(
+                                child: _imageOp4 == null
+                                    ? TextFormField(
+                                        minLines: 1,
+                                        maxLines: 3,
+                                        validator: ((val) =>
+                                            val!.isEmpty ? "กรอกคำตอบ" : null),
+                                        onChanged: (value) {
+                                          setState(() {
+                                            option4 = value;
+                                          });
+                                        },
+                                        decoration: InputDecoration(
+                                            hintText: 'คำตอบที่ 4'),
+                                      )
+                                    : Image.file(
+                                        _imageOp4!,
+                                        height: 100,
+                                      )),
+                          )),
+                    ),
+                    SizedBox(
+                      height: 50,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.grey),
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => DetailsQuizs(
+                                            quizId: widget.quizId,
+                                            questionId: widget.questionId, path: '',
+                                          )));
+                            },
+                            child: Text('ยกเลิก')),
+                        SizedBox(
+                          width: 50,
+                        ),
+                        ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                primary: Colors.deepPurple),
+                            onPressed: () {
+                              // print('โจทย์ : $question , รูปภาพ : $_imageUrlQs');
+                              if (_formKey.currentState!.validate()) {
+                                if (correct_answer == 0) {
+                                  //  showSnackbar(
+                                  //   context, Colors.red, "โปรดเลือกตอบที่ถูกต้อง");
+                                  normalDialog(
+                                      context, 'โปรดเลือกคำตอบที่ถูกต้อง');
+                                  return;
+                                } else if (question == null) {
+                                  showSnackbar(context, Colors.red,
+                                      "สร้างโจทย์ไม่คำถามสำเร็จ!!");
+                                }
+                                try {
+                                  createQuestionRadio(question);
+      
+                                  showSnackbar(context, Colors.green,
+                                      "สร้างโจทย์คำถามสำเร็จ");
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => DetailsQuizs(
+                                                quizId: widget.quizId,
+                                                questionId: widget.questionId, path: '',
+                                              )));
+                                } catch (e) {
+                                  showSnackbar(context, Colors.red, e.toString());
+                                }
+                              }
+                            },
+                            child: Text('บันทึกโจทย์')),
+                      ],
+                    ),
+                    SizedBox(height: 50,)
+                        ],
+                      ),
+                    ),
+                    
+                    
+                  ],
+                ),
+              ),
+            )),
+          ),
         ),
       ),
     );

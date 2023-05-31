@@ -7,6 +7,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:my_project/views/views_students/codePage.dart';
 import 'package:my_project/views/views_teachers/listName_Student.dart';
 import 'package:my_project/views/views_teachers/path_constant.dart';
+import 'package:my_project/views/views_teachers/rankingStudent.dart';
 import 'package:random_string/random_string.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -37,7 +38,11 @@ class _DetialQuizs_CodeState extends State<DetialQuizs_Code> {
       FirebaseFirestore.instance
           .collection('quizs')
           .doc(widget.quizId)
-          .update({'code': code});
+          .update({
+            'code': code,
+            'link' : null,
+            
+          });
     });
 
     return Scaffold(

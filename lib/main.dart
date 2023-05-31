@@ -4,8 +4,10 @@ import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
+import 'package:my_project/sheets/student_sheets_api.dart';
 import 'package:my_project/views/first_page.dart';
 import 'package:my_project/views/signin.dart';
+import 'package:my_project/views/views_students/questionWidget2.dart';
 import 'package:my_project/views/views_students/quizPage.dart';
 
 
@@ -24,6 +26,8 @@ void main() async {
 
   final PendingDynamicLinkData? initiaLink = 
     await FirebaseDynamicLinks.instance.getInitialLink();
+
+   await StudentSheetApi.init();
   
   runApp(MyApp(
     initiaLink: initiaLink,
@@ -59,8 +63,8 @@ class _MyAppState extends State<MyApp> {
         primarySwatch: Colors.purple,
       ),
       // ignore: prefer_const_constructors
-      // home: firstPage(path: path.toString(),),
-      home: QuizPage(quizId: 'R7wN0dwEbTVDqba8BMfx'),
+      home: firstPage(path: '',)
+      
       // onGenerateRoute: RouteServices.generateRoute
     );
   }

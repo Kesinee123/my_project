@@ -11,9 +11,9 @@ import 'package:my_project/compornent/sidemenu.dart';
 import 'package:my_project/views/views_teachers/create/create_quizs.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key,});
+  const HomePage({super.key, required this.path,});
 
-  // final String path;
+  final String path;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -65,20 +65,20 @@ Future<void> showNotification() async {
   );
 }
 
-@override
-  void initState() {
-    super.initState();
-    Firebase.initializeApp().then((_) {
-      FirebaseFirestore.instance
-          .collection('problum')
-          .doc('QBLew22zp9yA5Bsys85G')
-          .get()
-          .then((documentSnapshot) {
-        final data = documentSnapshot.data()!;
-        data['status'] == 'false' ? showNotification() : Text('');
-      });
-    });
-  }
+// @override
+//   void initState() {
+//     super.initState();
+//     Firebase.initializeApp().then((_) {
+//       FirebaseFirestore.instance
+//           .collection('problum')
+//           .doc('FZVrdseT7o0UebjALVvS')
+//           .get()
+//           .then((documentSnapshot) {
+//         final data = documentSnapshot.data()!;
+//         data['status'] == 'อยู่ในระหว่างตรวจสอบ' ? showNotification() : Text('');
+//       });
+//     });
+//   }
 
 
 
@@ -113,13 +113,13 @@ Future<void> showNotification() async {
                   Navigator.push(context, MaterialPageRoute(builder: (context) => CreateQuiz())),
                   // showToast('...Create Quiz'),
                 ),
-                SpeedDialChild(
-                  backgroundColor: Colors.white,
-                  child: Icon(Icons.edit),
-                  label: 'แจ้งเตือน',
-                  onTap: () => showNotification(),
-                  // showToast('...Create Quiz'),
-                )
+                // SpeedDialChild(
+                //   backgroundColor: Colors.white,
+                //   child: Icon(Icons.edit),
+                //   label: 'แจ้งเตือน',
+                //   onTap: () => showNotification(),
+                //   // showToast('...Create Quiz'),
+                // )
               ],
             ),
          drawer: sidemenu(),
@@ -153,7 +153,7 @@ Future<void> showNotification() async {
                   child: SingleChildScrollView(
                     padding: EdgeInsets.symmetric(vertical: 30, horizontal: 30),
                     child:
-                      QuizDetailList(),
+                      QuizDetailList(path: widget.path,),
                   ),
                 )),
           ],

@@ -54,7 +54,7 @@ class _QuestionQuizState extends State<QuestionQuiz> {
             .collection('quizs')
             .doc(widget.quizId)
             .collection("questions")
-            .orderBy('createdAt', descending: true)
+            .orderBy('createdAt', descending: false)
             .snapshots(),
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.hasData) {
@@ -131,7 +131,10 @@ class _QuestionQuizState extends State<QuestionQuiz> {
                                                           documentSnapshot[
                                                                   'correct_answer']
                                                               .toString(),
-                                                      imageUrl: documentSnapshot['imageUrl']?? null .toString(),
+                                                      imageUrl:
+                                                          documentSnapshot[
+                                                                  'imageUrl'] ??
+                                                              null.toString(),
                                                     );
                                                   } else if (documentSnapshot[
                                                           'type_quiz'] ==
@@ -146,8 +149,9 @@ class _QuestionQuizState extends State<QuestionQuiz> {
                                                         option1:
                                                             documentSnapshot[
                                                                 'answerId1'],
-                                                        imageUrl: documentSnapshot['imageUrl'] ?? null .toString()
-                                                    );
+                                                        imageUrl: documentSnapshot[
+                                                                'imageUrl'] ??
+                                                            null.toString());
                                                   } else {
                                                     return EditQuestion2(
                                                       quizId: widget.quizId,
@@ -164,7 +168,10 @@ class _QuestionQuizState extends State<QuestionQuiz> {
                                                           'answerId3'],
                                                       option4: documentSnapshot[
                                                           'answerId4'],
-                                                      imageUrl: documentSnapshot['imageUrl'] ?? null .toString(),
+                                                      imageUrl:
+                                                          documentSnapshot[
+                                                                  'imageUrl'] ??
+                                                              null.toString(),
                                                     );
                                                   }
                                                   // return Center(child: CircularProgressIndicator());
@@ -172,72 +179,38 @@ class _QuestionQuizState extends State<QuestionQuiz> {
                                           } else {
                                             showDialog(
                                                 context: context,
-                                                builder: (_) {
-                                                  return Dialog(
-                                                    child: Container(
-                                                        margin:
-                                                            const EdgeInsets.all(20),
-                                                        height: 150,
-                                                        width: 200,
-                                                        child: Column(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .center,
-                                                          children: [
-                                                            const Text(
-                                                              'ต้องการลบโจทย์หรือไม่ ??',
-                                                              style: TextStyle(
-                                                                  fontSize: 20,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold),
-                                                            ),
-                                                            const SizedBox(
-                                                              height: 20,
-                                                            ),
-
-                                                            Row(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .center,
-                                                              children: [
-                                                                ElevatedButton(
-                                                                    style: ElevatedButton.styleFrom(
-                                                                        backgroundColor:
-                                                                            Colors
-                                                                                .grey),
-                                                                    onPressed:
-                                                                        () {
-                                                                      Navigator.pop(
-                                                                          context);
-                                                                    },
-                                                                    child: const Text(
-                                                                        'ยกเลิก')),
-                                                                const SizedBox(
-                                                                  width: 50,
-                                                                ),
-                                                                ElevatedButton(
-                                                                    style: ElevatedButton.styleFrom(
-                                                                        backgroundColor:
-                                                                            Colors
-                                                                                .red),
-                                                                    onPressed:
-                                                                        () {
-                                                                      deleteQuestion(
-                                                                          documentSnapshot
-                                                                              .id);
-                                                                      Navigator.pop(
-                                                                          context);
-                                                                    },
-                                                                    child: const Text(
-                                                                        'ลบ'))
-                                                              ],
-                                                            ),
-                                                            // )
-                                                          ],
-                                                        )),
-                                                  );
-                                                });
+                                                builder: (context) =>
+                                                    AlertDialog(
+                                                        title: Text(
+                                                          "แจ้งเตือน",
+                                                          style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
+                                                        ),
+                                                        content: Text(
+                                                            "ต้องการลบโจทย์หรือไม่ ??"),
+                                                        actions: [
+                                                          TextButton(
+                                                            onPressed: () {
+                                                              Navigator.pop(
+                                                                  context);
+                                                            },
+                                                            child: const Text(
+                                                                'ยกเลิก'),
+                                                          ),
+                                                          TextButton(
+                                                            onPressed: () {
+                                                              deleteQuestion(
+                                                                  documentSnapshot
+                                                                      .id);
+                                                              Navigator.pop(
+                                                                  context);
+                                                            },
+                                                            child: const Text(
+                                                                'ลบ'),
+                                                          )
+                                                        ]));
                                           }
                                         }, itemBuilder: (context) {
                                           return popList
@@ -294,6 +267,7 @@ class _QuestionQuizState extends State<QuestionQuiz> {
                                       correct_answer:
                                           documentSnapshot['correct_answer']
                                               .toString(),
+                                      type_quiz: documentSnapshot['type_quiz'],
                                     ),
                                   ],
                                 ),
@@ -303,7 +277,8 @@ class _QuestionQuizState extends State<QuestionQuiz> {
                                       children: [
                                         Text(
                                           documentSnapshot['type_quiz'],
-                                          style: const TextStyle(color: Colors.red),
+                                          style: const TextStyle(
+                                              color: Colors.red),
                                         ),
                                       ],
                                     ),
@@ -356,12 +331,14 @@ class Answer extends StatefulWidget {
   final String quizId;
   final String questionId;
   final String correct_answer;
+  final String type_quiz;
 
   const Answer(
       {super.key,
       required this.quizId,
       required this.questionId,
-      required this.correct_answer});
+      required this.correct_answer,
+      required this.type_quiz});
 
   @override
   State<Answer> createState() => _AnswerState();
@@ -397,21 +374,34 @@ class _AnswerState extends State<Answer> {
                         margin: const EdgeInsets.all(10),
                         child: Row(
                           children: [
-                            const Text('คำตอบที่ 1 :' , style: TextStyle(fontWeight: FontWeight.bold),),
+                            const Text(
+                              'คำตอบที่ 1 :',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
                             const SizedBox(
                               width: 10,
                             ),
                             // Icon(Icons.circle),
-                            widget.correct_answer
-                                    .contains(documentSnapshot['identifier'])
-                                ? const Icon(
-                                    Icons.circle,
-                                    color: Colors.green,
-                                  )
-                                : const Icon(
-                                    Icons.circle,
-                                    color: Colors.red,
-                                  ),
+                            widget.type_quiz == 'แบบพิมคำตอบ'
+                                ? documentSnapshot['identifier'] == '1'
+                                    ? const Icon(
+                                        Icons.circle,
+                                        color: Colors.green,
+                                      )
+                                    : const Icon(
+                                        Icons.circle,
+                                        color: Colors.red,
+                                      )
+                                : widget.correct_answer.contains(
+                                        documentSnapshot['identifier'])
+                                    ? const Icon(
+                                        Icons.circle,
+                                        color: Colors.green,
+                                      )
+                                    : const Icon(
+                                        Icons.circle,
+                                        color: Colors.red,
+                                      ),
                             const SizedBox(
                               width: 10,
                             ),
@@ -435,9 +425,10 @@ class _AnswerState extends State<Answer> {
                       );
                     });
               }
-              return const Center(child: Center(child: CircularProgressIndicator()));
+              return const Center(
+                  child: Center(child: CircularProgressIndicator()));
             }),
-            StreamBuilder(
+        StreamBuilder(
             stream: FirebaseFirestore.instance
                 .collection('quizs')
                 .doc(widget.quizId)
@@ -458,7 +449,10 @@ class _AnswerState extends State<Answer> {
                         margin: const EdgeInsets.all(10),
                         child: Row(
                           children: [
-                            const Text('คำตอบที่ 2 :' , style: TextStyle(fontWeight: FontWeight.bold),),
+                            const Text(
+                              'คำตอบที่ 2 :',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
                             const SizedBox(
                               width: 10,
                             ),
@@ -496,9 +490,10 @@ class _AnswerState extends State<Answer> {
                       );
                     });
               }
-              return const Center(child: Center(child: CircularProgressIndicator()));
+              return const Center(
+                  child: Center(child: CircularProgressIndicator()));
             }),
-            StreamBuilder(
+        StreamBuilder(
             stream: FirebaseFirestore.instance
                 .collection('quizs')
                 .doc(widget.quizId)
@@ -519,7 +514,10 @@ class _AnswerState extends State<Answer> {
                         margin: const EdgeInsets.all(10),
                         child: Row(
                           children: [
-                            const Text('คำตอบที่ 3 :' , style: TextStyle(fontWeight: FontWeight.bold),),
+                            const Text(
+                              'คำตอบที่ 3 :',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
                             const SizedBox(
                               width: 10,
                             ),
@@ -557,9 +555,10 @@ class _AnswerState extends State<Answer> {
                       );
                     });
               }
-              return const Center(child: Center(child: CircularProgressIndicator()));
+              return const Center(
+                  child: Center(child: CircularProgressIndicator()));
             }),
-            StreamBuilder(
+        StreamBuilder(
             stream: FirebaseFirestore.instance
                 .collection('quizs')
                 .doc(widget.quizId)
@@ -580,7 +579,10 @@ class _AnswerState extends State<Answer> {
                         margin: const EdgeInsets.all(10),
                         child: Row(
                           children: [
-                            const Text('คำตอบที่ 4 :' , style: TextStyle(fontWeight: FontWeight.bold),),
+                            const Text(
+                              'คำตอบที่ 4 :',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
                             const SizedBox(
                               width: 10,
                             ),
@@ -618,7 +620,8 @@ class _AnswerState extends State<Answer> {
                       );
                     });
               }
-              return const Center(child: Center(child: CircularProgressIndicator()));
+              return const Center(
+                  child: Center(child: CircularProgressIndicator()));
             }),
       ],
     );

@@ -54,8 +54,8 @@ class _CreateQuestion3State extends State<CreateQuestion3> {
       'imageUrl': _imageUrlQs3,
       'createdAt': '$date $time',
       'quizId': widget.quizId,
-      'type_quiz': 'แบบเขียน',
-      "correct_answer": '1'
+      'type_quiz': 'แบบพิมคำตอบ',
+      "correct_answer": option1, 
     });
     await questionWrite.update({
       "questionId": questionWrite.id,
@@ -254,7 +254,7 @@ class _CreateQuestion3State extends State<CreateQuestion3> {
                                   MaterialPageRoute(
                                       builder: (context) => DetailsQuizs(
                                             quizId: widget.quizId,
-                                            questionId: widget.questionId,
+                                            questionId: widget.questionId, path: '',
                                           )));
                             }
                           },
@@ -399,7 +399,7 @@ class _CreateQuestion3State extends State<CreateQuestion3> {
                                 MaterialPageRoute(
                                     builder: (context) => DetailsQuizs(
                                           quizId: widget.quizId,
-                                          questionId: widget.questionId,
+                                          questionId: widget.questionId, path: '',
                                         )));
                           },
                           child: Text('ยกเลิก')),
@@ -428,7 +428,7 @@ class _CreateQuestion3State extends State<CreateQuestion3> {
                                         MaterialPageRoute(
                                             builder: (context) => DetailsQuizs(
                                                   quizId: widget.quizId,
-                                                  questionId: widget.questionId,
+                                                  questionId: widget.questionId, path: '',
                                                 )));
                                   }
                                 },

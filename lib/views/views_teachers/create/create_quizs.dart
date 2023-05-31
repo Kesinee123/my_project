@@ -52,7 +52,10 @@ class _CreateQuizState extends State<CreateQuiz> {
       'quizSubject': quizSubject,
       'createdAt': '$date $time',
       'imageUrl': _imageUrl,
-      'code': null
+      'code': null,
+      'startMakeQuiz' : null,
+      'endMakeQuiz' : null,
+      'start' : false
     });
     await quizDocumentReference.update({
       // "questions" : FieldValue.arrayUnion(["${uid}_$userName"]),
@@ -297,7 +300,7 @@ class _CreateQuizState extends State<CreateQuiz> {
                                               context,
                                               MaterialPageRoute(
                                                   builder: (context) =>
-                                                      HomePage()));
+                                                      HomePage(path: '',)));
                                         } catch (e) {
                                           showSnackbar(context, Colors.red,
                                               e.toString());
@@ -484,7 +487,7 @@ class _CreateQuizState extends State<CreateQuiz> {
                                                 context,
                                                 MaterialPageRoute(
                                                     builder: (context) =>
-                                                        HomePage()));
+                                                        HomePage(path: '',)));
                                           } catch (e) {
                                             showSnackbar(context, Colors.red,
                                                 e.toString());

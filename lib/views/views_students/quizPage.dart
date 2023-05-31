@@ -71,15 +71,15 @@ class _QuizPageState extends State<QuizPage> {
                         ),
                         ElevatedButton(
                             onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => QuestionWidget(
-                                    // quizCode: inputNumber,
-                                    quizId: widget.quizId, // ส่งข้อมูลไปด้วย
-                                  ),
-                                ),
-                              );
+                              // Navigator.push(
+                              //   context,
+                              //   MaterialPageRoute(
+                              //     builder: (context) => QuestionWidget(
+                              //       // quizCode: inputNumber,
+                              //       quizId: widget.quizId, // ส่งข้อมูลไปด้วย
+                              //     ),
+                              //   ),
+                              // );
                             },
                             style: ButtonStyle(
                                 backgroundColor:

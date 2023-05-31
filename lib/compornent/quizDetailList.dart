@@ -10,7 +10,9 @@ import 'package:my_project/models/menu_item.dart';
 import 'package:my_project/views/views_teachers/detail/details.dart';
 
 class QuizDetailList extends StatefulWidget {
-  QuizDetailList({super.key});
+  QuizDetailList({super.key, required this.path});
+
+  final String path;
 
   // final String quizId;
 
@@ -93,7 +95,7 @@ class _QuizDetailListState extends State<QuizDetailList> {
                                     builder: (context) => DetailsQuizs(
                                           quizId: documentSnapshot.id,
                                           questionId: documentSnapshot.id,
-                                          
+                                          path: widget.path,
                                         )));
                           },
                           child: ListTile(
@@ -127,68 +129,31 @@ class _QuizDetailListState extends State<QuizDetailList> {
                                 if (value == "ลบ") {
                                   showDialog(
                                       context: context,
-                                      builder: (_) {
-                                        return Dialog(
-                                          child: Container(
-                                              margin: EdgeInsets.all(20),
-                                              height: 150,
-                                              width: 300,
-                                              child: Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
-                                                  Text(
-                                                    'ต้องการลบแบบทดสอบหรือไม่ ??',
-                                                    style: TextStyle(
-                                                        fontSize: 16,
-                                                        fontWeight:
-                                                            FontWeight.bold),
-                                                  ),
-                                                  SizedBox(
-                                                    height: 20,
-                                                  ),
-
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    children: [
-                                                      ElevatedButton(
-                                                          style: ElevatedButton
-                                                              .styleFrom(
-                                                                  backgroundColor:
-                                                                      Colors
-                                                                          .grey),
-                                                          onPressed: () {
-                                                            Navigator.pop(
-                                                                context);
-                                                          },
-                                                          child:
-                                                              Text('ยกเลิก')),
-                                                      SizedBox(
-                                                        width: 50,
-                                                      ),
-                                                      ElevatedButton(
-                                                          style: ElevatedButton
-                                                              .styleFrom(
-                                                                  backgroundColor:
-                                                                      Colors
-                                                                          .red),
-                                                          onPressed: () {
-                                                            _deleteQuiz(
-                                                                documentSnapshot
-                                                                    .id);
-                                                            Navigator.pop(
-                                                                context);
-                                                          },
-                                                          child: Text('ลบ'))
-                                                    ],
-                                                  ),
-                                                  // )
-                                                ],
-                                              )),
-                                        );
-                                      });
+                                      builder: (context) => AlertDialog(
+                                              title: Text(
+                                                "แจ้งเตือน",
+                                                style: TextStyle(
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                              content: Text(
+                                                  "ต้องการลบแบบทดสอบหรือไม่ ??"),
+                                              actions: [
+                                                TextButton(
+                                                  onPressed: () {
+                                                    Navigator.pop(context);
+                                                  },
+                                                  child: const Text('ยกเลิก'),
+                                                ),
+                                                TextButton(
+                                                  onPressed: () {
+                                                    _deleteQuiz(
+                                                        documentSnapshot.id);
+                                                    Navigator.pop(context);
+                                                  },
+                                                  child: const Text('ลบ'),
+                                                )
+                                              ]));
                                 } else {
                                   quizTitleEdit.text =
                                       documentSnapshot['quizTitle'];
@@ -197,245 +162,103 @@ class _QuizDetailListState extends State<QuizDetailList> {
                                   _imageUrl = documentSnapshot['imageUrl'];
 
                                   showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return Dialog(
-                                          child: SingleChildScrollView(
-                                              child: Container(
-                                                  padding: EdgeInsets.all(30),
-                                                  child: Form(
-                                                      // key: _formkey,
-                                                      child:
-                                                          SingleChildScrollView(
-                                                              child: Column(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.start,
-                                                    children: [
-                                                      Text(
-                                                        'แก้ไขแบบทดสอบ',
-                                                        style: TextStyle(
-                                                            fontSize: 20,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold),
-                                                      ),
-                                                      Container(
-                                                          color: Colors.white,
-                                                          height: 500,
-                                                          width: 500,
-                                                          child: Container(
-                                                              child: Column(
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .center,
-                                                                  children: [
-                                                                Center(
-                                                                  child:
-                                                                      Padding(
-                                                                    padding:
-                                                                        EdgeInsets.all(
-                                                                            8.0),
-                                                                    child:
-                                                                        ClipRRect(
-                                                                      borderRadius:
-                                                                          BorderRadius.circular(
-                                                                              30),
-                                                                      child:
-                                                                          Container(
-                                                                        height:
-                                                                            150,
-                                                                        width: double
-                                                                            .infinity,
-                                                                        child:
-                                                                            Column(
-                                                                          children: [
-                                                                            Expanded(
-                                                                              child: Container(
-                                                                                width: 200,
-                                                                                decoration: BoxDecoration(
-                                                                                  borderRadius: BorderRadius.circular(20),
-                                                                                  border: Border.all(color: Colors.deepPurple),
-                                                                                ),
-                                                                                child: Center(
-                                                                                  child: Column(
-                                                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                                    children: [
-                                                                                      Expanded(
-                                                                                        child: _image == null
-                                                                                            ? Center(
-                                                                                                child:
-                                                                                                    // Text("ไม่มีรูปภาพ")
-                                                                                                    Image.network(documentSnapshot['imageUrl']))
-                                                                                            : Image.file(_image!),
-                                                                                      ),
-                                                                                    ],
-                                                                                  ),
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                                ElevatedButton(
-                                                                    style: ElevatedButton.styleFrom(
-                                                                        primary:
-                                                                            Colors
-                                                                                .yellow),
-                                                                    onPressed:
-                                                                        () {
-                                                                      imagePicker();
-                                                                    },
-                                                                    child: Text(
-                                                                      'เพิ่มรูปภาพ',
-                                                                      style: TextStyle(
-                                                                          color:
-                                                                              Colors.black),
-                                                                    )),
-                                                                SizedBox(
-                                                                  height: 20,
-                                                                ),
-                                                                Container(
-                                                                  alignment:
-                                                                      Alignment
-                                                                          .centerLeft,
-                                                                  margin: EdgeInsets
-                                                                      .symmetric(
-                                                                          horizontal:
-                                                                              10),
-                                                                  child:
-                                                                      Container(
-                                                                    child: Text(
-                                                                      "ชื่อแบบทดสอบ",
-                                                                      style: TextStyle(
-                                                                          color: Colors
-                                                                              .black,
-                                                                          fontSize:
-                                                                              16,
-                                                                          fontWeight:
-                                                                              FontWeight.bold),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                                Container(
-                                                                  alignment:
-                                                                      Alignment
-                                                                          .centerLeft,
-                                                                  margin: EdgeInsets
-                                                                      .symmetric(
-                                                                          horizontal:
-                                                                              10),
-                                                                  child:
-                                                                      Container(
-                                                                    child:
-                                                                        TextFormField(
-                                                                      controller:
-                                                                          quizTitleEdit,
+  context: context,
+  builder: (BuildContext context) {
+    return Dialog(
+      child: SingleChildScrollView(
+        child: Container(
+          padding: EdgeInsets.all(30),
+          child: Form(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text(
+                  'แก้ไขแบบทดสอบ',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 20),
+                Container(
+                  height: 200,
+                  width: 200,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: Colors.deepPurple),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: _image == null
+                        ? Center(child: Image.network(documentSnapshot['imageUrl']))
+                        : Image.file(_image!),
+                  ),
+                ),
+                SizedBox(height: 10),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(primary: Colors.yellow),
+                  onPressed: () {
+                    imagePicker();
+                  },
+                  child: Text(
+                    'เพิ่มรูปภาพ',
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ),
+                SizedBox(height: 20),
+                TextFormField(
+                  controller: quizTitleEdit,
+                  decoration: InputDecoration(
+                    labelText: "ชื่อแบบทดสอบ",
+                  ),
+                ),
+                SizedBox(height: 20),
+                TextFormField(
+                  controller: quizSubjectEdit,
+                  decoration: InputDecoration(
+                    labelText: "ชื่อวิชาของแบบทดสอบ",
+                  ),
+                ),
+                SizedBox(height: 30),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(primary: Colors.blueGrey),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text('ยกเลิก'),
+                    ),
+                    SizedBox(width: 100),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(primary: Colors.deepPurple),
+                      onPressed: () async {
+                        if (_image != null) {
+                          _imageUrl = await uploadImage(_image!);
+                        } else {
+                          _imageUrl = 'https://img.icons8.com/sf-regular-filled/256/question-mark.png';
+                        }
+                        snapshot.data!.docs[index].reference.update({
+                          "quizTitle": quizTitleEdit.text,
+                          "quizSubject": quizSubjectEdit.text,
+                          "imageUrl": _imageUrl,
+                        });
+                        Navigator.pop(context);
+                      },
+                      child: Text('ตกลง'),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  },
+);
 
-                                                                      // decoration: InputDecoration(hintText: "Quiz Title"),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                                SizedBox(
-                                                                  height: 20,
-                                                                ),
-                                                                Container(
-                                                                  alignment:
-                                                                      Alignment
-                                                                          .centerLeft,
-                                                                  margin: EdgeInsets
-                                                                      .symmetric(
-                                                                          horizontal:
-                                                                              10),
-                                                                  child:
-                                                                      Container(
-                                                                    child: Text(
-                                                                      "ชื่อวิชาของแบบทดสอบ",
-                                                                      style: TextStyle(
-                                                                          color: Colors
-                                                                              .black,
-                                                                          fontSize:
-                                                                              16,
-                                                                          fontWeight:
-                                                                              FontWeight.bold),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                                Container(
-                                                                  alignment:
-                                                                      Alignment
-                                                                          .centerLeft,
-                                                                  margin: EdgeInsets
-                                                                      .symmetric(
-                                                                          horizontal:
-                                                                              10),
-                                                                  child:
-                                                                      Container(
-                                                                    child:
-                                                                        TextFormField(
-                                                                      // decoration: InputDecoration(hintText: "Quiz Subject"),
-                                                                      controller:
-                                                                          quizSubjectEdit,
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                                SizedBox(
-                                                                  height: 30,
-                                                                ),
-                                                                Row(
-                                                                    mainAxisAlignment:
-                                                                        MainAxisAlignment
-                                                                            .center,
-                                                                    children: [
-                                                                      ElevatedButton(
-                                                                          style: ElevatedButton.styleFrom(
-                                                                              primary: Colors
-                                                                                  .blueGrey),
-                                                                          onPressed:
-                                                                              () {
-                                                                            Navigator.pop(context);
-                                                                          },
-                                                                          child:
-                                                                              Text('ยกเลิก')),
-                                                                      SizedBox(
-                                                                        width:
-                                                                            100,
-                                                                      ),
-                                                                      ElevatedButton(
-                                                                          style: ElevatedButton.styleFrom(
-                                                                              primary: Colors
-                                                                                  .deepPurple),
-                                                                          onPressed:
-                                                                              () async {
-                                                                            // final TextEditingController
-                                                                            //     quizTitleEdit =
-                                                                            //     TextEditingController();
-                                                                            // final TextEditingController
-                                                                            //     quizSubjectEdit =
-                                                                            //     TextEditingController();
-                                                                            if (_image !=
-                                                                                null) {
-                                                                              _imageUrl = await uploadImage(_image!);
-                                                                            } else {
-                                                                              _imageUrl = 'https://img.icons8.com/sf-regular-filled/256/question-mark.png';
-                                                                            }
-                                                                            snapshot.data!.docs[index].reference.update({
-                                                                              "quizTitle": quizTitleEdit.text,
-                                                                              "quizSubject": quizSubjectEdit.text,
-                                                                              "imageUrl": _imageUrl
-                                                                            });
-                                                                            Navigator.pop(context);
-                                                                          },
-                                                                          child:
-                                                                              Text('ตกลง')),
-                                                                    ]),
-                                                              ])))
-                                                    ],
-                                                  ))))),
-                                        );
-                                      });
                                 }
                               }, itemBuilder: (context) {
                                 return popList

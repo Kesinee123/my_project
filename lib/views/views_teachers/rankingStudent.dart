@@ -2,18 +2,20 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:my_project/views/views_teachers/homepage.dart';
-import 'package:my_project/views/views_teachers/rankingStudent.dart';
 
-class ListName extends StatefulWidget {
-  const ListName({super.key, required this.quizId});
+import '../../models/student.dart';
+import '../../sheets/student_sheets_api.dart';
+
+class RankingStudent extends StatefulWidget {
+  const RankingStudent({super.key, required this.quizId});
 
   final String quizId;
 
   @override
-  State<ListName> createState() => _ListNameState();
+  State<RankingStudent> createState() => _RankingStudentState();
 }
 
-class _ListNameState extends State<ListName> {
+class _RankingStudentState extends State<RankingStudent> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -32,7 +34,9 @@ class _ListNameState extends State<ListName> {
                       Padding(
                           padding: const EdgeInsets.only(right: 10),
                           child: IconButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                showSheet(context);
+                              },
                               icon: const Icon(Icons.exit_to_app))),
                     ],
                   ),
@@ -41,9 +45,8 @@ class _ListNameState extends State<ListName> {
                     width: 500,
                     height: 50,
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: const Color.fromARGB(255, 151, 114, 253),
-                    ),
+                        borderRadius: BorderRadius.circular(10),
+                        color: Colors.purple),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: Row(
@@ -86,6 +89,7 @@ class _ListNameState extends State<ListName> {
                               (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                             if (snapshot.hasData) {
                               return ListView.builder(
+                                  physics: AlwaysScrollableScrollPhysics(),
                                   itemCount: snapshot.data!.docs.length,
                                   shrinkWrap: true,
                                   itemBuilder: (context, index) {
@@ -126,9 +130,10 @@ class _ListNameState extends State<ListName> {
                                           ),
                                           Row(
                                             children: [
-                                               CircleAvatar(
-                                                backgroundImage: NetworkImage(documentSnapshot['imageUrl'])
-                                              ),
+                                              CircleAvatar(
+                                                  backgroundImage: NetworkImage(
+                                                      documentSnapshot[
+                                                          'imageUrl'])),
                                               const SizedBox(
                                                 width: 10,
                                               ),
@@ -162,4 +167,151 @@ class _ListNameState extends State<ListName> {
                           }))
                 ]))));
   }
+
+  showSheet(BuildContext context) {
+    showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return Padding(
+            padding: EdgeInsets.only(
+                // top: 20,
+                // left: 20,
+                // right: 20,
+                bottom: MediaQuery.of(context).viewInsets.bottom + 0),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                      height: 60,
+                      color: Colors.green,
+                      child: ButtonWidget(
+                        onClicked: () async {
+                          showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                      title: Text(
+                                        "แจ้งเตือน",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      content: Text(
+                                          "การดาวน์โหลด ข้อมูลของนักเรียนของคุณสำเร็จแล้ว"),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(context, 'OK'),
+                                          child: const Text('ตกลง'),
+                                        )
+                                      ]));
+                          insertStudent();
+                          // final student = {
+                          //   StudentFields.id : 1,
+                          //   StudentFields.name : 'pailin',
+                          //   StudentFields.email : '123@gmail.com',
+                          //   StudentFields.score : '10'
+                          // };
+                          // await StudentSheetApi.insert([student]);
+                        },
+                      )),
+                  Container(
+                    color: Colors.red,
+                    child: ListTile(
+                      leading: Icon(
+                        Icons.exit_to_app,
+                        color: Colors.white,
+                        size: 20,
+                      ),
+                      title: Text(
+                        'ออกจากแบบทดสอบ',
+                        style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => HomePage(
+                                      path: '',
+                                    )));
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
+  Future<void> insertStudent() async {
+    int index = 0;
+    final db = FirebaseFirestore.instance
+        .collection('quizs')
+        .doc(widget.quizId)
+        .collection('studentList')
+        .where('type_quiz' ,isEqualTo: 'ห้องเรียน');
+    try {
+      final querySnapshot = await db.get();
+      final students = querySnapshot.docs.map((doc) => doc.data()).toList();
+
+      if (students != null && students.isNotEmpty) {
+        final studentDataList = students.map((student) {
+          final studentData = {
+            StudentFields.id: '${index + 1}',
+            StudentFields.name: student['name'],
+            // StudentFields.email: student['email'],
+            StudentFields.quizTitle: student['quizTitle'],
+            StudentFields.quizsubject: student['quizSubject'],
+            // StudentFields.makeQuizStart: student['makeQuizStart'],
+            // StudentFields.makeQuizEnd: student['makeQuizEnd'],
+            StudentFields.score: student['score'],
+            StudentFields.status: student['type_quiz'],
+          };
+          return studentData;
+        }).toList();
+
+        await StudentSheetApi.insert(studentDataList);
+      }
+    } catch (error) {
+      print(error);
+    }
+  }
+}
+
+class ButtonWidget extends StatelessWidget {
+  // final String text;
+  final VoidCallback onClicked;
+
+  const ButtonWidget({
+    super.key,
+    required this.onClicked,
+  });
+
+  @override
+  Widget build(BuildContext context) => ElevatedButton(
+      onPressed: onClicked,
+      child: Row(
+        children: [
+          SizedBox(
+            width: 30,
+          ),
+          Icon(
+            Icons.download,
+            color: Colors.white,
+            size: 20,
+          ),
+          SizedBox(
+            width: 30,
+          ),
+          Text(
+            'ดาวน์โหลด',
+            style: TextStyle(
+                fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold),
+          ),
+        ],
+      ));
 }

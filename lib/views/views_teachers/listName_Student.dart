@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:my_project/views/views_teachers/homepage.dart';
-import 'package:my_project/views/views_teachers/ranking_Student.dart';
+import 'package:my_project/views/views_teachers/rankingStudent.dart';
 
 import '../../models/quiz.dart';
 
@@ -50,7 +50,7 @@ class _ListName_StudentState extends State<ListName_Student> {
                         //           context,
                         //           MaterialPageRoute(
                         //               builder: (context) =>
-                        //                   HomePage()));
+                        //                   HomePage(path: '',)));
                         //     },
                         //     child: IconButton(onPressed: (){},
                         //     icon: Icon(Icons.exit_to_app))),
@@ -184,14 +184,19 @@ class _ListName_StudentState extends State<ListName_Student> {
                                               documentSnapshot =
                                               snapshot.data!.docs[index];
                                           return Container(
-                                            // color: Colors.amber,
-                                            margin: EdgeInsets.symmetric(vertical: 5),
-                                            child: ListTile(
-                                              title: Text(documentSnapshot['name'] , style: TextStyle(fontWeight: FontWeight.bold),), 
-                                              leading: CircleAvatar(
-                                                child: Text('${index + 1}'),
-                                              )
-                                              ));
+                                              // color: Colors.amber,
+                                              margin: EdgeInsets.symmetric(
+                                                  vertical: 5),
+                                              child: ListTile(
+                                                  title: Text(
+                                                    documentSnapshot['name'],
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                  leading: CircleAvatar(
+                                                    child: Text('${index + 1}'),
+                                                  )));
                                         });
                                   }
                                   return CircularProgressIndicator();
@@ -201,10 +206,16 @@ class _ListName_StudentState extends State<ListName_Student> {
                     // button
                     InkWell(
                       onTap: () {
+                        FirebaseFirestore.instance
+                            .collection('quizs')
+                            .doc(widget.quizId)
+                            .update({'start': true,});
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => Ranking_Student()));
+                                builder: (context) => RankingStudent(
+                                      quizId: widget.quizId,
+                                    )));
                       },
                       child: Container(
                         height: 50,

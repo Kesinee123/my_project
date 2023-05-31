@@ -22,11 +22,14 @@ import '../../../config/responsive.dart';
 
 class DetailsQuizs extends StatefulWidget {
   const DetailsQuizs(
-      {super.key, required this.quizId, required this.questionId});
+      {super.key,
+      required this.quizId,
+      required this.questionId,
+      required this.path});
 
   final String quizId;
   final String questionId;
-  // final String path;
+  final String path;
 
   @override
   State<DetailsQuizs> createState() => _DetailsQuizsState();
@@ -177,355 +180,192 @@ class _DetailsQuizsState extends State<DetailsQuizs> {
               child: SafeArea(
                   child: SingleChildScrollView(
             child: Column(children: [
-              Responsive(
-                mobile: SizedBox(
-                  height: size.height,
-                  child: Stack(children: [
-                    Center(
-                        child: Container(
-                      width: 800,
-                      margin: const EdgeInsets.only(top: 200),
-                      height: 600,
-                      decoration: const BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(24),
-                              topRight: Radius.circular(24))),
-                      child: QuestionQuiz(
-                        question: question,
-                        option1: option1,
-                        option2: option2,
-                        option3: option3,
-                        option4: option4,
-                        quizId: widget.quizId,
-                        questionId: widget.questionId,
-                      ),
-                    )),
-                    Container(
-                      margin: const EdgeInsets.all(20),
-                      child: FutureBuilder(
-                          future: FirebaseFirestore.instance
-                              .collection('quizs')
-                              .doc(widget.quizId)
-                              .get(),
-                          builder: (context, AsyncSnapshot snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.done) {
-                              Map<String, dynamic> documentData =
-                                  snapshot.data!.data();
-                              return Column(
-                                children: [
-                                  Row(
-                                    children: [
-                                      const Text(
-                                        "ชื่อแบบทดสอบ :",
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      const SizedBox(
-                                        width: 5,
-                                      ),
-                                      Flexible(
-                                        child: Text(
-                                          "${documentData['quizTitle']}",
-                                          overflow: TextOverflow.ellipsis,
-                                          maxLines: 3,
-                                          style: const TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 16,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(
-                                    height: 10,
-                                  ),
-                                  Row(
-                                    children: [
-                                      const Text(
-                                        "ชื่อวิชา : ",
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      const SizedBox(
-                                        width: 5,
-                                      ),
-                                      Text(
-                                        "${documentData['quizSubject']}",
+              SizedBox(
+                height: size.height,
+                child: Stack(children: [
+                  Center(
+                      child: Container(
+                    width: 800,
+                    margin: const EdgeInsets.only(top: 200),
+                    height: 600,
+                    decoration: const BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(24),
+                            topRight: Radius.circular(24))),
+                    child: QuestionQuiz(
+                      question: question,
+                      option1: option1,
+                      option2: option2,
+                      option3: option3,
+                      option4: option4,
+                      quizId: widget.quizId,
+                      questionId: widget.questionId,
+                    ),
+                  )),
+                  Container(
+                    margin: const EdgeInsets.all(20),
+                    child: FutureBuilder(
+                        future: FirebaseFirestore.instance
+                            .collection('quizs')
+                            .doc(widget.quizId)
+                            .get(),
+                        builder: (context, AsyncSnapshot snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.done) {
+                            Map<String, dynamic> documentData =
+                                snapshot.data!.data();
+                            return Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    const Text(
+                                      "ชื่อแบบทดสอบ :",
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    const SizedBox(
+                                      width: 5,
+                                    ),
+                                    Flexible(
+                                      child: Text(
+                                        "${documentData['quizTitle']}",
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 3,
                                         style: const TextStyle(
                                           color: Colors.black,
                                           fontSize: 16,
                                         ),
                                       ),
-                                      const SizedBox(
-                                        width: 10,
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                Row(
+                                  children: [
+                                    const Text(
+                                      "ชื่อวิชา : ",
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    const SizedBox(
+                                      width: 5,
+                                    ),
+                                    Text(
+                                      "${documentData['quizSubject']}",
+                                      style: const TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 16,
                                       ),
-                                    ],
-                                  ),
-                                  // SizedBox(
-                                  //   height: 50,
-                                  // ),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      ElevatedButton(
-                                          style: ElevatedButton.styleFrom(
-                                              primary: Colors.purpleAccent),
-                                          onPressed: () {
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        DetialQuizs_Time(
-                                                          quizId: widget.quizId,
-                                                          questionId:
-                                                              widget.questionId, path: '',
-                                                        )));
-                                          },
-                                          child: const Text('การบ้าน')),
-                                      // SizedBox(
-                                      //   width: 30,
-                                      // ),
-
-                                      // ElevatedButton(
-                                      //   style: ElevatedButton.styleFrom(
-                                      //       primary: Colors.purpleAccent),
-                                      //   onPressed:
-                                      //   !_isCreatingLink
-                                      //       ? () async {
-                                      //           await _createDynamicLink(
-                                      //               true, kCodeLink);
-                                      //           String link = _linkMessage ??
-                                      //               ''; // Ensure link is not null
-                                      //           // await FirebaseFirestore.instance
-                                      //           //     .collection('link')
-                                      //           //     .add({
-                                      //           //   "Link": link,
-                                      //           // });
-                                      //           Navigator.push(context, MaterialPageRoute(builder: (context) => DetialQuizs_Code(
-                                      //             quizId: widget.quizId, link: link.toString(),)));
-                                      //         }
-                                      //       : null,
-                                      //   child: Text('ห้องเรียน'),
-                                      // ),
-                                      ElevatedButton(
+                                    ),
+                                    const SizedBox(
+                                      width: 10,
+                                    ),
+                                  ],
+                                ),
+                                // SizedBox(
+                                //   height: 50,
+                                // ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    ElevatedButton(
                                         style: ElevatedButton.styleFrom(
                                             primary: Colors.purpleAccent),
-                                        onPressed: () async {
-                                          Navigator.push(
+                                        onPressed: () {
+                                          if (documentData['startMakeQuiz'] == null) {
+                                            Navigator.push(
                                               context,
                                               MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      DetialQuizs_Code(
-                                                        quizId: widget.quizId,
-                                                      )));
-                                        },
-                                        child: const Text('ห้องเรียน'),
-                                      ),
-
-                                      CircleAvatar(
-                                          radius: 50,
-                                          backgroundColor: Colors.white,
-                                          backgroundImage: NetworkImage(
-                                            "${documentData['imageUrl']}",
-                                          ))
-                                    ],
-                                  ),
-                                ],
-                              );
-                            }
-                            return const CircularProgressIndicator();
-                          }),
-                    )
-                  ]),
-                ),
-                destop: SizedBox(
-                  height: size.height,
-                  child: Stack(children: [
-                    Center(
-                        child: Container(
-                      width: 800,
-                      margin: const EdgeInsets.only(top: 200),
-                      height: 600,
-                      decoration: const BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(24),
-                              topRight: Radius.circular(24))),
-                      child: QuestionQuiz(
-                        question: question,
-                        option1: option1,
-                        option2: option2,
-                        option3: option3,
-                        option4: option4,
-                        quizId: widget.quizId,
-                        questionId: widget.questionId,
-                      ),
-                    )),
-                    Container(
-                      margin: const EdgeInsets.all(20),
-                      child: FutureBuilder(
-                          future: FirebaseFirestore.instance
-                              .collection('quizs')
-                              .doc(widget.quizId)
-                              .get(),
-                          builder: (context, AsyncSnapshot snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.done) {
-                              Map<String, dynamic> documentData =
-                                  snapshot.data!.data();
-                              return Column(
-                                children: [
-                                  Container(
-                                    margin: const EdgeInsets.symmetric(
-                                        horizontal: 350),
-                                    child: Column(
-                                      children: [
-                                        Row(
-                                          // mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            const Text(
-                                              "ชื่อแบบทดสอบ :",
-                                              style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            const SizedBox(
-                                              width: 5,
-                                            ),
-                                            Text(
-                                              "${documentData['quizTitle']}",
-                                              style: const TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                          ],
-                                        ),
-                                        const SizedBox(
-                                          height: 10,
-                                        ),
-                                        Row(
-                                          // mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            const Text(
-                                              "ชื่อวิชา : ",
-                                              style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 16),
-                                            ),
-                                            const SizedBox(
-                                              width: 5,
-                                            ),
-                                            Text(
-                                              "${documentData['quizSubject']}",
-                                              style: const TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 16),
-                                            ),
-                                            const SizedBox(
-                                              width: 40,
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  // SizedBox(
-                                  //   height: 50,
-                                  // ),
-                                  Container(
-                                    margin: const EdgeInsets.symmetric(
-                                        horizontal: 350),
-                                    child: Row(
-                                      //  mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
-                                        ElevatedButton(
-                                            style: ElevatedButton.styleFrom(
-                                                primary: Colors.purpleAccent),
-                                            onPressed: () {
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          DetialQuizs_Time(
-                                                            quizId:
-                                                                widget.quizId,
-                                                            questionId: widget
-                                                                .questionId,
-                                                            path: '',
-                                                          )));
-                                            },
-                                            child: const Text('การบ้าน')),
-                                        // SizedBox(
-                                        //   width: 30,
-                                        // ),
-
-                                        // ElevatedButton(
-                                        //   style: ElevatedButton.styleFrom(
-                                        //       primary: Colors.purpleAccent),
-                                        //   onPressed:
-                                        //   !_isCreatingLink
-                                        //       ? () async {
-                                        //           await _createDynamicLink(
-                                        //               true, kCodeLink);
-                                        //           String link = _linkMessage ??
-                                        //               ''; // Ensure link is not null
-                                        //           // await FirebaseFirestore.instance
-                                        //           //     .collection('link')
-                                        //           //     .add({
-                                        //           //   "Link": link,
-                                        //           // });
-                                        //           Navigator.push(context, MaterialPageRoute(builder: (context) => DetialQuizs_Code(
-                                        //             quizId: widget.quizId, link: link.toString(),)));
-                                        //         }
-                                        //       : null,
-                                        //   child: Text('ห้องเรียน'),
-                                        // ),
-                                        const SizedBox(
-                                          width: 20,
-                                        ),
-                                        ElevatedButton(
-                                          style: ElevatedButton.styleFrom(
-                                              primary: Colors.purpleAccent),
-                                          onPressed: () async {
+                                                builder: (context) =>
+                                                    DetialQuizs_Time(
+                                                  quizId: widget.quizId,
+                                                  questionId: widget.questionId,
+                                                  path: widget.path,
+                                                ),
+                                              ),
+                                            );
+                                          } else {
                                             Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        DetialQuizs_Code(
-                                                          quizId: widget.quizId,
-                                                        )));
-                                          },
-                                          child: const Text('ห้องเรียน'),
-                                        ),
-                                        const SizedBox(
-                                          width: 450,
-                                        ),
-                                        CircleAvatar(
-                                            radius: 50,
-                                            backgroundColor: Colors.white,
-                                            backgroundImage: NetworkImage(
-                                              "${documentData['imageUrl']}",
-                                            ))
-                                      ],
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    DetialQuizs_Homework(
+                                                  quizId: widget.quizId,
+                                                  path: widget.path,
+                                                  questionId: widget.questionId,
+                                                  startMakeQuiz: documentData[
+                                                          'startMakeQuiz'],
+                                                  endMakeQuiz: documentData[
+                                                          'endMakeQuiz'],
+                                                ),
+                                              ),
+                                            );
+                                          }
+                                        },
+                                        child: const Text('การบ้าน')),
+                                    // SizedBox(
+                                    //   width: 30,
+                                    // ),
+
+                                    // ElevatedButton(
+                                    //   style: ElevatedButton.styleFrom(
+                                    //       primary: Colors.purpleAccent),
+                                    //   onPressed:
+                                    //   !_isCreatingLink
+                                    //       ? () async {
+                                    //           await _createDynamicLink(
+                                    //               true, kCodeLink);
+                                    //           String link = _linkMessage ??
+                                    //               ''; // Ensure link is not null
+                                    //           // await FirebaseFirestore.instance
+                                    //           //     .collection('link')
+                                    //           //     .add({
+                                    //           //   "Link": link,
+                                    //           // });
+                                    //           Navigator.push(context, MaterialPageRoute(builder: (context) => DetialQuizs_Code(
+                                    //             quizId: widget.quizId, link: link.toString(),)));
+                                    //         }
+                                    //       : null,
+                                    //   child: Text('ห้องเรียน'),
+                                    // ),
+                                    ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                          primary: Colors.purpleAccent),
+                                      onPressed: () async {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    DetialQuizs_Code(
+                                                      quizId: widget.quizId,
+                                                    )));
+                                      },
+                                      child: const Text('ห้องเรียน'),
                                     ),
-                                  ),
-                                ],
-                              );
-                            }
-                            return const CircularProgressIndicator();
-                          }),
-                    )
-                  ]),
-                ),
+
+                                    CircleAvatar(
+                                        radius: 50,
+                                        backgroundColor: Colors.white,
+                                        backgroundImage: NetworkImage(
+                                          "${documentData['imageUrl']}",
+                                        ))
+                                  ],
+                                ),
+                              ],
+                            );
+                          }
+                          return const CircularProgressIndicator();
+                        }),
+                  )
+                ]),
               ),
             ]),
           ))),

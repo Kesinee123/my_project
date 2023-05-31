@@ -981,6 +981,7 @@ class _EditQuestionState extends State<EditQuestion> {
                                   builder: (context) => DetailsQuizs(
                                         quizId: widget.quizId,
                                         questionId: widget.questionId,
+                                        path: '',
                                         
                                       )));
                         },
@@ -1609,7 +1610,7 @@ class _EditQuestionState extends State<EditQuestion> {
                                 MaterialPageRoute(
                                     builder: (context) => DetailsQuizs(
                                           quizId: widget.quizId,
-                                          questionId: widget.questionId,
+                                          questionId: widget.questionId, path: '',
                                           
                                         )));
                           },
